@@ -1,6 +1,7 @@
 'use client'
 
-import { AdminSidebar } from '@/components/admin-sidebar'
+import { AdminShell } from '@/components/admin-shell'
+import { DashboardHeader } from '@/components/dashboard/dashboard-header'
 import { 
   Lightbulb, 
   Plus, 
@@ -12,188 +13,163 @@ import {
   Sparkles,
   Calendar,
   BarChart3,
-  ChevronRight
+  ChevronRight,
+  ArrowRight,
+  Zap
 } from 'lucide-react'
 import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 
-const mockTips = [
-  { id: '1', title: 'Sabedoria do Ninho: Por que poupar?', category: 'Financeiro', status: 'Ativa', views: 1240, engagement: '92%', lastEdit: '2 dias atrás' },
-  { id: '2', title: 'O Poder da Arrumação Mágica', category: 'Comportamento', status: 'Ativa', views: 856, engagement: '78%', lastEdit: '5 dias atrás' },
-  { id: '3', title: 'Dica da Corujinha: Frutas são Superpoderes', category: 'Saúde', status: 'Agendada', views: 0, engagement: '0%', lastEdit: 'Hoje' },
-  { id: '4', title: 'Como se tornar um Mestre da Calma', category: 'Emocional', status: 'Rascunho', views: 0, engagement: '0%', lastEdit: '1 semana atrás' },
-]
+import { useAdminData } from '@/hooks/use-admin-data'
 
 export default function DicasPage() {
+  const { tips, isLoading } = useAdminData()
+  const [searchTerm, setSearchTerm] = useState('')
+
+  if (isLoading) {
+    return (
+      <AdminShell>
+         <div className="flex-1 flex items-center justify-center min-h-[60vh]">
+            <motion.div animate={{ rotate: [0, 10, -10, 0] }} transition={{ repeat: Infinity, duration: 2 }} className="text-brand-primary">
+               <Lightbulb size={48} />
+            </motion.div>
+         </div>
+      </AdminShell>
+    )
+  }
+
+  const filteredTips = tips.filter(t => 
+    t.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    t.category.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'white' }}>
-      <AdminSidebar />
-      
-      <main style={{ flex: 1, backgroundColor: '#F8FAFC', padding: '48px' }}>
-        <header style={{ marginBottom: '48px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div>
-            <h1 style={{ fontSize: '32px', fontWeight: 900, color: '#0F172A', marginBottom: '8px', letterSpacing: '-0.02em' }}>Dicas da Corujinha</h1>
-            <p style={{ color: '#64748B', fontSize: '16px', fontWeight: 500 }}>Gerencie as pílulas de conhecimento e o conteúdo educativo global.</p>
-          </div>
-          <button style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '10px', 
-            padding: '14px 28px', 
-            backgroundColor: '#1E4636', 
-            color: 'white', 
-            borderRadius: '12px', 
-            border: 'none', 
-            fontWeight: 700, 
-            fontSize: '15px',
-            cursor: 'pointer',
-            boxShadow: '0 4px 12px rgba(30, 70, 54, 0.2)'
-          }}>
-            <Plus size={20} strokeWidth={3} /> Nova Pílula Mágica
-          </button>
-        </header>
+    <AdminShell>
+      <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-12">
+        <DashboardHeader 
+          title="Dicas da Corujinha" 
+          subtitle="Gerencie as pílulas de conhecimento e o conteúdo educativo global." 
+        />
+        <button className="flex items-center gap-3 px-8 py-4 bg-brand-primary text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-brand-primary/20 hover:scale-105 active:scale-95 transition-all">
+          <Plus size={20} strokeWidth={3} /> Nova Pílula Mágica
+        </button>
+      </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '40px' }}>
-          {/* Content Management Area */}
-          <div>
-             <div style={{ position: 'relative', marginBottom: '32px' }}>
-                <Search style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} size={20} />
-                <input 
-                  type="text" 
-                  placeholder="Buscar dicas por título, categoria ou palavra-chave..." 
-                  style={{ 
-                    width: '100%', 
-                    padding: '16px 20px 16px 56px', 
-                    borderRadius: '14px', 
-                    border: '1px solid #E2E8F0', 
-                    fontSize: '15px',
-                    fontWeight: 500,
-                    outline: 'none',
-                    boxShadow: '0 1px 2px rgba(0,0,0,0.02)'
-                  }}
-                />
-             </div>
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-12 items-start">
+        {/* Content Management Area */}
+        <div className="space-y-8">
+           <div className="relative group">
+              <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" size={20} />
+              <input 
+                type="text" 
+                placeholder="Buscar pílulas mágicas..." 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-16 pr-6 py-5 bg-white border border-slate-100 rounded-3xl font-bold text-slate-900 outline-none focus:ring-8 focus:ring-brand-primary/5 transition-all shadow-sm" 
+              />
+           </div>
 
-             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {mockTips.map((tip) => (
-                   <div key={tip.id} style={{ 
-                     backgroundColor: 'white', 
-                     borderRadius: '20px', 
-                     padding: '24px', 
-                     border: '1px solid #F1F5F9',
-                     display: 'flex', 
-                     alignItems: 'center', 
-                     gap: '24px',
-                     boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
-                     transition: 'transform 0.2s'
-                   }} onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')} onMouseOut={(e) => (e.currentTarget.style.transform = 'none')}>
-                      <div style={{ 
-                        width: '56px', 
-                        height: '56px', 
-                        borderRadius: '14px', 
-                        backgroundColor: '#F1F5F9', 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center', 
-                        color: '#1E4636' 
-                      }}>
-                         {tip.category === 'Financeiro' ? <TrendingUp size={28} /> : tip.category === 'Comportamento' ? <Brain size={28} /> : <Sparkles size={28} />}
+           <div className="space-y-4">
+              <AnimatePresence mode="popLayout">
+                {filteredTips.map((tip) => (
+                   <motion.div 
+                     layout
+                     key={tip.id} 
+                     initial={{ opacity: 0, y: 20 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     className="bg-white rounded-[2rem] p-8 border border-slate-100 flex flex-col md:flex-row items-center gap-8 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 transition-all group"
+                   >
+                      <div className="w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-all duration-500">
+                         {tip.category === 'Financeiro' ? <TrendingUp size={32} /> : tip.category === 'Comportamento' ? <Brain size={32} /> : <Sparkles size={32} />}
                       </div>
                       
-                      <div style={{ flex: 1 }}>
-                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                            <span style={{ fontSize: '12px', fontWeight: 800, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{tip.category}</span>
-                            <div style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: '#CBD5E1' }} />
-                            <span style={{ 
-                               fontSize: '11px', 
-                               fontWeight: 900, 
-                               color: tip.status === 'Ativa' ? '#10B981' : tip.status === 'Agendada' ? '#3B82F6' : '#94A3B8',
-                               backgroundColor: tip.status === 'Ativa' ? '#ECFDF5' : tip.status === 'Agendada' ? '#EFF6FF' : '#F8FAFC',
-                               padding: '2px 8px',
-                               borderRadius: '6px'
-                            }}>{tip.status}</span>
+                      <div className="flex-1 text-center md:text-left">
+                         <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
+                            <span className="text-[10px] font-black text-brand-primary uppercase tracking-widest">{tip.category}</span>
+                            <div className="w-1 h-1 rounded-full bg-slate-200" />
+                            <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg
+                              ${tip.status === 'Ativa' ? 'bg-emerald-50 text-emerald-500' : tip.status === 'Agendada' ? 'bg-blue-50 text-blue-500' : 'bg-slate-50 text-slate-400'}`}>
+                               {tip.status || 'Rascunho'}
+                            </span>
                          </div>
-                         <h3 style={{ fontSize: '18px', fontWeight: 900, color: '#0F172A', margin: 0 }}>{tip.title}</h3>
+                         <h3 className="text-xl font-black text-slate-900 italic tracking-tight">{tip.title}</h3>
                       </div>
 
-                      <div style={{ display: 'flex', gap: '32px', alignItems: 'center', padding: '0 24px', borderRight: '1px solid #F1F5F9', borderLeft: '1px solid #F1F5F9' }}>
-                         <div style={{ textAlign: 'center' }}>
-                            <p style={{ margin: '0 0 2px', fontSize: '16px', fontWeight: 900, color: '#0F172A' }}>{tip.views}</p>
-                            <p style={{ margin: 0, fontSize: '11px', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>Vistas</p>
+                      <div className="flex gap-8 items-center px-8 border-y md:border-y-0 md:border-x border-slate-50 py-4 md:py-0 w-full md:w-auto justify-around md:justify-start">
+                         <div className="text-center">
+                            <p className="text-lg font-black text-slate-900">{tip.views || 0}</p>
+                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Vistas</p>
                          </div>
-                         <div style={{ textAlign: 'center' }}>
-                            <p style={{ margin: '0 0 2px', fontSize: '16px', fontWeight: 900, color: '#0F172A' }}>{tip.engagement}</p>
-                            <p style={{ margin: 0, fontSize: '11px', color: '#64748B', fontWeight: 700, textTransform: 'uppercase' }}>Engaj.</p>
+                         <div className="text-center">
+                            <p className="text-lg font-black text-slate-900">{tip.engagement || '0%'}</p>
+                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Engaj.</p>
                          </div>
                       </div>
 
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                         <button style={{ width: '44px', height: '44px', borderRadius: '12px', border: '1px solid #E2E8F0', backgroundColor: 'white', color: '#64748B', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                      <div className="flex items-center gap-4">
+                         <button className="w-12 h-12 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-brand-primary/5 hover:text-brand-primary transition-all">
                             <Eye size={20} />
                          </button>
-                         <button style={{ border: 'none', background: 'none', color: '#94A3B8', cursor: 'pointer', padding: '4px' }}>
+                         <button className="w-12 h-12 flex items-center justify-center text-slate-300 hover:text-slate-600 transition-colors">
                             <MoreVertical size={24} />
                          </button>
                       </div>
-                   </div>
+                   </motion.div>
                 ))}
-             </div>
-          </div>
-
-          {/* Performance Intelligence Sidebar */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-             <div style={{ 
-               backgroundColor: 'white', 
-               borderRadius: '24px', 
-               padding: '32px', 
-               border: '1px solid #F1F5F9',
-               boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)'
-             }}>
-                <h3 style={{ fontSize: '18px', fontWeight: 900, color: '#0F172A', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                   <BarChart3 size={20} color="#3B82F6" /> Top Performance
-                </h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                   {[1, 2, 3].map((_, i) => (
-                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                         <div style={{ fontSize: '14px', fontWeight: 900, color: '#94A3B8', width: '20px' }}>{i+1}</div>
-                         <div style={{ flex: 1 }}>
-                            <p style={{ fontSize: '14px', fontWeight: 700, color: '#0F172A', margin: '0 0 2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Poupar moedas é mágico</p>
-                            <p style={{ fontSize: '12px', color: '#64748B', margin: 0 }}>98.2% engajamento</p>
-                         </div>
-                         <ChevronRight size={16} color="#CBD5E1" />
-                      </div>
-                   ))}
-                </div>
-             </div>
-
-             <div style={{ 
-               backgroundColor: '#1E4636', 
-               borderRadius: '24px', 
-               padding: '32px', 
-               color: 'white',
-               boxShadow: '0 10px 20px rgba(30, 70, 54, 0.2)',
-               backgroundImage: 'linear-gradient(135deg, #1E4636 0%, #2D6A4F 100%)'
-             }}>
-                <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
-                   <Calendar size={24} />
-                </div>
-                <h3 style={{ fontSize: '20px', fontWeight: 900, marginBottom: '12px' }}>Calendário Editorial</h3>
-                <p style={{ fontSize: '14px', opacity: 0.9, marginBottom: '24px', lineHeight: 1.5 }}>Você possui <b>3 pílulas mágicas</b> agendadas para os próximos 7 dias. Mantenha o ritmo!</p>
-                <button style={{ 
-                  width: '100%', 
-                  padding: '14px', 
-                  borderRadius: '12px', 
-                  border: 'none', 
-                  backgroundColor: 'white', 
-                  color: '#1E4636', 
-                  fontWeight: 800, 
-                  fontSize: '14px', 
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
-                }}>Ver Agenda Completa</button>
-             </div>
-          </div>
+              </AnimatePresence>
+           </div>
         </div>
-      </main>
-    </div>
+
+        {/* Performance Intelligence Sidebar */}
+        <div className="space-y-8">
+           <div className="bg-white rounded-[2.5rem] p-10 border border-slate-100 shadow-2xl shadow-slate-200/20">
+              <div className="flex items-center gap-4 mb-10">
+                 <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-500">
+                    <BarChart3 size={24} />
+                 </div>
+                 <h3 className="text-xl font-black text-slate-900 italic tracking-tight">Top Performance</h3>
+              </div>
+              <div className="space-y-6">
+                 {filteredTips.slice(0, 3).map((tip, i) => (
+                    <button key={tip.id} className="w-full flex items-center gap-5 group text-left">
+                       <div className="text-xl font-black text-slate-200 group-hover:text-brand-primary transition-colors italic w-8">0{i+1}</div>
+                       <div className="flex-1 min-w-0">
+                          <p className="text-sm font-black text-slate-900 truncate tracking-tight">{tip.title}</p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{tip.engagement || '0%'} engajamento</p>
+                       </div>
+                       <ChevronRight size={16} className="text-slate-200 group-hover:translate-x-1 transition-all" />
+                    </button>
+                 ))}
+              </div>
+           </div>
+
+           <div className="bg-brand-primary rounded-[2.5rem] p-10 text-white shadow-2xl shadow-brand-primary/30 relative overflow-hidden group">
+              <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/5 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
+              
+              <div className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mb-8">
+                 <Calendar size={28} />
+              </div>
+              <h3 className="text-2xl font-black italic tracking-tight mb-4">Calendário Editorial</h3>
+              <p className="text-brand-primary-light font-bold text-sm mb-10 leading-relaxed uppercase tracking-wide">
+                Você possui <span className="text-white">{filteredTips.filter(t => t.status === 'Agendada').length} pílulas mágicas</span> agendadas para os próximos 7 dias.
+              </p>
+              <button className="w-full py-5 bg-white text-brand-primary rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3">
+                Ver Agenda Completa <ArrowRight size={16} strokeWidth={3} />
+              </button>
+           </div>
+
+           <div className="bg-amber-400 rounded-[2.5rem] p-10 text-white shadow-2xl shadow-amber-400/20 flex flex-col items-center text-center gap-6">
+              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center animate-bounce">
+                 <Zap size={28} fill="currentColor" />
+              </div>
+              <div className="space-y-1">
+                <h4 className="text-xl font-black italic tracking-tight">Dica do Dia</h4>
+                <p className="text-[10px] font-black uppercase tracking-widest opacity-80">Insight gerado por IA</p>
+              </div>
+              <p className="text-sm font-black leading-relaxed italic">"Dicas de comportamento sobre 'Calma' possuem 40% mais cliques nas manhãs de segunda-feira."</p>
+           </div>
+        </div>
+      </div>
+    </AdminShell>
   )
 }

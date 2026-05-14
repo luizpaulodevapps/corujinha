@@ -1,6 +1,8 @@
 'use client'
 
-import { AdminSidebar } from '@/components/admin-sidebar'
+import { AdminShell } from '@/components/admin-shell'
+import { DashboardHeader } from '@/components/dashboard/dashboard-header'
+import { StatCard } from '@/components/dashboard/stat-card'
 import { 
   Handshake, 
   Plus, 
@@ -10,30 +12,38 @@ import {
   TrendingUp,
   MapPin,
   Search,
-  Globe,
-  Briefcase,
   ShieldCheck,
   X,
-  Upload,
   Check,
-  Edit2,
-  Trash2,
-  Ban
+  Briefcase
 } from 'lucide-react'
 import { useState } from 'react'
-
-const mockPartners = [
-  { id: '1', name: 'Escola Pequeno Cientista', category: 'Educacional', location: 'São Paulo, SP', status: 'Ativo', commission: '15%', activeFamilies: 124, logo: '🏫', url: 'https://escola.com' },
-  { id: '2', name: 'Brinquedos Criativos', category: 'Produtos', location: 'Curitiba, PR', status: 'Ativo', commission: '10%', activeFamilies: 88, logo: '🧸', url: 'https://loja.com' },
-  { id: '3', name: 'Psicologia Infantil ABC', category: 'Saúde', location: 'Rio de Janeiro, RJ', status: 'Em Análise', commission: '20%', activeFamilies: 0, logo: '🧠', url: 'https://saude.com' },
-  { id: '4', name: 'Esportes & Ação Kids', category: 'Lazer', location: 'Belo Horizonte, MG', status: 'Ativo', commission: '12%', activeFamilies: 45, logo: '⚽', url: 'https://esportes.com' },
-]
+import { motion, AnimatePresence } from 'framer-motion'
+import { useAdminData } from '@/hooks/use-admin-data'
 
 export default function ParceirosPage() {
-  const [partners, setPartners] = useState(mockPartners)
+  const { partners: realPartners, isLoading } = useAdminData()
+  const [searchTerm, setSearchTerm] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
+
+  if (isLoading) {
+    return (
+      <AdminShell>
+         <div className="flex-1 flex items-center justify-center min-h-[50vh]">
+            <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1.5 }} className="text-brand-primary">
+               <Handshake size={32} />
+            </motion.div>
+         </div>
+      </AdminShell>
+    )
+  }
+
+  const filteredPartners = realPartners.filter(p => 
+    p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    (p.category || '').toLowerCase().includes(searchTerm.toLowerCase())
+  )
 
   const handleCreatePartner = (e: React.FormEvent) => {
     e.preventDefault()
@@ -44,195 +54,176 @@ export default function ParceirosPage() {
     }, 2000)
   }
 
-  const handleDelete = (id: string) => {
-    setPartners(partners.filter(p => p.id !== id))
-    setOpenMenuId(null)
-  }
+  const stats = [
+    { label: 'Rede de Parceiros', value: realPartners.length.toString(), change: 'Total de alianças', icon: Handshake, color: '#10B981', bgColor: '#ECFDF5' },
+    { label: 'Famílias Impactadas', value: realPartners.reduce((acc, p) => acc + (p.activeFamilies || 0), 0).toString(), change: 'Alcance B2B', icon: TrendingUp, color: '#3B82F6', bgColor: '#EFF6FF' },
+    { label: 'Comissão Média', value: '14.5%', change: 'Receita recorrente', icon: Briefcase, color: '#8B5CF6', bgColor: '#F5F3FF' }
+  ]
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'white' }}>
-      <AdminSidebar />
-      
-      <main style={{ flex: 1, backgroundColor: '#F8FAFC', padding: '48px' }}>
-        <header style={{ marginBottom: '48px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div>
-            <h1 style={{ fontSize: '32px', fontWeight: 900, color: '#1E4636', marginBottom: '8px', letterSpacing: '-0.02em' }}>Rede de Parceiros B2B</h1>
-            <p style={{ color: '#64748B', fontSize: '16px', fontWeight: 500 }}>Gerencie as alianças estratégicas e serviços integrados ao ecossistema Corujinha.</p>
-          </div>
-          <button 
-            onClick={() => setIsModalOpen(true)}
-            style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '12px', 
-              padding: '14px 28px', 
-              backgroundColor: '#1E4636', 
-              color: 'white', 
-              borderRadius: '12px', 
-              border: 'none', 
-              fontWeight: 800, 
-              fontSize: '15px',
-              cursor: 'pointer',
-              boxShadow: '0 8px 20px rgba(30, 70, 54, 0.2)',
-              transition: 'transform 0.2s'
-            }}
-          >
-            <Plus size={20} strokeWidth={3} /> Nova Parceria
-          </button>
-        </header>
+    <AdminShell>
+      <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-8">
+        <DashboardHeader 
+          title="Rede de Parceiros B2B" 
+          subtitle="Gerencie as alianças estratégicas e serviços integrados." 
+        />
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          className="flex items-center gap-2 px-6 py-3 bg-brand-primary text-white rounded-xl font-black text-[11px] uppercase tracking-widest shadow-lg shadow-brand-primary/20 hover:scale-105 active:scale-95 transition-all"
+        >
+          <Plus size={18} strokeWidth={3} /> Nova Parceria
+        </button>
+      </div>
 
-        {/* Global Metrics */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', marginBottom: '48px' }}>
-           {[
-             { label: 'Total de Parceiros', value: '42', sub: '3 novos este mês', icon: Handshake, color: '#10B981' },
-             { label: 'Conversões via B2B', value: '1.240', sub: '+18% crescimento', icon: TrendingUp, color: '#3B82F6' },
-             { label: 'Comissão Média', value: '14.5%', sub: 'Receita recorrente', icon: Briefcase, color: '#8B5CF6' }
-           ].map((stat, i) => (
-             <div key={i} style={{ backgroundColor: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #F1F5F9', display: 'flex', alignItems: 'center', gap: '20px' }}>
-                <div style={{ width: '60px', height: '60px', borderRadius: '18px', backgroundColor: '#F8FAFC', display: 'flex', alignItems: 'center', justifyContent: 'center', color: stat.color, border: '1px solid #F1F5F9' }}>
-                   <stat.icon size={28} />
-                </div>
-                <div>
-                   <p style={{ fontSize: '13px', color: '#94A3B8', fontWeight: 700, margin: '0 0 2px' }}>{stat.label}</p>
-                   <h3 style={{ fontSize: '24px', fontWeight: 900, color: '#0F172A', margin: 0 }}>{stat.value}</h3>
-                   <p style={{ fontSize: '12px', color: '#10B981', fontWeight: 700, margin: 0 }}>{stat.sub}</p>
-                </div>
-             </div>
-           ))}
-        </div>
+      {/* Global Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+         {stats.map((stat, i) => (
+            <StatCard key={i} {...stat} />
+         ))}
+      </div>
 
-        {/* Filters */}
-        <div style={{ display: 'flex', gap: '16px', marginBottom: '32px' }}>
-           <div style={{ flex: 1, position: 'relative' }}>
-              <Search style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} size={20} />
-              <input type="text" placeholder="Buscar parceiros..." style={{ width: '100%', padding: '16px 20px 16px 56px', borderRadius: '16px', border: '1px solid #E2E8F0', backgroundColor: 'white', fontSize: '15px', fontWeight: 500, outline: 'none' }} />
-           </div>
-        </div>
+      {/* Control Bar */}
+      <div className="flex gap-4 mb-8">
+         <div className="flex-1 relative group">
+            <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" size={18} />
+            <input 
+              type="text" 
+              placeholder="Pesquisar parceiros..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-14 pr-6 py-4 bg-white border border-slate-100 rounded-[1.5rem] font-bold text-slate-900 placeholder:text-slate-300 outline-none focus:border-brand-primary transition-all shadow-sm"
+            />
+         </div>
+      </div>
 
-        {/* Partner Cards Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '32px' }}>
-           {partners.map((partner) => (
-             <div key={partner.id} style={{ 
-                backgroundColor: 'white', 
-                borderRadius: '24px', 
-                padding: '32px', 
-                border: '1px solid #F1F5F9',
-                display: 'flex', 
-                flexDirection: 'column', 
-                gap: '28px',
-                boxShadow: '0 4px 6px rgba(0,0,0,0.02)',
-                position: 'relative'
-              }}>
-                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                       <div style={{ width: '72px', height: '72px', borderRadius: '20px', backgroundColor: '#F8FAFC', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '36px', border: '1px solid #F1F5F9' }}>
-                          {partner.logo}
-                       </div>
-                       <div>
-                          <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0F172A', margin: '0 0 4px' }}>{partner.name}</h3>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                             <span style={{ fontSize: '11px', fontWeight: 900, color: '#10B981', backgroundColor: '#ECFDF5', padding: '3px 10px', borderRadius: '6px' }}>{partner.category}</span>
-                             {partner.status === 'Ativo' && <ShieldCheck size={16} style={{ color: '#1E4636' }} />}
-                          </div>
-                       </div>
-                    </div>
-                    
-                    {/* Action Menu */}
-                    <div style={{ position: 'relative' }}>
-                       <button 
-                         onClick={() => setOpenMenuId(openMenuId === partner.id ? null : partner.id)}
-                         style={{ border: '2px solid #F1F5F9', backgroundColor: 'white', padding: '8px', borderRadius: '10px', color: '#94A3B8', cursor: 'pointer' }}
-                       >
-                          <MoreVertical size={20} />
-                       </button>
-                       {openMenuId === partner.id && (
-                         <div style={{ position: 'absolute', top: '100%', right: 0, marginTop: '8px', backgroundColor: 'white', borderRadius: '14px', border: '1px solid #F1F5F9', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', zIndex: 10, width: '180px', padding: '8px', overflow: 'hidden' }}>
-                            <button style={{ width: '100%', padding: '10px 12px', border: 'none', background: 'none', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px', fontWeight: 700, color: '#475569', cursor: 'pointer', borderRadius: '8px' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#F8FAFC'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-                               <Edit2 size={16} /> Editar
-                            </button>
-                            <button style={{ width: '100%', padding: '10px 12px', border: 'none', background: 'none', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px', fontWeight: 700, color: '#F59E0B', cursor: 'pointer', borderRadius: '8px' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#FFFBEB'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-                               <Ban size={16} /> Desativar
-                            </button>
-                            <button 
-                              onClick={() => handleDelete(partner.id)}
-                              style={{ width: '100%', padding: '10px 12px', border: 'none', background: 'none', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px', fontWeight: 700, color: '#EF4444', cursor: 'pointer', borderRadius: '8px' }} 
-                              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#FEF2F2'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                            >
-                               <Trash2 size={16} /> Excluir
-                            </button>
-                         </div>
-                       )}
-                    </div>
-                 </div>
+      {/* Partner Cards Grid */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+         <AnimatePresence>
+            {filteredPartners.map((partner) => (
+               <motion.div 
+                 key={partner.id}
+                 layout
+                 initial={{ opacity: 0, y: 20 }}
+                 animate={{ opacity: 1, y: 0 }}
+                 exit={{ opacity: 0, scale: 0.95 }}
+                 className="bg-white rounded-[2rem] p-6 border border-slate-100 shadow-xl shadow-slate-200/20 flex flex-col gap-6 group relative"
+               >
+                  <div className="flex justify-between items-start">
+                     <div className="flex items-center gap-4">
+                        <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-3xl border border-slate-50 group-hover:bg-brand-bg transition-colors duration-500">
+                           {partner.logo || '🤝'}
+                        </div>
+                        <div>
+                           <h3 className="text-lg font-black text-slate-900 tracking-tight mb-1">{partner.name}</h3>
+                           <div className="flex items-center gap-2">
+                              <span className="px-2 py-0.5 bg-emerald-50 text-emerald-500 text-[9px] font-black uppercase tracking-widest rounded-lg border border-emerald-100/50">
+                                 {partner.category || 'Geral'}
+                              </span>
+                              <ShieldCheck size={14} className="text-brand-primary" />
+                           </div>
+                        </div>
+                     </div>
+                     
+                     <div className="relative">
+                        <button 
+                          onClick={() => setOpenMenuId(openMenuId === partner.id ? null : partner.id)}
+                          className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all
+                            ${openMenuId === partner.id ? 'bg-slate-900 text-white' : 'bg-white border border-slate-100 text-slate-300 hover:text-slate-600'}`}
+                        >
+                           <MoreVertical size={18} />
+                        </button>
+                     </div>
+                  </div>
 
-                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                    <div style={{ padding: '20px', backgroundColor: '#F8FAFC', borderRadius: '20px', border: '1px solid #F1F5F9' }}>
-                       <p style={{ margin: '0 0 4px', fontSize: '11px', color: '#94A3B8', fontWeight: 800 }}>COMISSÃO</p>
-                       <p style={{ margin: 0, fontSize: '18px', fontWeight: 900, color: '#1E4636' }}>{partner.commission}</p>
-                    </div>
-                    <div style={{ padding: '20px', backgroundColor: '#F8FAFC', borderRadius: '20px', border: '1px solid #F1F5F9' }}>
-                       <p style={{ margin: '0 0 4px', fontSize: '11px', color: '#94A3B8', fontWeight: 800 }}>ALCANCE</p>
-                       <p style={{ margin: 0, fontSize: '18px', fontWeight: 900, color: '#1E4636' }}>{partner.activeFamilies} fam.</p>
-                    </div>
-                 </div>
+                  <div className="grid grid-cols-2 gap-3">
+                     <div className="p-4 bg-slate-50/50 rounded-xl border border-slate-100">
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Comissão</p>
+                        <p className="text-lg font-black text-brand-primary italic">{partner.commission || '10%'}</p>
+                     </div>
+                     <div className="p-4 bg-slate-50/50 rounded-xl border border-slate-100">
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Impacto</p>
+                        <p className="text-lg font-black text-brand-primary italic">{partner.activeFamilies || 0} fam.</p>
+                     </div>
+                  </div>
 
-                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748B', fontSize: '13px', fontWeight: 700 }}>
-                       <MapPin size={16} /> {partner.location}
-                    </div>
-                    <div style={{ display: 'flex', gap: '12px' }}>
-                       <a 
-                         href={`mailto:contato@${partner.name.toLowerCase().replace(/ /g, '')}.com.br`}
-                         style={{ width: '48px', height: '48px', borderRadius: '14px', border: '2px solid #F1F5F9', backgroundColor: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748B', cursor: 'pointer', textDecoration: 'none' }}
-                       >
-                          <Mail size={20} />
-                       </a>
-                       <button 
-                         onClick={() => window.open(partner.url, '_blank')}
-                         style={{ width: '48px', height: '48px', borderRadius: '14px', border: '2px solid #F1F5F9', backgroundColor: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748B', cursor: 'pointer' }}
-                       >
-                          <ExternalLink size={20} />
-                       </button>
-                    </div>
-                 </div>
-              </div>
-           ))}
-        </div>
+                  <div className="flex justify-between items-center pt-2 border-t border-slate-50">
+                     <div className="flex items-center gap-2 text-slate-400 text-xs font-bold">
+                        <MapPin size={14} className="text-brand-accent" /> {partner.location || 'Brasil'}
+                     </div>
+                     <div className="flex gap-2">
+                        <a 
+                          href={`mailto:contato@${partner.name.toLowerCase().replace(/ /g, '')}.com.br`}
+                          className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-brand-primary hover:border-brand-primary transition-all"
+                        >
+                           <Mail size={16} />
+                        </a>
+                        <button 
+                          onClick={() => partner.url && window.open(partner.url, '_blank')}
+                          className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-brand-primary hover:border-brand-primary transition-all"
+                        >
+                           <ExternalLink size={16} />
+                        </button>
+                     </div>
+                  </div>
+               </motion.div>
+            ))}
+         </AnimatePresence>
+      </div>
 
-        {/* ... Modal Logic ... */}
+      {/* Modal Nova Parceria */}
+      <AnimatePresence>
         {isModalOpen && (
-          <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '24px' }}>
-             <div style={{ backgroundColor: 'white', borderRadius: '32px', width: '100%', maxWidth: '600px', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)', position: 'relative' }}>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
+             <motion.div 
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               exit={{ opacity: 0 }}
+               onClick={() => setIsModalOpen(false)}
+               className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"
+             />
+             <motion.div 
+               initial={{ opacity: 0, scale: 0.9, y: 20 }}
+               animate={{ opacity: 1, scale: 1, y: 0 }}
+               exit={{ opacity: 0, scale: 0.9, y: 20 }}
+               className="relative w-full max-w-lg bg-white rounded-[2rem] shadow-2xl overflow-hidden"
+             >
                 {isSuccess ? (
-                  <div style={{ padding: '80px 40px', textAlign: 'center' }}>
-                     <div style={{ width: '80px', height: '80px', borderRadius: '50%', backgroundColor: '#ECFDF5', color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}><Check size={40} strokeWidth={3} /></div>
-                     <h2 style={{ fontSize: '28px', fontWeight: 900, color: '#0F172A', marginBottom: '12px' }}>Parceria Registrada!</h2>
+                  <div className="p-16 text-center">
+                     <div className="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
+                        <Check size={32} strokeWidth={3} />
+                     </div>
+                     <h2 className="text-2xl font-black text-slate-900 mb-1 italic">Parceria Selada!</h2>
+                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Registrando contrato digital...</p>
                   </div>
                 ) : (
                   <>
-                    <header style={{ padding: '32px 40px', borderBottom: '1px solid #F1F5F9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                       <h2 style={{ fontSize: '24px', fontWeight: 900, color: '#0F172A', margin: 0 }}>Nova Aliança B2B</h2>
-                       <button onClick={() => setIsModalOpen(false)} style={{ background: 'none', border: 'none', color: '#94A3B8', cursor: 'pointer' }}><X size={24} /></button>
+                    <header className="p-6 border-b border-slate-50 flex justify-between items-center">
+                       <h2 className="text-xl font-black text-slate-900 italic tracking-tight">Nova Aliança B2B</h2>
+                       <button onClick={() => setIsModalOpen(false)} className="w-8 h-8 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-slate-100 transition-colors">
+                          <X size={18} />
+                       </button>
                     </header>
-                    <form onSubmit={handleCreatePartner} style={{ padding: '40px' }}>
-                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                             <label style={{ fontSize: '13px', fontWeight: 800, color: '#475569' }}>NOME DA EMPRESA</label>
-                             <input required type="text" style={{ padding: '14px 16px', borderRadius: '12px', border: '1px solid #E2E8F0', fontSize: '15px' }} />
+                    <form onSubmit={handleCreatePartner} className="p-6 space-y-6">
+                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-1">
+                             <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Empresa</label>
+                             <input required type="text" className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-slate-900 outline-none focus:border-brand-primary transition-all text-sm" />
                           </div>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                             <label style={{ fontSize: '13px', fontWeight: 800, color: '#475569' }}>CUPOM</label>
-                             <input type="text" style={{ padding: '14px 16px', borderRadius: '12px', border: '1px solid #E2E8F0', fontSize: '15px' }} />
+                          <div className="space-y-1">
+                             <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Cupom</label>
+                             <input type="text" className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-xl font-bold text-slate-900 outline-none focus:border-brand-primary transition-all text-sm" />
                           </div>
                        </div>
-                       <button type="submit" style={{ width: '100%', padding: '16px', borderRadius: '14px', backgroundColor: '#1E4636', color: 'white', border: 'none', fontWeight: 800, cursor: 'pointer' }}>Confirmar Parceria</button>
+                       <button type="submit" className="w-full py-4 bg-brand-primary text-white rounded-xl font-black text-sm uppercase tracking-widest shadow-xl shadow-brand-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+                          Finalizar Acordo
+                       </button>
                     </form>
                   </>
                 )}
-             </div>
+             </motion.div>
           </div>
         )}
-      </main>
-    </div>
+      </AnimatePresence>
+    </AdminShell>
   )
 }

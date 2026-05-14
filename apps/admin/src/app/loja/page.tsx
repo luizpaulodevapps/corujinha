@@ -1,192 +1,146 @@
 'use client'
 
-import { AdminSidebar } from '@/components/admin-sidebar'
-import { 
-  ShoppingBag, 
-  Plus, 
-  Search, 
-  Filter, 
-  Tag, 
-  Package, 
-  DollarSign, 
-  MoreVertical,
-  Star,
-  Gamepad2,
-  Tv,
-  IceCream,
-  Sparkles,
-  Zap
+import { AdminShell } from '@/components/admin-shell'
+import { DashboardHeader } from '@/components/dashboard/dashboard-header'
+import { StatCard } from '@/components/dashboard/stat-card'
+import {
+   ShoppingBag,
+   Plus,
+   Search,
+   Tag,
+   DollarSign,
+   Star,
+   Zap,
+   Coins,
+   Sparkles
 } from 'lucide-react'
 import { useState } from 'react'
-
-const mockProducts = [
-  { id: '1', title: '30 min de Tablet', cost: 50, category: 'Tecnologia', emoji: '📱', stock: 'Ilimitado', status: 'Ativo', sales: 342 },
-  { id: '2', title: 'Sobremesa Especial', cost: 30, category: 'Comida', emoji: '🍦', stock: 'Ilimitado', status: 'Ativo', sales: 156 },
-  { id: '3', title: 'Escolher o Filme', cost: 40, category: 'Lazer', emoji: '🎬', stock: 'Ilimitado', status: 'Ativo', sales: 89 },
-  { id: '4', title: 'Dormir 30 min mais tarde', cost: 60, category: 'Lazer', emoji: '🌙', stock: 'Ilimitado', status: 'Pausado', sales: 124 },
-  { id: '5', title: 'Escolher o Jantar', cost: 100, category: 'Comida', emoji: '🍕', stock: 'Ilimitado', status: 'Ativo', sales: 56 },
-  { id: '6', title: 'Vale Abraço Gigante', cost: 5, category: 'Afeição', emoji: '🫂', stock: 'Ilimitado', status: 'Ativo', sales: 999 },
-]
+import { motion, AnimatePresence } from 'framer-motion'
+import { useAdminData } from '@/hooks/use-admin-data'
 
 export default function LojaPage() {
-  const [searchTerm, setSearchTerm] = useState('')
+   const { rewards, isLoading } = useAdminData()
+   const [searchTerm, setSearchTerm] = useState('')
 
-  return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'white' }}>
-      <AdminSidebar />
-      
-      <main style={{ flex: 1, backgroundColor: '#F8FAFC', padding: '48px' }}>
-        <header style={{ marginBottom: '48px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div>
-            <h1 style={{ fontSize: '32px', fontWeight: 900, color: '#1E4636', marginBottom: '8px', letterSpacing: '-0.02em' }}>Loja de Recompensas</h1>
-            <p style={{ color: '#64748B', fontSize: '16px', fontWeight: 500 }}>Configure os itens que as crianças podem trocar por suas moedas e XP.</p>
-          </div>
-          <button style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '12px', 
-            padding: '14px 28px', 
-            backgroundColor: '#1E4636', 
-            color: 'white', 
-            borderRadius: '12px', 
-            border: 'none', 
-            fontWeight: 800, 
-            fontSize: '15px',
-            cursor: 'pointer',
-            boxShadow: '0 8px 20px rgba(30, 70, 54, 0.2)'
-          }}>
-            <Plus size={20} strokeWidth={3} /> Novo Item de Troca
-          </button>
-        </header>
+   if (isLoading) {
+      return (
+         <AdminShell>
+            <div className="flex-1 flex items-center justify-center min-h-[50vh]">
+               <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2 }} className="text-brand-primary">
+                  <ShoppingBag size={32} />
+               </motion.div>
+            </div>
+         </AdminShell>
+      )
+   }
 
-        {/* Reward Metrics */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px', marginBottom: '48px' }}>
-           {[
-             { label: 'Itens Trocados', value: '1.850', sub: 'Total histórico', icon: Zap, color: '#F59E0B' },
-             { label: 'Economia Circular', value: '45.8k', sub: 'Moedas em giro', icon: DollarSign, color: '#10B981' },
-             { label: 'Item Mais Popular', value: 'Vale Tablet', sub: '342 trocas', icon: Star, color: '#3B82F6' },
-             { label: 'Categorias', value: '8', sub: 'Diversidade de prêmios', icon: Tag, color: '#8B5CF6' }
-           ].map((stat, i) => (
-             <div key={i} style={{ backgroundColor: 'white', padding: '24px', borderRadius: '24px', border: '1px solid #F1F5F9' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: '#F8FAFC', display: 'flex', alignItems: 'center', justifyContent: 'center', color: stat.color, marginBottom: '16px', border: '1px solid #F1F5F9' }}>
-                   <stat.icon size={20} />
-                </div>
-                <p style={{ fontSize: '12px', color: '#94A3B8', fontWeight: 700, margin: '0 0 2px' }}>{stat.label}</p>
-                <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0F172A', margin: 0 }}>{stat.value}</h3>
-                <p style={{ fontSize: '11px', color: '#64748B', fontWeight: 600, margin: 0 }}>{stat.sub}</p>
-             </div>
-           ))}
-        </div>
+   const stats = [
+      { label: 'Recompensas Ativas', value: rewards.length.toString(), change: 'Catálogo completo', icon: Zap, color: '#F59E0B', bgColor: '#FFFBEB' },
+      { label: 'Custo Médio', value: `${Math.round(rewards.reduce((acc, r) => acc + (r.costCoins || 0), 0) / (rewards.length || 1))} moedas`, change: 'Equilíbrio econômico', icon: DollarSign, color: '#10B981', bgColor: '#ECFDF5' },
+      { label: 'Recompensa Top', value: rewards[0]?.title || '---', change: 'Mais desejada', icon: Star, color: '#3B82F6', bgColor: '#EFF6FF' },
+      { label: 'Categorias', value: '8', change: 'Diversidade', icon: Tag, color: '#8B5CF6', bgColor: '#F5F3FF' }
+   ]
 
-        {/* Control Bar */}
-        <div style={{ display: 'flex', gap: '16px', marginBottom: '32px' }}>
-           <div style={{ flex: 1, position: 'relative' }}>
-              <Search style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} size={20} />
-              <input 
-                type="text" 
-                placeholder="Filtrar por nome do prêmio ou categoria..." 
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                style={{ width: '100%', padding: '14px 16px 14px 48px', borderRadius: '14px', border: '1px solid #E2E8F0', fontSize: '15px', fontWeight: 500, outline: 'none' }} 
-              />
-           </div>
-           <div style={{ display: 'flex', gap: '8px' }}>
-              {['Todos', 'Lazer', 'Comida', 'Tecnologia'].map((cat, i) => (
-                <button key={i} style={{ padding: '0 20px', borderRadius: '12px', border: '1px solid #E2E8F0', backgroundColor: i === 0 ? '#1E4636' : 'white', color: i === 0 ? 'white' : '#64748B', fontWeight: 800, fontSize: '13px', cursor: 'pointer' }}>{cat}</button>
-              ))}
-           </div>
-        </div>
+   const filteredRewards = rewards.filter(r =>
+      r.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (r.category || '').toLowerCase().includes(searchTerm.toLowerCase())
+   )
 
-        {/* Reward Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '32px' }}>
-           {mockProducts.map((product) => (
-             <div key={product.id} style={{ 
-               backgroundColor: 'white', 
-               borderRadius: '24px', 
-               padding: '24px', 
-               border: '1px solid #F1F5F9',
-               display: 'flex', 
-               flexDirection: 'column',
-               gap: '20px',
-               transition: 'all 0.2s',
-               cursor: 'pointer'
-             }}
-             onMouseOver={(e) => e.currentTarget.style.boxShadow = '0 15px 30px rgba(0,0,0,0.04)'}
-             onMouseOut={(e) => e.currentTarget.style.boxShadow = 'none'}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                   <div style={{ 
-                     width: '64px', 
-                     height: '64px', 
-                     borderRadius: '20px', 
-                     backgroundColor: '#F8FAFC', 
-                     display: 'flex', 
-                     alignItems: 'center', 
-                     justifyContent: 'center', 
-                     fontSize: '32px',
-                     border: '1px solid #F1F5F9'
-                   }}>
-                      {product.emoji}
-                   </div>
-                   <div style={{ textAlign: 'right' }}>
-                      <span style={{ fontSize: '10px', fontWeight: 900, color: product.status === 'Ativo' ? '#10B981' : '#EF4444', backgroundColor: product.status === 'Ativo' ? '#ECFDF5' : '#FEF2F2', padding: '4px 10px', borderRadius: '6px', textTransform: 'uppercase' }}>{product.status}</span>
-                      <p style={{ margin: '4px 0 0', fontSize: '11px', color: '#94A3B8', fontWeight: 700 }}>{product.sales} trocas</p>
-                   </div>
-                </div>
+   return (
+      <AdminShell>
+         <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-8">
+            <DashboardHeader
+               title="Loja de Recompensas"
+               subtitle="Configure os itens que as crianças podem trocar por suas moedas e XP."
+            />
+            <button className="flex items-center gap-2 px-6 py-3 bg-brand-primary text-white rounded-xl font-black text-[11px] uppercase tracking-widest shadow-lg shadow-brand-primary/20 hover:scale-105 active:scale-95 transition-all">
+               <Plus size={18} strokeWidth={3} /> Novo Item
+            </button>
+         </div>
 
-                <div>
-                   <span style={{ fontSize: '11px', fontWeight: 800, color: '#1E4636', opacity: 0.5, letterSpacing: '0.05em' }}>{product.category.toUpperCase()}</span>
-                   <h3 style={{ fontSize: '20px', fontWeight: 900, color: '#0F172A', margin: '2px 0 16px', letterSpacing: '-0.02em' }}>{product.title}</h3>
-                   
-                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '16px', backgroundColor: '#FFFBEB', borderRadius: '16px', border: '1px solid #FEF3C7' }}>
-                      <DollarSign size={20} className="text-amber-600" />
-                      <span style={{ fontSize: '20px', fontWeight: 910, color: '#D97706' }}>{product.cost} <span style={{ fontSize: '13px', fontWeight: 800 }}>Moedas</span></span>
-                   </div>
-                </div>
+         {/* Reward Metrics */}
+         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            {stats.map((stat, i) => (
+               <StatCard key={i} {...stat} />
+            ))}
+         </div>
 
-                <div style={{ display: 'flex', gap: '12px' }}>
-                   <button style={{ flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid #E2E8F0', backgroundColor: 'white', color: '#475569', fontWeight: 800, fontSize: '13px', cursor: 'pointer' }}>Editar</button>
-                   <button style={{ 
-                     flex: 1, 
-                     padding: '12px', 
-                     borderRadius: '12px', 
-                     border: 'none', 
-                     backgroundColor: '#1E4636', 
-                     color: 'white', 
-                     fontWeight: 800, 
-                     fontSize: '13px', 
-                     cursor: 'pointer',
-                     display: 'flex',
-                     alignItems: 'center',
-                     justifyContent: 'center',
-                     gap: '6px'
-                   }}>
-                      Dashboard <Sparkles size={14} />
-                   </button>
-                </div>
-             </div>
-           ))}
+         {/* Control Bar */}
+         <div className="flex flex-col lg:flex-row gap-4 mb-8">
+            <div className="flex-1 relative group">
+               <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" size={18} />
+               <input
+                  type="text"
+                  placeholder="Filtrar recompensas..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-14 pr-6 py-4 bg-white border border-slate-100 rounded-[1.5rem] font-bold text-slate-900 placeholder:text-slate-300 outline-none focus:border-brand-primary transition-all shadow-sm"
+               />
+            </div>
+         </div>
 
-           {/* Add New Reward Placeholder */}
-           <button style={{ 
-              borderRadius: '24px', 
-              border: '3px dashed #E2E8F0', 
-              backgroundColor: 'transparent', 
-              display: 'flex', 
-              flexDirection: 'column', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              gap: '16px', 
-              padding: '40px',
-              cursor: 'pointer',
-              color: '#94A3B8'
-           }} onMouseOver={(e) => (e.currentTarget.style.backgroundColor = 'white')} onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>
-              <div style={{ width: '56px', height: '56px', borderRadius: '50%', border: '2px solid currentColor', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                 <Plus size={28} strokeWidth={3} />
-              </div>
-              <span style={{ fontSize: '15px', fontWeight: 800 }}>Novo Item de Recompensa</span>
-           </button>
-        </div>
-      </main>
-    </div>
-  )
+         {/* Reward Grid */}
+         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <AnimatePresence>
+               {filteredRewards.map((product) => (
+                  <motion.div
+                     key={product.id}
+                     layout
+                     initial={{ opacity: 0, scale: 0.9 }}
+                     animate={{ opacity: 1, scale: 1 }}
+                     exit={{ opacity: 0, scale: 0.9 }}
+                     whileHover={{ y: -4 }}
+                     className="bg-white rounded-[2rem] p-6 border border-slate-100 shadow-xl shadow-slate-200/20 flex flex-col gap-4 group cursor-pointer"
+                  >
+                     <div className="flex justify-between items-start">
+                        <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-3xl border border-slate-50 group-hover:bg-brand-bg transition-colors group-hover:scale-105 duration-500">
+                           {product.iconEmoji || '🎁'}
+                        </div>
+                        <div className="text-right">
+                           <span className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-500`}>
+                              ATIVO
+                           </span>
+                        </div>
+                     </div>
+
+                     <div>
+                        <span className="text-[9px] font-black text-brand-primary uppercase tracking-[0.2em] opacity-60 mb-1 block">{product.category || 'Recompensa'}</span>
+                        <h3 className="text-lg font-black text-slate-900 tracking-tight mb-4">{product.title}</h3>
+
+                        <div className="flex items-center gap-3 p-4 bg-amber-50/50 rounded-xl border border-amber-100 group-hover:bg-amber-50 transition-colors">
+                           <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600">
+                              <Coins size={18} strokeWidth={3} />
+                           </div>
+                           <span className="text-xl font-black text-amber-600 italic tracking-tighter">
+                              {product.costCoins} <span className="text-[10px] uppercase tracking-widest not-italic ml-1">Moedas</span>
+                           </span>
+                        </div>
+                     </div>
+
+                     <div className="flex gap-2">
+                        <button className="flex-1 py-3 rounded-lg border border-slate-100 bg-white text-slate-400 font-black text-[9px] uppercase tracking-widest hover:bg-slate-50 transition-all">
+                           Editar
+                        </button>
+                        <button className="flex-2 py-3 px-4 rounded-lg bg-slate-100 text-slate-600 font-black text-[9px] uppercase tracking-widest hover:bg-brand-primary hover:text-white transition-all flex items-center justify-center gap-2">
+                           Visualizar <Sparkles size={12} />
+                        </button>
+                     </div>
+                  </motion.div>
+               ))}
+
+               {/* Add New Reward Placeholder */}
+               <motion.button
+                  layout
+                  whileHover={{ scale: 0.98 }}
+                  className="rounded-[2rem] border-4 border-dashed border-slate-100 bg-slate-50/30 flex flex-col items-center justify-center gap-4 p-8 group hover:border-brand-primary/20 hover:bg-brand-bg transition-all min-h-[300px]"
+               >
+                  <div className="w-12 h-12 rounded-full bg-white border-2 border-slate-100 flex items-center justify-center text-slate-300 group-hover:text-brand-primary group-hover:border-brand-primary/20 transition-all shadow-sm">
+                     <Plus size={24} strokeWidth={3} />
+                  </div>
+                  <p className="text-xs font-black text-slate-400 uppercase tracking-widest group-hover:text-brand-primary transition-colors">Nova Recompensa</p>
+               </motion.button>
+            </AnimatePresence>
+         </div>
+      </AdminShell>
+   )
 }

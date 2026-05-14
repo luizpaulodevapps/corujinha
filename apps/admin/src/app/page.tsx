@@ -1,259 +1,179 @@
 'use client'
 
-import { AdminSidebar } from '@/components/admin-sidebar'
-import { 
-  Users, 
-  Sword, 
-  TrendingUp, 
-  Clock,
-  ChevronUp,
-  Activity,
-  Loader2,
-  CheckCircle2,
-  XCircle,
-  MoreVertical,
-  Calendar,
-  AlertCircle
-} from 'lucide-react'
-import { useAdminData } from '@/hooks/use-admin-data'
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { ShieldCheck, Lock, Mail, ArrowRight, Loader2, Sparkles, ChevronLeft } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import Image from 'next/image'
 
-export default function AdminDashboard() {
-  const { families, children, tasks, pendingTasks, isLoading, approveTask, rejectTask } = useAdminData()
+import { getFirebaseAuth } from '@corujinha/firebase'
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import { Chrome } from 'lucide-react'
 
-  if (isLoading) {
-    return (
-      <div style={{ display: 'flex', minHeight: '100vh' }}>
-        <AdminSidebar />
-        <main style={{ flex: 1, backgroundColor: '#F8FAFC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ textAlign: 'center' }}>
-             <Loader2 className="animate-spin" size={48} color="#1E4636" style={{ marginBottom: '16px' }} />
-             <p style={{ fontWeight: 700, color: '#64748B' }}>Sincronizando Universo...</p>
-          </div>
-        </main>
-      </div>
-    )
+export default function LoginPage() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const router = useRouter()
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const auth = getFirebaseAuth()
+      await signInWithEmailAndPassword(auth, email.trim(), password)
+      router.push('/dashboard')
+    } catch (err: any) {
+      console.error('[Admin Login] Erro:', err)
+      if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found') {
+        setError('E-mail ou senha incorretos.')
+      } else if (err.code === 'auth/invalid-email') {
+        setError('Por favor, digite um e-mail válido.')
+      } else {
+        setError('Acesso negado ou erro de conexão.')
+      }
+    } finally {
+      setIsLoading(false)
+    }
   }
 
-  const stats = [
-    { label: 'Famílias Ativas', value: families.length.toString(), change: '+12%', icon: Users, color: '#3B82F6', bgColor: '#EFF6FF' },
-    { label: 'Pequenos Heróis', value: children.length.toString(), change: '+18%', icon: Activity, color: '#8B5CF6', bgColor: '#F5F3FF' },
-    { label: 'Missões Ativas', value: tasks.filter(t => t.active).length.toString(), change: '+5%', icon: Sword, color: '#10B981', bgColor: '#ECFDF5' },
-    { label: 'Validações', value: pendingTasks.length.toString(), change: 'Pendentes', icon: Clock, color: '#F59E0B', bgColor: '#FFFBEB' },
-  ]
+  const handleGoogleLogin = async () => {
+    setIsLoading(true)
+    setError(null)
+    try {
+      const auth = getFirebaseAuth()
+      const provider = new GoogleAuthProvider()
+      await signInWithPopup(auth, provider)
+      router.push('/dashboard')
+    } catch (err: any) {
+      console.error('[Admin Google Login] Erro:', err)
+      setError('Falha na autenticação com Google.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'white' }}>
-      <AdminSidebar />
-      
-      <main style={{ flex: 1, backgroundColor: '#F8FAFC', padding: '48px' }}>
-        <header style={{ marginBottom: '48px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div>
-            <h1 style={{ fontSize: '32px', fontWeight: 900, color: '#0F172A', marginBottom: '8px', letterSpacing: '-0.02em' }}>Dashboard Executivo</h1>
-            <p style={{ color: '#64748B', fontSize: '16px', fontWeight: 500 }}>Bem-vindo ao Centro de Comando Estratégico da Corujinha.</p>
-          </div>
-          <div style={{ 
-            backgroundColor: 'white', 
-            padding: '12px 20px', 
-            borderRadius: '14px', 
-            border: '1px solid #E2E8F0', 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '12px', 
-            fontSize: '15px', 
-            fontWeight: 700, 
-            color: '#475569',
-            boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
-          }}>
-            <Calendar size={20} color="#1E4636" /> {new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}
-          </div>
-        </header>
+    <div className="min-h-screen flex items-center justify-center bg-brand-primary p-6 relative overflow-hidden">
+      {/* ─── Background Orbs ────────────────────────────────────────────── */}
+      <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-brand-accent/5 rounded-full blur-[120px] animate-pulse" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-emerald-400/5 rounded-full blur-[120px] animate-pulse delay-1000" />
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
 
-        {/* Vital Signs Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px', marginBottom: '48px' }}>
-          {stats.map((stat, i) => (
-            <div key={i} style={{ 
-              backgroundColor: 'white', 
-              padding: '32px', 
-              borderRadius: '20px', 
-              border: '1px solid #F1F5F9',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-                <div style={{ 
-                  width: '52px', 
-                  height: '52px', 
-                  borderRadius: '14px', 
-                  backgroundColor: stat.bgColor, 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center', 
-                  color: stat.color 
-                }}>
-                  <stat.icon size={26} />
-                </div>
-                <div style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '4px', 
-                  color: i === 3 ? '#F59E0B' : '#10B981', 
-                  fontSize: '13px', 
-                  fontWeight: 800, 
-                  backgroundColor: i === 3 ? '#FFFBEB' : '#ECFDF5', 
-                  padding: '6px 12px', 
-                  borderRadius: '10px', 
-                  height: 'fit-content' 
-                }}>
-                  {i < 3 && <ChevronUp size={14} strokeWidth={3} />} {stat.change}
-                </div>
-              </div>
-              <p style={{ fontSize: '14px', color: '#64748B', fontWeight: 600, marginBottom: '8px' }}>{stat.label}</p>
-              <h2 style={{ fontSize: '32px', fontWeight: 900, color: '#0F172A', margin: 0 }}>{stat.value}</h2>
-            </div>
-          ))}
-        </div>
+      {/* ─── Back to Landing ────────────────────────────────────────────── */}
+      <Link href="https://corujinha.vercel.app" className="fixed top-8 left-8 z-50 flex items-center gap-2 text-white/50 font-black uppercase tracking-widest text-[10px] hover:text-brand-accent transition-all group">
+        <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> 
+        Voltar para o Portal
+      </Link>
 
-        {/* Dashboard Intelligence Area */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '32px' }}>
-          {/* Pending Validations - Priority Queue */}
-          <div style={{ 
-            backgroundColor: 'white', 
-            borderRadius: '24px', 
-            border: '1px solid #F1F5F9',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
-            overflow: 'hidden'
-          }}>
-            <div style={{ padding: '32px', borderBottom: '1px solid #F1F5F9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                 <h3 style={{ fontSize: '20px', fontWeight: 900, color: '#0F172A', margin: '0 0 4px' }}>Fila de Validação Prioritária</h3>
-                 <p style={{ fontSize: '14px', color: '#64748B', fontWeight: 500, margin: 0 }}>Analise as evidências enviadas pelos pequenos heróis.</p>
-              </div>
-              <div style={{ 
-                fontSize: '13px', 
-                fontWeight: 800, 
-                backgroundColor: pendingTasks.length > 0 ? '#FEF2F2' : '#ECFDF5', 
-                color: pendingTasks.length > 0 ? '#EF4444' : '#10B981', 
-                padding: '8px 16px', 
-                borderRadius: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}>
-                {pendingTasks.length > 0 ? <AlertCircle size={16} /> : <CheckCircle2 size={16} />}
-                {pendingTasks.length} solicitações em espera
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-[480px] z-10"
+      >
+        <div className="bg-white/5 backdrop-blur-3xl p-10 md:p-14 rounded-[3.5rem] border border-white/10 shadow-[0_50px_100px_rgba(0,0,0,0.4)] relative overflow-hidden">
+          {/* Admin Seal Decoration */}
+          <div className="absolute -top-10 -right-10 w-40 h-40 bg-brand-accent/10 rounded-full blur-3xl" />
+          
+          <div className="text-center mb-12 relative z-10">
+            <motion.div 
+              whileHover={{ rotate: 5, scale: 1.05 }}
+              className="w-16 h-16 bg-brand-accent rounded-[1.25rem] flex items-center justify-center text-white mx-auto mb-6 shadow-[0_15px_30px_rgba(82,183,136,0.3)] border-4 border-white/10"
+            >
+              <ShieldCheck size={32} strokeWidth={2.5} />
+            </motion.div>
+            <h1 className="text-2xl font-black text-white italic tracking-tighter m-0">
+              Corujinha Admin
+            </h1>
+            <p className="text-brand-accent/60 text-[10px] font-black uppercase tracking-[0.2em] mt-3">
+              Centro de Comando
+            </p>
+          </div>
+
+          {error && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center gap-3 text-red-400 font-bold text-xs text-center justify-center"
+            >
+              <Sparkles size={14} className="animate-pulse" />
+              {error}
+            </motion.div>
+          )}
+
+          <form onSubmit={handleLogin} className="space-y-6 relative z-10">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-white/30 uppercase tracking-widest ml-4">Credencial</label>
+              <div className="relative group">
+                <div className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-brand-accent transition-colors"><Mail size={18} /></div>
+                <input 
+                  type="email" 
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="admin@corujinha.com"
+                  className="w-full h-14 pl-14 bg-white/5 border border-white/10 rounded-xl text-white font-bold placeholder:text-white/10 outline-none focus:border-brand-accent focus:bg-white/10 transition-all text-sm"
+                />
               </div>
             </div>
-            
-            <div style={{ padding: '0' }}>
-              {pendingTasks.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '80px 40px', color: '#64748B' }}>
-                  <div style={{ width: '80px', height: '80px', borderRadius: '50%', backgroundColor: '#ECFDF5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10B981', margin: '0 auto 24px' }}>
-                     <CheckCircle2 size={40} />
-                  </div>
-                  <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#0F172A', margin: '0 0 8px' }}>Tudo em Ordem!</h4>
-                  <p style={{ fontWeight: 500, margin: 0 }}>O Universo Corujinha está operando em 100% de harmonia.</p>
-                </div>
-              ) : (
-                <div style={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                    <thead>
-                      <tr style={{ backgroundColor: '#F8FAFC' }}>
-                        <th style={{ padding: '20px 32px', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: '#64748B', letterSpacing: '0.05em' }}>Criança</th>
-                        <th style={{ padding: '20px 32px', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: '#64748B', letterSpacing: '0.05em' }}>Missão</th>
-                        <th style={{ padding: '20px 32px', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: '#64748B', letterSpacing: '0.05em' }}>Evidência</th>
-                        <th style={{ padding: '20px 32px', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: '#64748B', letterSpacing: '0.05em' }}>Horário</th>
-                        <th style={{ padding: '20px 32px', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: '#64748B', letterSpacing: '0.05em', textAlign: 'right' }}>Decisão</th>
-                      </tr>
-                    </thead>
-                    <tbody style={{ fontSize: '15px' }}>
-                      {pendingTasks.map((exec) => (
-                        <tr key={exec.id} style={{ borderTop: '1px solid #F1F5F9', transition: 'background-color 0.2s' }} onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#F8FAFC')} onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>
-                          <td style={{ padding: '24px 32px' }}>
-                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                <div style={{ width: '40px', height: '40px', borderRadius: '12px', backgroundColor: '#F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#1E4636' }}>
-                                   {exec.childName.charAt(0)}
-                                </div>
-                                <span style={{ fontWeight: 700, color: '#0F172A' }}>{exec.childName}</span>
-                             </div>
-                          </td>
-                          <td style={{ padding: '24px 32px', color: '#475569', fontWeight: 600 }}>{exec.taskTitle}</td>
-                          <td style={{ padding: '24px 32px' }}>
-                             {exec.proofImageUrl ? (
-                               <a href={exec.proofImageUrl} target="_blank" rel="noreferrer" style={{ 
-                                 width: '48px', 
-                                 height: '48px', 
-                                 borderRadius: '10px', 
-                                 overflow: 'hidden', 
-                                 display: 'block', 
-                                 border: '2px solid #E2E8F0',
-                                 transition: 'transform 0.2s'
-                               }} onMouseOver={(e) => (e.currentTarget.style.transform = 'scale(1.1)')} onMouseOut={(e) => (e.currentTarget.style.transform = 'scale(1)')}>
-                                 <img src={exec.proofImageUrl} alt="Prova" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                               </a>
-                             ) : (
-                               <div style={{ padding: '6px 12px', borderRadius: '8px', backgroundColor: '#F8FAFC', fontSize: '12px', color: '#94A3B8', fontWeight: 700, border: '1px solid #E2E8F0', width: 'fit-content' }}>
-                                  SEM FOTO
-                               </div>
-                             )}
-                          </td>
-                          <td style={{ padding: '24px 32px', color: '#64748B', fontWeight: 500 }}>
-                            {exec.completedAt ? new Date(exec.completedAt.seconds * 1000).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '---'}
-                          </td>
-                          <td style={{ padding: '24px 32px', textAlign: 'right' }}>
-                            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-                              <button 
-                                onClick={() => approveTask(exec)}
-                                style={{ 
-                                  padding: '10px 20px', 
-                                  borderRadius: '10px', 
-                                  border: 'none', 
-                                  backgroundColor: '#ECFDF5', 
-                                  color: '#10B981', 
-                                  fontWeight: 800, 
-                                  fontSize: '13px',
-                                  cursor: 'pointer', 
-                                  display: 'flex', 
-                                  alignItems: 'center', 
-                                  gap: '8px',
-                                  transition: 'all 0.2s'
-                                }}
-                                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#D1FAE5')}
-                                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#ECFDF5')}
-                              >
-                                <CheckCircle2 size={18} strokeWidth={3} /> Aprovar
-                              </button>
-                              <button 
-                                onClick={() => rejectTask(exec.id, 'Evidência insuficiente')}
-                                style={{ 
-                                  padding: '10px 20px', 
-                                  borderRadius: '10px', 
-                                  border: 'none', 
-                                  backgroundColor: '#FEF2F2', 
-                                  color: '#EF4444', 
-                                  fontWeight: 800, 
-                                  fontSize: '13px',
-                                  cursor: 'pointer', 
-                                  display: 'flex', 
-                                  alignItems: 'center', 
-                                  gap: '8px',
-                                  transition: 'all 0.2s'
-                                }}
-                                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#FEE2E2')}
-                                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#FEF2F2')}
-                              >
-                                <XCircle size={18} strokeWidth={3} /> Recusar
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-white/30 uppercase tracking-widest ml-4">Chave de Segurança</label>
+              <div className="relative group">
+                <div className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-brand-accent transition-colors"><Lock size={18} /></div>
+                <input 
+                  type="password" 
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full h-14 pl-14 bg-white/5 border border-white/10 rounded-xl text-white font-bold placeholder:text-white/10 outline-none focus:border-brand-accent focus:bg-white/10 transition-all text-sm"
+                />
+              </div>
+            </div>
+
+            <button 
+              type="submit" 
+              disabled={isLoading}
+              className="w-full h-16 bg-brand-accent text-brand-primary font-black text-lg rounded-xl shadow-[0_4px_0_0_#2d6a4f] active:shadow-none active:translate-y-1 transition-all flex items-center justify-center gap-3 mt-4 disabled:opacity-50"
+            >
+              {isLoading ? <Loader2 className="animate-spin" /> : (
+                <>Acessar Painel <ArrowRight size={20} strokeWidth={3} /></>
               )}
+            </button>
+
+            <div className="relative py-2">
+              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/5"></div></div>
+              <div className="relative flex justify-center text-[9px] font-black uppercase tracking-widest"><span className="bg-brand-primary px-3 text-white/20">Acesso Rápido</span></div>
             </div>
+
+            <button 
+              type="button" 
+              onClick={handleGoogleLogin}
+              disabled={isLoading}
+              className="w-full h-14 rounded-xl border border-white/10 flex items-center justify-center gap-4 font-black text-white hover:bg-white/5 transition-all disabled:opacity-50 text-xs"
+            >
+              <Chrome size={18} className="text-brand-accent" /> Entrar com Google
+            </button>
+          </form>
+
+          <div className="mt-10 text-center">
+            <Link href="/register" className="text-white/40 text-[9px] font-black uppercase tracking-widest hover:text-white transition-colors">
+              Solicitar Acesso Administrativo
+            </Link>
           </div>
         </div>
-      </main>
+
+        {/* Footer Brand */}
+        <div className="mt-8 text-center opacity-20 flex flex-col items-center gap-2">
+           <Image src="/owl_mascot.png" alt="Corujinha" width={30} height={30} className="grayscale brightness-0 invert" />
+           <p className="text-[9px] font-black text-white uppercase tracking-[0.3em]">Encrypted Environment v2.4</p>
+        </div>
+      </motion.div>
     </div>
   )
 }

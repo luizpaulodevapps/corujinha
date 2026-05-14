@@ -20,12 +20,16 @@ import {
   Store
 } from 'lucide-react'
 import { clsx } from 'clsx'
+import { motion } from 'framer-motion'
+import { getFirebaseAuth } from '@corujinha/firebase'
+import { signOut } from 'firebase/auth'
+import { useRouter } from 'next/navigation'
 
 const menuGroups = [
   {
     title: 'Operações',
     items: [
-      { icon: LayoutDashboard, label: 'Dashboard', href: '/' },
+      { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
       { icon: Users, label: 'Famílias', href: '/familias' },
       { icon: Sword, label: 'Missões', href: '/missoes' },
       { icon: MessageSquare, label: 'Suporte', href: '/suporte' },
@@ -56,17 +60,14 @@ const menuGroups = [
   }
 ]
 
-import { getFirebaseAuth } from '@corujinha/firebase'
-import { signOut } from 'firebase/auth'
-import { useRouter } from 'next/navigation'
-
 export function AdminSidebar() {
   const pathname = usePathname()
   const router = useRouter()
+  const auth = getFirebaseAuth()
+  const user = auth.currentUser
 
   const handleLogout = async () => {
     try {
-      const auth = getFirebaseAuth()
       await signOut(auth)
       router.push('/login')
     } catch (error) {
@@ -74,129 +75,87 @@ export function AdminSidebar() {
     }
   }
 
+  const adminName = user?.displayName || user?.email?.split('@')[0] || 'Administrador'
+  const adminEmail = user?.email || 'admin@corujinha.com'
+  const adminPhoto = user?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${adminName}&backgroundColor=b6e3f4`
+
   return (
-    <aside style={{ 
-      width: '300px', 
-      height: '100vh', 
-      borderRight: '1px solid #F1F5F9', 
-      backgroundColor: 'white', 
-      display: 'flex', 
-      flexDirection: 'column', 
-      position: 'sticky', 
-      top: 0,
-      zIndex: 100
-    }}>
-      {/* Brand Identity */}
-      <div style={{ padding: '40px 32px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-        <div style={{ 
-          width: '44px', 
-          height: '44px', 
-          backgroundColor: '#1E4636', 
-          borderRadius: '14px', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center', 
-          color: 'white',
-          boxShadow: '0 8px 16px rgba(30, 70, 54, 0.2)'
-        }}>
-          <ShieldCheck size={26} strokeWidth={2.5} />
-        </div>
-        <div>
-          <h1 style={{ fontSize: '20px', fontWeight: 900, color: '#1E4636', margin: 0, letterSpacing: '-0.02em' }}>Corujinha</h1>
-          <p style={{ fontSize: '11px', fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>Command Center</p>
+    <aside className="w-[280px] lg:w-[320px] h-screen glass-panel flex flex-col sticky top-0 z-[100] font-outfit border-r border-white/20">
+      {/* Brand Identity with Magic Touch */}
+      <div className="p-10 px-8 flex items-center gap-5">
+        <motion.div 
+          whileHover={{ rotate: 15, scale: 1.15 }}
+          className="w-12 h-12 bg-gradient-to-br from-brand-primary to-brand-secondary rounded-[1.25rem] flex items-center justify-center text-white shadow-2xl shadow-brand-primary/30 flex-shrink-0"
+        >
+          <ShieldCheck size={28} strokeWidth={2.5} />
+        </motion.div>
+        <div className="min-w-0">
+          <h1 className="text-2xl font-black text-brand-primary leading-none tracking-tighter italic">Corujinha</h1>
+          <p className="text-[10px] font-black text-brand-accent uppercase tracking-[0.3em] mt-1.5 opacity-80">Command Center</p>
         </div>
       </div>
 
-      {/* Structured Menu */}
-      <nav style={{ flex: 1, padding: '0 20px', display: 'flex', flexDirection: 'column', gap: '32px', overflowY: 'auto' }} className="scrollbar-hide">
+      {/* Structured Menu with Premium Styling */}
+      <nav className="flex-1 px-4 space-y-8 overflow-y-auto scrollbar-hide py-4">
         {menuGroups.map((group, idx) => (
-          <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <p style={{ 
-              fontSize: '11px', 
-              fontWeight: 800, 
-              color: '#94A3B8', 
-              textTransform: 'uppercase', 
-              letterSpacing: '0.1em', 
-              paddingLeft: '16px',
-              marginBottom: '4px'
-            }}>{group.title}</p>
+          <div key={idx} className="space-y-3">
+            <p className="text-[10px] font-black text-slate-400/60 uppercase tracking-[0.3em] px-8 mb-4">
+              {group.title}
+            </p>
             
-            {group.items.map((item) => {
-              const isActive = pathname === item.href
-              return (
-                <Link 
-                  key={item.href} 
-                  href={item.href}
-                  style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '14px', 
-                    padding: '12px 16px', 
-                    borderRadius: '14px', 
-                    textDecoration: 'none',
-                    backgroundColor: isActive ? '#F8FAFC' : 'transparent',
-                    color: isActive ? '#1E4636' : '#64748B',
-                    fontWeight: isActive ? 800 : 600,
-                    fontSize: '15px',
-                    transition: 'all 0.2s'
-                  }}
-                >
-                  <item.icon size={20} strokeWidth={isActive ? 2.5 : 2} />
-                  <span style={{ flex: 1 }}>{item.label}</span>
-                  {isActive && <ChevronRight size={16} strokeWidth={3} />}
-                </Link>
-              )
-            })}
+            <div className="space-y-1">
+              {group.items.map((item) => {
+                const isActive = pathname === item.href
+                return (
+                  <Link 
+                    key={item.href} 
+                    href={item.href}
+                    className={clsx(
+                      "sidebar-item",
+                      isActive && "active"
+                    )}
+                  >
+                    <item.icon />
+                    <span className="flex-1">{item.label}</span>
+                    {isActive && (
+                      <motion.div 
+                        initial={{ x: -10, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        className="w-1.5 h-6 bg-white/40 rounded-full"
+                      />
+                    )}
+                  </Link>
+                )
+              })}
+            </div>
           </div>
         ))}
       </nav>
 
-      {/* Operational Footer */}
-      <div style={{ padding: '32px 20px', borderTop: '1px solid #F1F5F9', marginTop: 'auto' }}>
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: '14px', 
-          marginBottom: '24px',
-          padding: '0 12px'
-        }}>
-          <div style={{ 
-            width: '44px', 
-            height: '44px', 
-            borderRadius: '50%', 
-            backgroundColor: '#F1F5F9', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            border: '2px solid white',
-            boxShadow: '0 0 0 1px #F1F5F9'
-          }}>
-            <Users size={22} color="#1E4636" strokeWidth={2.5} />
+      {/* Operational Footer - Refined */}
+      <div className="p-8 px-6 bg-white/40 backdrop-blur-md border-t border-white/50">
+        <div className="flex items-center gap-4 mb-8 px-4">
+          <div className="relative">
+            <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center border-2 border-brand-accent/20 shadow-xl overflow-hidden">
+               <img 
+                 src={adminPhoto} 
+                 alt="Admin Avatar"
+                 className="w-full h-full object-cover"
+               />
+            </div>
+            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 border-4 border-white rounded-full" />
           </div>
-          <div>
-            <p style={{ fontSize: '15px', fontWeight: 800, color: '#0F172A', margin: 0 }}>Super Admin</p>
-            <p style={{ fontSize: '12px', color: '#64748B', fontWeight: 500, margin: 0 }}>ID: CX-9428</p>
+          <div className="min-w-0 flex-1">
+            <p className="text-lg font-black text-slate-900 leading-none italic truncate capitalize">{adminName}</p>
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-2 truncate">{adminEmail}</p>
           </div>
         </div>
+        
         <button 
           onClick={handleLogout}
-          style={{ 
-            width: '100%', 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '12px', 
-            padding: '14px 16px', 
-            borderRadius: '14px', 
-            border: '1px solid #F1F5F9',
-            backgroundColor: '#F8FAFC',
-            color: '#EF4444',
-            fontWeight: 800,
-            fontSize: '14px',
-            cursor: 'pointer',
-            transition: 'all 0.2s'
-          }}
+          className="w-full flex items-center justify-center gap-3 py-5 rounded-[1.5rem] bg-white border border-slate-100 text-red-500 font-black text-[11px] uppercase tracking-[0.2em] hover:bg-rose-500 hover:text-white hover:border-rose-500 hover:shadow-xl hover:shadow-rose-200 transition-all active:scale-95 group"
         >
-          <LogOut size={20} strokeWidth={2.5} />
+          <LogOut size={20} strokeWidth={3} className="group-hover:-translate-x-1 transition-transform" />
           <span>Sair do Centro</span>
         </button>
       </div>

@@ -8,9 +8,13 @@ import Link from 'next/link'
 import Image from 'next/image'
 
 import { getFirebaseAuth } from '@corujinha/firebase'
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
+import { createUserWithEmailAndPassword, updateProfile, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import { Chrome } from 'lucide-react'
+
+import { useAdminData } from '@/hooks/use-admin-data'
 
 export default function RegisterPage() {
+  const { systemSettings, isLoading: isSettingsLoading } = useAdminData()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [role, setRole] = useState('')
@@ -19,8 +23,16 @@ export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
+  const allowNewAdmins = systemSettings?.allowNewAdmins ?? true
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (!allowNewAdmins) {
+      setError('O registro de novos administradores está temporariamente desativado pelo sistema.')
+      return
+    }
+
     setIsLoading(true)
     setError(null)
 
@@ -28,7 +40,6 @@ export default function RegisterPage() {
       const auth = getFirebaseAuth()
       const userCredential = await createUserWithEmailAndPassword(auth, email.trim(), password)
       
-      // Atualiza o perfil com nome e cargo (armazenado no displayName como string JSON ou apenas nome)
       await updateProfile(userCredential.user, { 
         displayName: `${name} | ${role}` 
       })
@@ -48,6 +59,42 @@ export default function RegisterPage() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const handleGoogleRegister = async () => {
+    if (!allowNewAdmins) {
+      setError('O registro via Google está desativado.')
+      return
+    }
+
+    setIsLoading(true)
+    setError(null)
+    try {
+      const auth = getFirebaseAuth()
+      const provider = new GoogleAuthProvider()
+      const userCredential = await signInWithPopup(auth, provider)
+      
+      if (userCredential.user.displayName === null) {
+        await updateProfile(userCredential.user, { 
+          displayName: userCredential.user.email?.split('@')[0] || 'Novo Admin'
+        })
+      }
+      
+      router.push('/')
+    } catch (err: any) {
+      console.error('[Admin Google Register] Erro:', err)
+      setError('Falha ao registrar com Google.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  if (isSettingsLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-brand-primary">
+        <Loader2 className="animate-spin text-brand-accent" size={48} />
+      </div>
+    )
   }
 
   return (
@@ -87,6 +134,15 @@ export default function RegisterPage() {
             </p>
           </div>
 
+          {!allowNewAdmins && (
+            <div className="mb-8 p-6 bg-amber-500/10 border border-amber-500/20 rounded-[2rem] text-center space-y-3">
+               <ShieldCheck className="mx-auto text-amber-500" size={32} />
+               <p className="text-xs font-black text-amber-200 uppercase tracking-widest leading-relaxed">
+                  O registro de novos administradores <br/> está bloqueado pelo administrador master.
+               </p>
+            </div>
+          )}
+
           {error && (
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
@@ -98,7 +154,7 @@ export default function RegisterPage() {
             </motion.div>
           )}
 
-          <form onSubmit={handleRegister} className="space-y-5 relative z-10">
+          <form onSubmit={handleRegister} className={`space-y-5 relative z-10 ${!allowNewAdmins ? 'opacity-30 pointer-events-none grayscale' : ''}`}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-white/30 uppercase tracking-widest ml-4">Nome Completo</label>
@@ -169,6 +225,19 @@ export default function RegisterPage() {
               {isLoading ? <Loader2 className="animate-spin" /> : (
                 <>Solicitar Registro <ArrowRight size={22} strokeWidth={3} /></>
               )}
+            </button>
+            <div className="relative py-4">
+              <div className="absolute inset-0 flex items-center"><div className="w-full border-t-2 border-white/5"></div></div>
+              <div className="relative flex justify-center text-[10px] font-black uppercase tracking-widest"><span className="bg-brand-primary px-4 text-white/20">Registro Rápido</span></div>
+            </div>
+
+            <button 
+              type="button" 
+              onClick={handleGoogleRegister}
+              disabled={isLoading}
+              className="w-full h-16 rounded-2xl border border-white/10 flex items-center justify-center gap-4 font-black text-white hover:bg-white/5 transition-all disabled:opacity-50"
+            >
+              <Chrome size={20} className="text-brand-accent" /> Registrar com Google
             </button>
           </form>
 

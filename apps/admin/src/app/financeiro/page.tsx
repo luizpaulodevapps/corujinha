@@ -1,185 +1,121 @@
 'use client'
 
-import { AdminSidebar } from '@/components/admin-sidebar'
+import { AdminShell } from '@/components/admin-shell'
+import { DashboardHeader } from '@/components/dashboard/dashboard-header'
+import { StatCard } from '@/components/dashboard/stat-card'
 import { 
   CreditCard, 
   TrendingUp, 
   Users, 
   DollarSign, 
-  ArrowUpRight, 
-  ArrowDownRight,
   Download,
   Filter,
-  CheckCircle2,
-  XCircle,
-  Clock,
+  CheckCircle2,   
   MoreVertical
 } from 'lucide-react'
-import { useState } from 'react'
+import { useAdminData } from '@/hooks/use-admin-data'
+import { motion } from 'framer-motion'
 
 export default function FinanceiroPage() {
+  const { families, isLoading } = useAdminData()
+
+  if (isLoading) {
+    return (
+      <AdminShell>
+         <div className="flex-1 flex items-center justify-center min-h-[60vh]">
+            <motion.div animate={{ rotate: [0, 360] }} transition={{ repeat: Infinity, duration: 2 }} className="text-brand-primary">
+               <DollarSign size={48} />
+            </motion.div>
+         </div>
+      </AdminShell>
+    )
+  }
+
+  const kpis = [
+    { label: 'Receita Prevista', value: `R$ ${(families.length * 29.9).toLocaleString()}`, change: '+12.5%', up: true, icon: DollarSign, color: '#10B981', bgColor: '#ECFDF5' },
+    { label: 'Famílias Ativas', value: families.length.toString(), change: '+42', up: true, icon: Users, color: '#3B82F6', bgColor: '#EFF6FF' },
+    { label: 'Ticket Médio', value: 'R$ 29,90', change: 'Estável', up: true, icon: TrendingUp, color: '#F59E0B', bgColor: '#FFFBEB' },
+    { label: 'Impacto Social', value: families.length.toString(), change: 'Famílias', up: true, icon: CreditCard, color: '#8B5CF6', bgColor: '#F5F3FF' }
+  ]
+
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'white' }}>
-      <AdminSidebar />
-      
-      <main style={{ flex: 1, backgroundColor: '#F8FAFC', padding: '48px' }}>
-        <header style={{ marginBottom: '48px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div>
-            <h1 style={{ fontSize: '32px', fontWeight: 900, color: '#0F172A', marginBottom: '8px', letterSpacing: '-0.02em' }}>Gestão Financeira</h1>
-            <p style={{ color: '#64748B', fontSize: '16px', fontWeight: 500 }}>Acompanhe as assinaturas e a saúde econômica da plataforma.</p>
-          </div>
-          <button style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '10px', 
-            padding: '14px 28px', 
-            backgroundColor: '#1E4636', 
-            color: 'white', 
-            borderRadius: '12px', 
-            border: 'none', 
-            fontWeight: 700, 
-            fontSize: '15px',
-            cursor: 'pointer',
-            boxShadow: '0 4px 12px rgba(30, 70, 54, 0.2)'
-          }}>
-            <Download size={20} strokeWidth={3} /> Exportar Relatório
-          </button>
-        </header>
+    <AdminShell>
+      <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-12">
+        <DashboardHeader 
+          title="Gestão Financeira" 
+          subtitle="Acompanhe as assinaturas e a saúde econômica da plataforma." 
+        />
+        <button className="flex items-center gap-3 px-8 py-4 bg-brand-primary text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-brand-primary/20 hover:scale-105 active:scale-95 transition-all">
+          <Download size={20} strokeWidth={3} /> Exportar Relatório
+        </button>
+      </div>
 
-        {/* Financial KPIs */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px', marginBottom: '48px' }}>
-           {[
-             { label: 'MRR (Receita Mensal)', value: 'R$ 18.450', change: '+12.5%', up: true, icon: DollarSign, color: '#10B981', bgColor: '#ECFDF5' },
-             { label: 'Assinaturas Ativas', value: '432', change: '+42', up: true, icon: Users, color: '#3B82F6', bgColor: '#EFF6FF' },
-             { label: 'Churn Rate', value: '2.4%', change: '-0.5%', up: true, icon: TrendingUp, color: '#F59E0B', bgColor: '#FFFBEB' },
-             { label: 'Receita Total', value: 'R$ 142.800', change: '+8.2%', up: true, icon: CreditCard, color: '#8B5CF6', bgColor: '#F5F3FF' }
-           ].map((stat, i) => (
-             <div key={i} style={{ 
-               backgroundColor: 'white', 
-               padding: '32px', 
-               borderRadius: '16px', 
-               border: '1px solid #F1F5F9',
-               boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
-             }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-                   <div style={{ 
-                     width: '48px', 
-                     height: '48px', 
-                     borderRadius: '12px', 
-                     backgroundColor: stat.bgColor, 
-                     display: 'flex', 
-                     alignItems: 'center', 
-                     justifyContent: 'center', 
-                     color: stat.color 
-                   }}>
-                      <stat.icon size={24} />
-                   </div>
-                   <div style={{ 
-                     display: 'flex', 
-                     alignItems: 'center', 
-                     gap: '4px', 
-                     fontSize: '13px', 
-                     fontWeight: 800, 
-                     color: stat.up ? '#10B981' : '#EF4444',
-                     backgroundColor: stat.up ? '#ECFDF5' : '#FEF2F2',
-                     padding: '4px 10px',
-                     borderRadius: '8px'
-                   }}>
-                      {stat.up ? <ArrowUpRight size={14} strokeWidth={3} /> : <ArrowDownRight size={14} strokeWidth={3} />} {stat.change}
-                   </div>
-                </div>
-                <p style={{ fontSize: '14px', color: '#64748B', fontWeight: 600, margin: '0 0 8px' }}>{stat.label}</p>
-                <h3 style={{ fontSize: '28px', fontWeight: 900, color: '#0F172A', margin: 0 }}>{stat.value}</h3>
-             </div>
-           ))}
-        </div>
+      {/* Financial KPIs */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+         {kpis.map((stat, i) => (
+           <StatCard 
+             key={i}
+             label={stat.label}
+             value={stat.value}
+             change={stat.change}
+             icon={stat.icon}
+             color={stat.color}
+             bgColor={stat.bgColor}
+           />
+         ))}
+      </div>
 
-        {/* Subscriptions Table - Master Detail Style */}
-        <div style={{ 
-          backgroundColor: 'white', 
-          borderRadius: '20px', 
-          border: '1px solid #F1F5F9',
-          boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)',
-          overflow: 'hidden'
-        }}>
-           <div style={{ padding: '32px', borderBottom: '1px solid #F1F5F9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                 <h3 style={{ fontSize: '20px', fontWeight: 900, color: '#0F172A', margin: '0 0 4px' }}>Assinaturas Recentes</h3>
-                 <p style={{ fontSize: '14px', color: '#64748B', fontWeight: 500, margin: 0 }}>Listagem detalhada das últimas transações na plataforma.</p>
-              </div>
-              <div style={{ display: 'flex', gap: '12px' }}>
-                 <button style={{ 
-                   padding: '10px 20px', 
-                   borderRadius: '10px', 
-                   border: '1px solid #E2E8F0', 
-                   backgroundColor: 'white', 
-                   display: 'flex', 
-                   alignItems: 'center', 
-                   gap: '8px', 
-                   fontSize: '14px', 
-                   fontWeight: 700, 
-                   color: '#475569',
-                   cursor: 'pointer'
-                 }}>
-                    <Filter size={18} /> Filtros
-                 </button>
-              </div>
-           </div>
-           
-           <div style={{ overflowX: 'auto' }}>
-             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                <thead>
-                   <tr style={{ backgroundColor: '#F8FAFC' }}>
-                      <th style={{ padding: '20px 32px', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: '#64748B', letterSpacing: '0.05em' }}>Família</th>
-                      <th style={{ padding: '20px 32px', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: '#64748B', letterSpacing: '0.05em' }}>Plano</th>
-                      <th style={{ padding: '20px 32px', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: '#64748B', letterSpacing: '0.05em' }}>Status</th>
-                      <th style={{ padding: '20px 32px', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: '#64748B', letterSpacing: '0.05em' }}>Vencimento</th>
-                      <th style={{ padding: '20px 32px', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: '#64748B', letterSpacing: '0.05em' }}>Valor</th>
-                      <th style={{ padding: '20px 32px', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: '#64748B', letterSpacing: '0.05em' }}>Ações</th>
-                   </tr>
-                </thead>
-                <tbody style={{ fontSize: '15px' }}>
-                   {[
-                     { name: 'Família Silva', plan: 'Premium Mensal', status: 'Ativo', date: '12 Fev 2026', price: 'R$ 29,90' },
-                     { name: 'Família Santos', plan: 'Family Plus Anual', status: 'Pendente', date: '---', price: 'R$ 299,00' },
-                     { name: 'Família Oliveira', plan: 'Premium Mensal', status: 'Ativo', date: '15 Fev 2026', price: 'R$ 29,90' },
-                     { name: 'Família Pereira', plan: 'Gratuito', status: 'Cancelado', date: '---', price: 'R$ 0,00' },
-                   ].map((sub, i) => (
-                      <tr key={i} style={{ borderTop: '1px solid #F1F5F9', transition: 'background-color 0.2s' }} onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#F8FAFC')} onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>
-                         <td style={{ padding: '24px 32px', fontWeight: 700, color: '#0F172A' }}>{sub.name}</td>
-                         <td style={{ padding: '24px 32px' }}>
-                            <span style={{ padding: '6px 12px', borderRadius: '8px', backgroundColor: '#F1F5F9', fontSize: '13px', fontWeight: 700, color: '#475569' }}>{sub.plan}</span>
-                         </td>
-                         <td style={{ padding: '24px 32px' }}>
-                            <div style={{ 
-                              display: 'inline-flex', 
-                              alignItems: 'center', 
-                              gap: '8px', 
-                              padding: '6px 14px', 
-                              borderRadius: '20px',
-                              backgroundColor: sub.status === 'Ativo' ? '#ECFDF5' : sub.status === 'Pendente' ? '#FFFBEB' : '#FEF2F2',
-                              color: sub.status === 'Ativo' ? '#10B981' : sub.status === 'Pendente' ? '#F59E0B' : '#EF4444',
-                              fontWeight: 700,
-                              fontSize: '13px'
-                            }}>
-                               {sub.status === 'Ativo' ? <CheckCircle2 size={16} /> : sub.status === 'Pendente' ? <Clock size={16} /> : <XCircle size={16} />}
-                               {sub.status}
-                            </div>
-                         </td>
-                         <td style={{ padding: '24px 32px', color: '#64748B', fontWeight: 500 }}>{sub.date}</td>
-                         <td style={{ padding: '24px 32px', fontWeight: 800, color: '#0F172A' }}>{sub.price}</td>
-                         <td style={{ padding: '24px 32px' }}>
-                            <button style={{ color: '#64748B', background: 'none', border: 'none', cursor: 'pointer' }}>
-                               <MoreVertical size={20} />
-                            </button>
-                         </td>
-                      </tr>
-                   ))}
-                </tbody>
-             </table>
-           </div>
-        </div>
-      </main>
-    </div>
+      {/* Subscriptions Table */}
+      <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl overflow-hidden">
+         <div className="p-10 border-b border-slate-50 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div>
+               <h3 className="text-2xl font-black text-slate-900 mb-1">Status de Assinatura por Família</h3>
+               <p className="text-sm text-slate-500 font-bold text-center md:text-left">Listagem detalhada das famílias e seus planos vigentes.</p>
+            </div>
+            <button className="px-8 py-3 bg-white border border-slate-100 rounded-2xl flex items-center gap-2 text-slate-500 font-black text-xs uppercase tracking-widest hover:bg-slate-50 transition-all">
+               <Filter size={18} /> Filtros
+            </button>
+         </div>
+         
+         <div className="overflow-x-auto">
+           <table className="w-full border-collapse">
+              <thead>
+                 <tr className="bg-slate-50/50">
+                    <th className="px-10 py-6 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Família</th>
+                    <th className="px-10 py-6 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Plano</th>
+                    <th className="px-10 py-6 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
+                    <th className="px-10 py-6 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Vencimento</th>
+                    <th className="px-10 py-6 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Valor</th>
+                    <th className="px-10 py-6 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">Ações</th>
+                 </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-50 font-bold text-slate-600">
+                 {families.map((family, i) => (
+                    <tr key={family.id} className="hover:bg-slate-50/30 transition-colors group">
+                       <td className="px-10 py-8 font-black text-slate-900">Família {family.name || family.id.slice(0, 5)}</td>
+                       <td className="px-10 py-8">
+                          <span className="px-4 py-2 rounded-xl bg-slate-100 text-slate-500 text-[11px] font-black uppercase tracking-widest">Premium Mensal</span>
+                       </td>
+                       <td className="px-10 py-8">
+                          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl font-black text-[11px] uppercase tracking-widest bg-emerald-50 text-emerald-500`}
+                          >
+                             <CheckCircle2 size={16} strokeWidth={3} />
+                             Ativo
+                          </div>
+                       </td>
+                       <td className="px-10 py-8 text-sm text-slate-400 font-black">Próx. Mês</td>
+                       <td className="px-10 py-8 font-black text-slate-900 text-lg italic">R$ 29,90</td>
+                       <td className="px-10 py-8 text-right opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button className="p-3 rounded-xl border border-slate-100 bg-white text-slate-400 hover:text-brand-primary hover:bg-slate-50 transition-all">
+                             <MoreVertical size={20} />
+                          </button>
+                       </td>
+                    </tr>
+                 ))}
+              </tbody>
+           </table>
+         </div>
+      </div>
+    </AdminShell>
   )
 }

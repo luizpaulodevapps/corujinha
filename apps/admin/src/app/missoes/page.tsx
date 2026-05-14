@@ -1,6 +1,7 @@
 'use client'
 
-import { AdminSidebar } from '@/components/admin-sidebar'
+import { AdminShell } from '@/components/admin-shell'
+import { DashboardHeader } from '@/components/dashboard/dashboard-header'
 import { 
   Sword, 
   Plus, 
@@ -12,11 +13,13 @@ import {
   Coins,
   Loader2,
   Trophy,
-  Target
+  Target,
+  Sparkles
 } from 'lucide-react'
 import { useState } from 'react'
 import { useAdminData } from '@/hooks/use-admin-data'
 import { MissionModal } from '@/components/mission-modal'
+import { motion } from 'framer-motion'
 
 export default function MissoesPage() {
   const { tasks, isLoading } = useAdminData()
@@ -25,12 +28,11 @@ export default function MissoesPage() {
 
   if (isLoading) {
     return (
-      <div style={{ display: 'flex', minHeight: '100vh' }}>
-        <AdminSidebar />
-        <main style={{ flex: 1, backgroundColor: '#F8FAFC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Loader2 className="animate-spin" size={48} color="#1E4636" />
-        </main>
-      </div>
+      <AdminShell>
+        <div className="flex-1 flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="animate-spin text-brand-primary" size={48} />
+        </div>
+      </AdminShell>
     )
   }
 
@@ -39,181 +41,143 @@ export default function MissoesPage() {
     t.category.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
+  const stats = [
+    { label: 'Missões Ativas', value: tasks.filter(t => t.active).length, icon: Target, color: '#10B981', bgColor: '#ECFDF5' },
+    { label: 'Total de Modelos', value: tasks.length, icon: Sword, color: '#3B82F6', bgColor: '#EFF6FF' },
+    { label: 'Categorias Mágicas', value: new Set(tasks.map(t => t.category)).size, icon: Trophy, color: '#F59E0B', bgColor: '#FFFBEB' }
+  ]
+
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'white' }}>
-      <AdminSidebar />
-      
-      <main style={{ flex: 1, backgroundColor: '#F8FAFC', padding: '48px' }}>
-        <header style={{ marginBottom: '48px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div>
-            <h1 style={{ fontSize: '32px', fontWeight: 900, color: '#0F172A', marginBottom: '8px', letterSpacing: '-0.02em' }}>Gestão de Missões</h1>
-            <p style={{ color: '#64748B', fontSize: '16px', fontWeight: 500 }}>Crie, edite e monitore as tarefas épicas que guiam os pequenos heróis.</p>
-          </div>
+    <AdminShell>
+      <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-8">
+        <DashboardHeader 
+          title="Gestão de Missões" 
+          subtitle="Crie, edite e monitore as tarefas épicas que guiam os pequenos heróis." 
+        />
+        <div className="flex gap-3">
           <button 
             onClick={() => setIsModalOpen(true)}
-            style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '10px', 
-              padding: '14px 28px', 
-              backgroundColor: '#1E4636', 
-              color: 'white', 
-              borderRadius: '12px', 
-              border: 'none', 
-              fontWeight: 700, 
-              fontSize: '15px',
-              cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(30, 70, 54, 0.2)'
-            }}
+            className="flex items-center gap-2 px-6 py-3 bg-white border-2 border-brand-primary text-brand-primary rounded-xl font-black text-[11px] uppercase tracking-widest hover:bg-brand-primary hover:text-white transition-all group"
           >
-            <Plus size={20} strokeWidth={3} /> Nova Missão Global
+            <Plus size={18} strokeWidth={3} className="group-hover:rotate-90 transition-transform" /> Nova Missão
           </button>
-        </header>
-
-        {/* Tactical Metrics Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', marginBottom: '40px' }}>
-          {[
-            { label: 'Missões Ativas', value: tasks.filter(t => t.active).length, icon: Target, color: '#10B981', bgColor: '#ECFDF5' },
-            { label: 'Total de Modelos', value: tasks.length, icon: Sword, color: '#3B82F6', bgColor: '#EFF6FF' },
-            { label: 'Categorias Mágicas', value: new Set(tasks.map(t => t.category)).size, icon: Trophy, color: '#F59E0B', bgColor: '#FFFBEB' }
-          ].map((stat, i) => (
-            <div key={i} style={{ backgroundColor: 'white', padding: '24px 32px', borderRadius: '16px', border: '1px solid #F1F5F9', display: 'flex', alignItems: 'center', gap: '20px' }}>
-               <div style={{ width: '56px', height: '56px', borderRadius: '14px', backgroundColor: stat.bgColor, display: 'flex', alignItems: 'center', justifyContent: 'center', color: stat.color }}>
-                  <stat.icon size={26} />
-               </div>
-               <div>
-                  <p style={{ margin: '0 0 4px', fontSize: '14px', color: '#64748B', fontWeight: 600 }}>{stat.label}</p>
-                  <h3 style={{ margin: 0, fontSize: '24px', fontWeight: 900, color: '#0F172A' }}>{stat.value}</h3>
-               </div>
-            </div>
-          ))}
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-brand-primary to-emerald-400 text-white rounded-xl font-black text-[11px] uppercase tracking-widest shadow-lg shadow-brand-primary/20 hover:scale-105 active:scale-95 transition-all"
+          >
+            <Sparkles size={18} strokeWidth={3} className="animate-pulse" /> Criar com IA
+          </button>
         </div>
+      </div>
 
-        {/* Global Missions Table */}
-        <div style={{ 
-          backgroundColor: 'white', 
-          borderRadius: '24px', 
-          border: '1px solid #F1F5F9',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
-          overflow: 'hidden'
-        }}>
-          <div style={{ padding: '24px 32px', borderBottom: '1px solid #F1F5F9', display: 'flex', gap: '20px' }}>
-            <div style={{ flex: 1, position: 'relative' }}>
-               <Search style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} size={18} />
-               <input 
-                 type="text" 
-                 placeholder="Buscar missões pelo título ou categoria..." 
-                 value={searchTerm}
-                 onChange={(e) => setSearchTerm(e.target.value)}
-                 style={{ 
-                   width: '100%', 
-                   padding: '12px 16px 12px 48px', 
-                   borderRadius: '12px', 
-                   border: '1px solid #E2E8F0', 
-                   fontSize: '15px',
-                   fontWeight: 500,
-                   outline: 'none',
-                   transition: 'border-color 0.2s'
-                 }}
-               />
-            </div>
-            <button style={{ 
-              padding: '0 20px', 
-              borderRadius: '12px', 
-              border: '1px solid #E2E8F0', 
-              backgroundColor: 'white', 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '10px', 
-              color: '#475569', 
-              fontWeight: 700,
-              fontSize: '14px',
-              cursor: 'pointer' 
-            }}>
-              <Filter size={18} /> Filtros
-            </button>
+      {/* Tactical Metrics Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {stats.map((stat, i) => (
+          <div key={i} className="bg-white p-6 rounded-[2rem] border border-slate-100 flex items-center gap-4 shadow-sm group hover:shadow-xl transition-all">
+             <div 
+               className="w-12 h-12 rounded-xl flex items-center justify-center border border-white"
+               style={{ backgroundColor: stat.bgColor, color: stat.color }}
+             >
+                <stat.icon size={22} />
+             </div>
+             <div>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{stat.label}</p>
+                <h3 className="text-2xl font-black text-slate-900 leading-none tracking-tight italic">{stat.value}</h3>
+             </div>
           </div>
-          
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-            <thead style={{ backgroundColor: '#F8FAFC' }}>
-              <tr style={{ color: '#64748B', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                <th style={{ padding: '20px 32px' }}>Missão & Detalhes</th>
-                <th style={{ padding: '20px 32px' }}>Categoria</th>
-                <th style={{ padding: '20px 32px' }}>Dificuldade</th>
-                <th style={{ padding: '20px 32px' }}>Recompensa Principal</th>
-                <th style={{ padding: '20px 32px' }}>Origem</th>
-                <th style={{ padding: '20px 32px' }}>Status Global</th>
-                <th style={{ padding: '20px 32px', textAlign: 'right' }}>Ações</th>
+        ))}
+      </div>
+
+      {/* Global Missions Table */}
+      <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl overflow-hidden">
+        <div className="p-8 border-b border-slate-50 flex gap-4">
+          <div className="flex-1 relative group">
+             <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" size={20} />
+             <input 
+               type="text" 
+               placeholder="Buscar missões pelo título ou categoria..." 
+               value={searchTerm}
+               onChange={(e) => setSearchTerm(e.target.value)}
+               className="w-full pl-16 pr-8 py-4 bg-white border border-slate-100 rounded-2xl font-bold text-slate-900 placeholder:text-slate-300 outline-none focus:border-brand-primary transition-all"
+             />
+          </div>
+          <button className="px-6 bg-white border border-slate-100 rounded-2xl flex items-center gap-2 text-slate-500 font-black text-xs uppercase tracking-widest hover:bg-slate-50 transition-all">
+            <Filter size={18} /> Filtros
+          </button>
+        </div>
+        
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="bg-slate-50/50">
+                <th className="px-10 py-6 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Missão & Detalhes</th>
+                <th className="px-10 py-6 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Categoria</th>
+                <th className="px-10 py-6 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Dificuldade</th>
+                <th className="px-10 py-6 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Recompensa</th>
+                <th className="px-10 py-6 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Origem</th>
+                <th className="px-10 py-6 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Status Global</th>
+                <th className="px-10 py-6 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">Ações</th>
               </tr>
             </thead>
-            <tbody style={{ fontSize: '15px' }}>
+            <tbody className="divide-y divide-slate-50 font-bold text-slate-600">
               {filteredTasks.length === 0 ? (
                 <tr>
-                  <td colSpan={7} style={{ padding: '80px', textAlign: 'center', color: '#64748B', fontWeight: 500 }}>Nenhuma missão encontrada no universo atual.</td>
+                  <td colSpan={7} className="px-10 py-24 text-center text-slate-400">Nenhuma missão encontrada no universo atual.</td>
                 </tr>
               ) : filteredTasks.map((mission) => (
-                <tr key={mission.id} style={{ borderTop: '1px solid #F1F5F9', transition: 'background-color 0.2s' }} onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#F8FAFC')} onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>
-                  <td style={{ padding: '24px 32px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                       <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: '#F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1E4636' }}>
+                <tr key={mission.id} className="hover:bg-slate-50/30 transition-colors group">
+                  <td className="px-10 py-8">
+                    <div className="flex items-center gap-4">
+                       <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-brand-primary">
                           <Sword size={20} />
                        </div>
                        <div>
-                          <p style={{ fontWeight: 800, color: '#0F172A', margin: '0 0 4px' }}>{mission.title}</p>
-                          <p style={{ margin: 0, fontSize: '13px', color: '#64748B', maxWidth: '280px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{mission.description}</p>
+                          <p className="font-black text-slate-900 mb-0.5">{mission.title}</p>
+                          <p className="text-[11px] text-slate-400 max-w-[280px] truncate font-bold">{mission.description}</p>
                        </div>
                     </div>
                   </td>
-                  <td style={{ padding: '24px 32px' }}>
-                    <span style={{ padding: '6px 12px', borderRadius: '8px', backgroundColor: '#F1F5F9', color: '#475569', fontSize: '13px', fontWeight: 700 }}>
+                  <td className="px-10 py-8">
+                    <span className="px-4 py-2 rounded-xl bg-slate-100 text-slate-500 text-[11px] font-black uppercase tracking-widest">
                       {mission.category}
                     </span>
                   </td>
-                  <td style={{ padding: '24px 32px' }}>
-                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 700, fontSize: '13px', color: '#0F172A' }}>
-                        <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: mission.difficulty === 'easy' ? '#10B981' : mission.difficulty === 'medium' ? '#F59E0B' : '#EF4444', boxShadow: '0 0 8px rgba(0,0,0,0.05)' }} />
-                        {mission.difficulty === 'easy' ? 'Iniciante' : mission.difficulty === 'medium' ? 'Intermediária' : 'Avançada'}
+                  <td className="px-10 py-8">
+                     <div className="flex items-center gap-3">
+                        <div className={`w-2.5 h-2.5 rounded-full 
+                          ${mission.difficulty === 'easy' ? 'bg-emerald-500 shadow-[0_0_8px_#10B98160]' : mission.difficulty === 'medium' ? 'bg-amber-500 shadow-[0_0_8px_#F59E0B60]' : 'bg-red-500 shadow-[0_0_8px_#EF444460]'}`} 
+                        />
+                        <span className="text-sm font-black italic">
+                          {mission.difficulty === 'easy' ? 'Iniciante' : mission.difficulty === 'medium' ? 'Intermediária' : 'Avançada'}
+                        </span>
                      </div>
                   </td>
-                  <td style={{ padding: '24px 32px' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                       <span style={{ fontWeight: 800, color: '#D97706', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '16px' }}>
-                         <Coins size={18} fill="currentColor" opacity={0.8} /> {mission.rewardCoins}
+                  <td className="px-10 py-8">
+                    <div className="flex flex-col">
+                       <span className="font-black text-amber-600 flex items-center gap-2 text-lg">
+                         <Coins size={18} className="text-amber-500" /> {mission.rewardCoins}
                        </span>
-                       <span style={{ fontSize: '12px', color: '#94A3B8', fontWeight: 600 }}>+ {mission.rewardXp} XP de bônus</span>
+                       <span className="text-[10px] text-slate-400 font-black uppercase tracking-wider">+ {mission.rewardXp} XP</span>
                     </div>
                   </td>
-                  <td style={{ padding: '24px 32px' }}>
+                  <td className="px-10 py-8">
                     {/* @ts-ignore */}
                     {mission.isCustom ? (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                         <span style={{ padding: '4px 8px', borderRadius: '6px', backgroundColor: '#F5F3FF', color: '#8B5CF6', fontSize: '11px', fontWeight: 800, width: 'fit-content' }}>PERSONALIZADA</span>
-                         <span style={{ fontSize: '11px', color: '#94A3B8', fontWeight: 600 }}>Família VIP</span>
-                      </div>
+                       <span className="px-3 py-1 rounded-lg bg-violet-50 text-violet-500 text-[10px] font-black uppercase tracking-widest">Personalizada</span>
                     ) : (
-                      <span style={{ padding: '4px 8px', borderRadius: '6px', backgroundColor: '#ECFDF5', color: '#10B981', fontSize: '11px', fontWeight: 800, width: 'fit-content' }}>GLOBAL</span>
+                       <span className="px-3 py-1 rounded-lg bg-emerald-50 text-emerald-500 text-[10px] font-black uppercase tracking-widest">Global</span>
                     )}
                   </td>
-                  <td style={{ padding: '24px 32px' }}>
-                    <div style={{ 
-                      display: 'inline-flex', 
-                      alignItems: 'center', 
-                      gap: '8px', 
-                      padding: '6px 14px', 
-                      borderRadius: '20px',
-                      backgroundColor: mission.active ? '#ECFDF5' : '#FEF2F2',
-                      color: mission.active ? '#10B981' : '#EF4444',
-                      fontWeight: 800,
-                      fontSize: '12px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em'
-                    }}>
+                  <td className="px-10 py-8">
+                    <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl font-black text-[11px] uppercase tracking-widest
+                      ${mission.active ? 'bg-emerald-50 text-emerald-500' : 'bg-red-50 text-red-500'}`}
+                    >
                        {mission.active ? <CheckCircle2 size={14} strokeWidth={3} /> : <Clock size={14} strokeWidth={3} />}
                        {mission.active ? 'Ativa' : 'Inativa'}
                     </div>
                   </td>
-                  <td style={{ padding: '24px 32px', textAlign: 'right' }}>
-                    <button style={{ border: 'none', background: 'none', color: '#94A3B8', cursor: 'pointer', padding: '8px' }}>
+                  <td className="px-10 py-8 text-right opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button className="p-3 rounded-xl border border-slate-100 bg-white text-slate-400 hover:text-brand-primary hover:bg-slate-50 transition-all">
                        <MoreVertical size={22} />
                     </button>
                   </td>
@@ -222,9 +186,9 @@ export default function MissoesPage() {
             </tbody>
           </table>
         </div>
+      </div>
 
-        <MissionModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-      </main>
-    </div>
+      <MissionModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+    </AdminShell>
   )
 }

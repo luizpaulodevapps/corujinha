@@ -1,413 +1,497 @@
 'use client'
 
-import { AdminSidebar } from '@/components/admin-sidebar'
+import { AdminShell } from '@/components/admin-shell'
+import { DashboardHeader } from '@/components/dashboard/dashboard-header'
 import { 
-  Settings, 
   Shield, 
   Bell, 
   Database, 
   Globe, 
   Palette, 
-  Save,
-  Lock,
-  Mail,
   Smartphone,
-  Check,
-  ChevronRight,
-  Monitor,
-  Type,
-  Image as ImageIcon,
-  MousePointer2,
-  Download,
-  Languages,
-  Clock,
-  Zap,
-  Globe2,
+  Save,
+  Mail,
+  Lock,
+  Plus,
   Trash2,
-  Plus
+  Calendar,
+  ChevronRight,
+  Settings,
+  Users,
+  Smartphone as Phone,
+  Shield as ShieldIcon,
+  Star,
+  Sparkles,
+  Handshake,
+  AlertTriangle,
+  MessageSquare
 } from 'lucide-react'
 import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useAdminData } from '@/hooks/use-admin-data'
+import { getFirebaseAuth } from '@corujinha/firebase'
 
-type TabType = 'seguranca' | 'notificacoes' | 'firestore' | 'localizacao' | 'branding' | 'pwa'
+type TabType = 'seguranca' | 'notificacoes' | 'database' | 'idioma' | 'branding' | 'pwa'
 
 export default function ConfiguracoesPage() {
-  const [activeTab, setActiveTab] = useState<TabType>('notificacoes')
+  const { 
+    families, 
+    children, 
+    tasks, 
+    rewards, 
+    media, 
+    tips, 
+    products, 
+    partners, 
+    mascots, 
+    systemSettings,
+    updateSystemSettings,
+    isLoading 
+  } = useAdminData()
   
-  // Theme State
-  const [primaryColor, setPrimaryColor] = useState('#1E4636')
-  const [secondaryColor, setSecondaryColor] = useState('#10B981')
-  const [alertColor, setAlertColor] = useState('#EF4444')
-  const [fontFamily, setFontFamily] = useState('Outfit')
+  const [activeTab, setActiveTab] = useState<TabType>('seguranca')
+  const auth = getFirebaseAuth()
+  const currentUser = auth.currentUser
+  
+  // Local States for pending changes
+  const [localAllowNewAdmins, setLocalAllowNewAdmins] = useState<boolean | null>(null)
+  const [primaryColor, setPrimaryColor] = useState('#0A3D2D')
+  const [secondaryColor, setSecondaryColor] = useState('#3EC28F')
 
-  const tabs = [
-    { id: 'seguranca', icon: Shield, label: 'Segurança e Acesso' },
-    { id: 'notificacoes', icon: Bell, label: 'Notificações do Sistema' },
-    { id: 'firestore', icon: Database, label: 'Banco de Dados' },
-    { id: 'localizacao', icon: Globe, label: 'Região e Idioma' },
-    { id: 'branding', icon: Palette, label: 'Branding Visual' },
-    { id: 'pwa', icon: Smartphone, label: 'Experiência PWA' }
+  // Sync local state with DB once
+  const dbAllowNewAdmins = systemSettings?.allowNewAdmins ?? true
+  const currentAllowNewAdmins = localAllowNewAdmins !== null ? localAllowNewAdmins : dbAllowNewAdmins
+
+  const hasChanges = 
+    (localAllowNewAdmins !== null && localAllowNewAdmins !== dbAllowNewAdmins) ||
+    primaryColor !== '#0A3D2D' ||
+    secondaryColor !== '#3EC28F'
+
+  const handleSave = async () => {
+    await updateSystemSettings({
+      allowNewAdmins: currentAllowNewAdmins,
+      primaryColor,
+      secondaryColor
+    })
+    setLocalAllowNewAdmins(null) // Reset local track after save
+    alert('Configurações salvas com sucesso!')
+  }
+
+  if (isLoading) {
+    return (
+      <AdminShell>
+         <div className="flex-1 flex items-center justify-center min-h-[50vh]">
+            <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2 }} className="text-brand-primary">
+               <Settings size={32} />
+            </motion.div>
+         </div>
+      </AdminShell>
+    )
+  }
+
+  const tabs: { id: TabType; label: string; icon: any }[] = [
+    { id: 'seguranca', label: 'Segurança e Acesso', icon: Shield },
+    { id: 'notificacoes', label: 'Notificações do Sistema', icon: Bell },
+    { id: 'database', label: 'Banco de Dados', icon: Database },
+    { id: 'idioma', label: 'Região e Idioma', icon: Globe },
+    { id: 'branding', label: 'Branding Visual', icon: Palette },
+    { id: 'pwa', label: 'Experiência PWA', icon: Smartphone },
   ]
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'white' }}>
-      <AdminSidebar />
-      
-      <main style={{ flex: 1, backgroundColor: '#F8FAFC', padding: '48px' }}>
-        <header style={{ marginBottom: '48px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div>
-            <h1 style={{ fontSize: '32px', fontWeight: 900, color: '#0F172A', marginBottom: '8px', letterSpacing: '-0.02em' }}>Configurações Globais</h1>
-            <p style={{ color: '#64748B', fontSize: '16px', fontWeight: 500 }}>Ajuste os parâmetros críticos e a identidade da plataforma Corujinha.</p>
+    <AdminShell>
+      <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-8">
+        <div>
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-white rounded-full border border-slate-100 shadow-sm w-fit mb-3">
+             <Calendar size={14} className="text-brand-primary" />
+             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
           </div>
-          <button style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '10px', 
-            padding: '14px 28px', 
-            backgroundColor: '#1E4636', 
-            color: 'white', 
-            borderRadius: '12px', 
-            border: 'none', 
-            fontWeight: 800, 
-            fontSize: '15px',
-            cursor: 'pointer',
-            boxShadow: '0 8px 20px rgba(30, 70, 54, 0.2)'
-          }}>
-            <Save size={20} strokeWidth={3} /> Salvar Parâmetros
-          </button>
-        </header>
+          <h1 className="text-2xl font-black text-slate-900 italic tracking-tighter">Configurações Globais</h1>
+          <p className="text-sm text-slate-400 font-bold">Ajuste os parâmetros críticos e a identidade da plataforma Corujinha.</p>
+        </div>
+        <button 
+          onClick={handleSave}
+          disabled={!hasChanges}
+          className={`flex items-center gap-2 px-6 py-3 rounded-xl font-black text-[11px] uppercase tracking-widest transition-all
+            ${hasChanges 
+              ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 hover:scale-105 active:scale-95' 
+              : 'bg-slate-100 text-slate-400 cursor-not-allowed opacity-50'}`}
+        >
+          <Save size={18} strokeWidth={3} /> Salvar Parâmetros
+        </button>
+      </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: '48px' }}>
-          {/* Settings Navigation Sidebar */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-             {tabs.map((tab) => (
-                <button 
-                  key={tab.id} 
-                  onClick={() => setActiveTab(tab.id as TabType)}
-                  style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'space-between',
-                    padding: '18px 24px', 
-                    borderRadius: '16px', 
-                    border: activeTab === tab.id ? '2px solid #1E4636' : '2px solid transparent', 
-                    backgroundColor: activeTab === tab.id ? 'white' : 'transparent', 
-                    color: activeTab === tab.id ? '#1E4636' : '#64748B',
-                    fontWeight: 800,
-                    fontSize: '15px',
-                    cursor: 'pointer',
-                    boxShadow: activeTab === tab.id ? '0 10px 20px rgba(0,0,0,0.04)' : 'none',
-                    transition: 'all 0.2s'
-                  }}
-                >
-                   <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                      <tab.icon size={20} strokeWidth={activeTab === tab.id ? 3 : 2} />
-                      {tab.label}
-                   </div>
-                   {activeTab === tab.id && <ChevronRight size={16} strokeWidth={3} />}
-                </button>
-             ))}
-          </div>
+      <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 items-start">
+        {/* Navigation Sidebar */}
+        <aside className="space-y-2">
+           {tabs.map((tab) => (
+             <button
+               key={tab.id}
+               onClick={() => setActiveTab(tab.id)}
+               className={`w-full flex items-center justify-between p-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all
+                 ${activeTab === tab.id 
+                   ? 'bg-brand-primary text-white shadow-xl shadow-brand-primary/20 scale-105 z-10' 
+                   : 'bg-white text-slate-400 border border-slate-50 hover:bg-slate-50'}`}
+             >
+                <div className="flex items-center gap-3">
+                   <tab.icon size={18} />
+                   {tab.label}
+                </div>
+                {activeTab === tab.id && <ChevronRight size={16} />}
+             </button>
+           ))}
+        </aside>
 
-          {/* Dynamic Content Area */}
-          <div style={{ 
-            backgroundColor: 'white', 
-            borderRadius: '32px', 
-            padding: '48px', 
-            border: '1px solid #F1F5F9',
-            boxShadow: '0 20px 50px rgba(0,0,0,0.03)'
-          }}>
-             {activeTab === 'branding' && (
-               <div style={{ display: 'flex', flexDirection: 'column', gap: '48px' }}>
-                  {/* Colors Section */}
-                  <section>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '32px', borderBottom: '1px solid #F1F5F9', paddingBottom: '20px' }}>
-                       <div style={{ width: '40px', height: '40px', borderRadius: '12px', backgroundColor: '#F5F3FF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#8B5CF6' }}>
-                          <Palette size={20} />
-                       </div>
-                       <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0F172A', margin: 0 }}>Identidade de Marca</h3>
-                    </div>
+        {/* Content Area */}
+        <div className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-2xl shadow-slate-200/20 min-h-[500px]">
+           <AnimatePresence mode="wait">
+             <motion.div
+               key={activeTab}
+               initial={{ opacity: 0, x: 10 }}
+               animate={{ opacity: 1, x: 0 }}
+               exit={{ opacity: 0, x: -10 }}
+               transition={{ duration: 0.2 }}
+             >
+               {activeTab === 'seguranca' && (
+                 <div className="space-y-8">
+                    <section>
+                      <div className="flex items-center gap-4 mb-8 pb-6 border-b border-slate-50">
+                         <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-500 border border-blue-100">
+                            <Shield size={24} />
+                         </div>
+                         <div>
+                            <h3 className="text-xl font-black text-slate-900 italic tracking-tighter">Segurança e Acesso</h3>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Controle de credenciais e permissões master</p>
+                         </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                         <div className="space-y-2">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">E-mail Master Autorizado</label>
+                            <div className="relative group">
+                               <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-brand-primary transition-colors" size={18} />
+                               <input 
+                                 type="email" 
+                                 disabled
+                                 value={currentUser?.email || 'admin@corujinha.com'} 
+                                 className="w-full pl-14 pr-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-black text-slate-900 outline-none text-base italic opacity-70 cursor-not-allowed" 
+                               />
+                               {currentUser?.providerData.some(p => p.providerId === 'google.com') && (
+                                 <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-3 py-1 bg-white border border-slate-100 rounded-lg shadow-sm">
+                                   <div className="w-1.5 h-1.5 bg-brand-primary rounded-full animate-pulse" />
+                                   <span className="text-[8px] font-black text-brand-primary uppercase tracking-widest">Google Auth</span>
+                                 </div>
+                               )}
+                            </div>
+                         </div>
+                         <div className="space-y-2">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Segurança da Conta</label>
+                            <div className="flex gap-2">
+                               <button 
+                                 onClick={async () => {
+                                   if (currentUser?.email) {
+                                     try {
+                                       const { sendPasswordResetEmail } = await import('firebase/auth')
+                                       await sendPasswordResetEmail(auth, currentUser.email)
+                                       alert('E-mail de redefinição enviado!')
+                                     } catch (err) {
+                                       console.error(err)
+                                       alert('Falha ao enviar e-mail.')
+                                     }
+                                   }
+                                 }}
+                                 className="flex-1 flex items-center justify-center gap-3 px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-black text-[10px] uppercase tracking-widest text-slate-600 hover:bg-brand-primary hover:text-white hover:border-brand-primary transition-all group"
+                               >
+                                  <Lock size={16} className="group-hover:rotate-12 transition-transform" /> 
+                                  Redefinir Senha
+                               </button>
+                               <div className="flex-[1.5] px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl flex items-center gap-3">
+                                  <Shield size={16} className="text-emerald-500" />
+                                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Proteção Ativa</span>
+                               </div>
+                            </div>
+                         </div>
+                      </div>
+
+                      <div className="mt-8 p-6 bg-slate-50/50 rounded-[1.5rem] border border-slate-100 flex flex-col md:flex-row items-center justify-between gap-4 group hover:bg-white hover:shadow-lg transition-all duration-500">
+                         <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 bg-brand-bg rounded-xl flex items-center justify-center text-brand-primary border border-brand-primary/10">
+                               <Plus size={24} />
+                            </div>
+                            <div>
+                               <h4 className="text-lg font-black text-slate-900 italic tracking-tight">Permitir Novos Administradores</h4>
+                               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Habilita ou desabilita o registro de novos membros na equipe</p>
+                            </div>
+                         </div>
+                         <div 
+                           onClick={() => setLocalAllowNewAdmins(!currentAllowNewAdmins)}
+                           className={`w-14 h-7 rounded-full relative cursor-pointer transition-all duration-500 shadow-inner
+                             ${currentAllowNewAdmins ? 'bg-brand-primary' : 'bg-slate-200'}`}
+                         >
+                            <div className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-lg transition-all duration-500
+                              ${currentAllowNewAdmins ? 'right-1 scale-105' : 'left-1 scale-100'}`} 
+                            />
+                         </div>
+                      </div>
+                    </section>
+
+                    <section className="pt-8 border-t border-slate-50">
+                      <div className="bg-rose-50/50 rounded-[1.5rem] p-6 border border-rose-100 flex flex-col md:flex-row items-center justify-between gap-6">
+                         <div>
+                            <h4 className="text-lg font-black text-rose-600 italic tracking-tighter mb-1">Zona de Perigo</h4>
+                            <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest">Ações irreversíveis no banco de dados e usuários.</p>
+                         </div>
+                         <button className="px-6 py-4 bg-rose-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-rose-200 hover:bg-rose-700 transition-all flex items-center gap-3">
+                            <Trash2 size={18} strokeWidth={3} /> Resetar todo o ecossistema
+                         </button>
+                      </div>
+                    </section>
+                 </div>
+               )}
+
+               {activeTab === 'database' && (
+                 <div className="space-y-8">
+                    <header className="mb-8">
+                       <h3 className="text-xl font-black text-slate-900 italic tracking-tighter">Métricas do Banco de Dados</h3>
+                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Visão geral do volume de dados em tempo real</p>
+                    </header>
                     
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                        {[
-                         { label: 'Cor Primária', value: primaryColor, setter: setPrimaryColor },
-                         { label: 'Cor de Destaque', value: secondaryColor, setter: setSecondaryColor },
-                         { label: 'Cor de Urgência', value: alertColor, setter: setAlertColor }
+                         { label: 'Famílias', value: families.length, icon: Users, color: 'text-blue-500', bg: 'bg-blue-50' },
+                         { label: 'Crianças', value: children.length, icon: Phone, color: 'text-emerald-500', bg: 'bg-emerald-50' },
+                         { label: 'Missões', value: tasks.length, icon: ShieldIcon, color: 'text-amber-500', bg: 'bg-amber-50' },
+                         { label: 'Prêmios', value: rewards.length, icon: Star, color: 'text-rose-500', bg: 'bg-rose-50' },
+                         { label: 'Mascotes', value: mascots.length, icon: Sparkles, color: 'text-purple-500', bg: 'bg-purple-50' },
+                         { label: 'Parceiros', value: partners.length, icon: Handshake, color: 'text-indigo-500', bg: 'bg-indigo-50' }
                        ].map((item, i) => (
-                          <div key={i} style={{ padding: '32px 24px', borderRadius: '24px', border: '1px solid #F1F5F9', textAlign: 'center', backgroundColor: '#F8FAFC' }}>
-                             <div style={{ 
-                               width: '64px', 
-                               height: '64px', 
-                               backgroundColor: item.value, 
-                               borderRadius: '16px', 
-                               margin: '0 auto 20px', 
-                               boxShadow: `0 10px 20px ${item.value}20`,
-                               cursor: 'pointer',
-                               border: '4px solid white'
-                             }} />
-                             <p style={{ fontSize: '14px', fontWeight: 800, color: '#0F172A', margin: '0 0 4px' }}>{item.label}</p>
+                         <div key={i} className="p-5 bg-slate-50 border border-slate-100 rounded-2xl flex flex-col items-center text-center gap-3">
+                            <div className={`w-10 h-10 ${item.bg} ${item.color} rounded-xl flex items-center justify-center`}>
+                               <item.icon size={20} />
+                            </div>
+                            <div>
+                               <p className="text-xl font-black text-slate-900 italic">{item.value}</p>
+                               <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{item.label}</p>
+                            </div>
+                         </div>
+                       ))}
+                    </div>
+
+                    <div className="bg-amber-50 border border-amber-100 rounded-2xl p-6 flex gap-4">
+                       <div className="w-10 h-10 bg-amber-200 text-amber-700 rounded-xl flex items-center justify-center shrink-0">
+                          <AlertTriangle size={20} />
+                       </div>
+                       <div>
+                          <p className="text-xs font-black text-amber-900 uppercase tracking-widest mb-1">Backup Automático</p>
+                          <p className="text-[11px] text-amber-700 font-bold leading-relaxed">O sistema realiza backups automáticos a cada 24 horas. O último snapshot foi realizado às 03:00 AM.</p>
+                       </div>
+                    </div>
+                 </div>
+               )}
+
+               {activeTab === 'branding' && (
+                 <div className="space-y-8">
+                    <header className="mb-8">
+                       <h3 className="text-xl font-black text-slate-900 italic tracking-tighter">Identidade Visual</h3>
+                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Configure as cores e logos do aplicativo</p>
+                    </header>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                       <div className="space-y-4">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Cor Primária</label>
+                          <div className="flex items-center gap-4 p-4 bg-slate-50 border border-slate-100 rounded-2xl">
+                             <div className="w-10 h-10 rounded-lg shadow-inner" style={{ backgroundColor: primaryColor }} />
                              <input 
                                type="text" 
-                               value={item.value} 
-                               onChange={(e) => item.setter(e.target.value)}
-                               style={{ fontSize: '13px', color: '#94A3B8', fontWeight: 700, border: 'none', backgroundColor: 'transparent', textAlign: 'center', width: '100%', outline: 'none' }} 
+                               value={primaryColor}
+                               onChange={(e) => setPrimaryColor(e.target.value)}
+                               className="bg-transparent font-black text-slate-900 outline-none uppercase w-24" 
                              />
+                             <div className="flex-1 text-right">
+                                <input 
+                                  type="color" 
+                                  value={primaryColor}
+                                  onChange={(e) => setPrimaryColor(e.target.value)}
+                                  className="w-8 h-8 rounded-full border-none cursor-pointer"
+                                />
+                             </div>
                           </div>
+                       </div>
+                       <div className="space-y-4">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Cor Secundária</label>
+                          <div className="flex items-center gap-4 p-4 bg-slate-50 border border-slate-100 rounded-2xl">
+                             <div className="w-10 h-10 rounded-lg shadow-inner" style={{ backgroundColor: secondaryColor }} />
+                             <input 
+                               type="text" 
+                               value={secondaryColor}
+                               onChange={(e) => setSecondaryColor(e.target.value)}
+                               className="bg-transparent font-black text-slate-900 outline-none uppercase w-24" 
+                             />
+                             <div className="flex-1 text-right">
+                                <input 
+                                  type="color" 
+                                  value={secondaryColor}
+                                  onChange={(e) => setSecondaryColor(e.target.value)}
+                                  className="w-8 h-8 rounded-full border-none cursor-pointer"
+                                />
+                             </div>
+                          </div>
+                       </div>
+                    </div>
+
+                    <div className="space-y-4 pt-8 border-t border-slate-50">
+                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Logotipos do App</label>
+                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                          {[1, 2, 3, 4].map(i => (
+                            <div key={i} className="aspect-square bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center gap-2 group hover:border-brand-primary transition-all cursor-pointer">
+                               <Plus className="text-slate-300 group-hover:text-brand-primary" size={20} />
+                               <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Upload Logo</span>
+                            </div>
+                          ))}
+                       </div>
+                    </div>
+                 </div>
+               )}
+
+               {activeTab === 'notificacoes' && (
+                 <div className="space-y-8">
+                    <header className="flex items-center gap-4 mb-8 pb-6 border-b border-slate-50">
+                       <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center text-amber-500 border border-amber-100">
+                          <Bell size={24} />
+                       </div>
+                       <div>
+                          <h3 className="text-xl font-black text-slate-900 italic tracking-tighter">Central de Notificações</h3>
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Configure como o sistema deve alertar os administradores</p>
+                       </div>
+                    </header>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                       {[
+                         { id: 'push', label: 'Push Admin', icon: Smartphone, color: 'text-blue-500', bg: 'bg-blue-50' },
+                         { id: 'email', label: 'E-mail Master', icon: Mail, color: 'text-purple-500', bg: 'bg-purple-50' },
+                         { id: 'whatsapp', label: 'WhatsApp (Beta)', icon: MessageSquare, color: 'text-emerald-500', bg: 'bg-emerald-50' }
+                       ].map((channel) => (
+                         <div key={channel.id} className="p-6 bg-slate-50 border border-slate-100 rounded-[1.5rem] flex flex-col items-center gap-4 group hover:bg-white hover:shadow-xl transition-all">
+                            <div className={`w-12 h-12 ${channel.bg} ${channel.color} rounded-xl flex items-center justify-center border border-white`}>
+                               <channel.icon size={22} />
+                            </div>
+                            <div className="text-center">
+                               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{channel.label}</p>
+                               <div className="w-12 h-6 bg-brand-primary rounded-full relative cursor-pointer shadow-inner">
+                                  <div className="absolute top-1 right-1 w-4 h-4 bg-white rounded-full shadow-md" />
+                               </div>
+                            </div>
+                         </div>
                        ))}
                     </div>
-                  </section>
 
-                  {/* Logo Management */}
-                  <section>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '32px', borderBottom: '1px solid #F1F5F9', paddingBottom: '20px' }}>
-                       <div style={{ width: '40px', height: '40px', borderRadius: '12px', backgroundColor: '#ECFDF5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10B981' }}>
-                          <ImageIcon size={20} />
-                       </div>
-                       <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0F172A', margin: 0 }}>Logotipia Oficial</h3>
+                    <div className="space-y-4 pt-8 border-t border-slate-50">
+                       <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-6">Alertas Operacionais</h4>
+                       {[
+                         { title: 'Novos Cadastros de Família', desc: 'Alertar quando uma nova conta Guardian for criada' },
+                         { title: 'Solicitações de Validação', desc: 'Notificar sobre novas missões pendentes de revisão' },
+                         { title: 'Alertas de Segurança', desc: 'Tentativas de login ou alterações críticas de sistema' },
+                         { title: 'Relatórios Semanais', desc: 'Resumo executivo de performance do ecossistema' }
+                       ].map((item, i) => (
+                         <div key={i} className="p-4 bg-white border border-slate-50 rounded-2xl flex items-center justify-between group hover:border-brand-primary/20 hover:shadow-lg hover:shadow-brand-primary/5 transition-all">
+                            <div>
+                               <p className="font-black text-slate-900 text-sm italic">{item.title}</p>
+                               <p className="text-[10px] text-slate-400 font-bold">{item.desc}</p>
+                            </div>
+                            <div className="w-10 h-5 bg-emerald-500 rounded-full relative cursor-pointer">
+                               <div className="absolute top-0.5 right-0.5 w-4 h-4 bg-white rounded-full shadow-sm" />
+                            </div>
+                         </div>
+                       ))}
                     </div>
-                    
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
-                       <div style={{ padding: '40px', backgroundColor: '#F8FAFC', borderRadius: '24px', border: '1px solid #F1F5F9', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
-                          <div style={{ width: '120px', height: '120px', backgroundColor: 'white', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '64px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>🦉</div>
-                          <p style={{ fontSize: '14px', fontWeight: 700, color: '#64748B' }}>Logo Principal (Símbolo)</p>
-                          <div style={{ display: 'flex', gap: '10px' }}>
-                             <button style={{ padding: '8px 16px', borderRadius: '10px', backgroundColor: '#1E4636', color: 'white', border: 'none', fontWeight: 700, fontSize: '13px', cursor: 'pointer' }}>Alterar</button>
-                             <button style={{ padding: '8px 16px', borderRadius: '10px', backgroundColor: 'white', color: '#EF4444', border: '1px solid #FEE2E2', fontWeight: 700, fontSize: '13px', cursor: 'pointer' }}>Remover</button>
+                 </div>
+               )}
+
+               {activeTab === 'pwa' && (
+                 <div className="space-y-8">
+                    <header className="flex items-center gap-4 mb-8 pb-6 border-b border-slate-50">
+                       <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-500 border border-indigo-100">
+                          <Smartphone size={24} />
+                       </div>
+                       <div>
+                          <h3 className="text-xl font-black text-slate-900 italic tracking-tighter">Experiência PWA</h3>
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Configure como o Corujinha se comporta como aplicativo instalado</p>
+                       </div>
+                    </header>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                       <div className="space-y-2">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Nome do App (Instalação)</label>
+                          <input type="text" defaultValue="Corujinha" className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-black text-slate-900 outline-none" />
+                       </div>
+                       <div className="space-y-2">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Modo de Exibição</label>
+                          <select className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-black text-slate-900 outline-none appearance-none">
+                             <option>Standalone (App Nativo)</option>
+                             <option>Fullscreen</option>
+                             <option>Minimal UI</option>
+                          </select>
+                       </div>
+                    </div>
+
+                    <div className="p-6 bg-emerald-50/50 border border-emerald-100 rounded-[2rem] space-y-6">
+                       <div>
+                          <h4 className="text-xs font-black text-emerald-600 uppercase tracking-widest mb-2 flex items-center gap-2">
+                             <Sparkles size={16} /> Ícones de Alta Fidelidade
+                          </h4>
+                          <p className="text-[10px] text-emerald-500 font-bold">Otimize a presença visual na home screen do usuário</p>
+                       </div>
+                       
+                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                          {[
+                            { label: '512x512', desc: 'Main Icon' },
+                            { label: '192x192', desc: 'Android/Chrome' },
+                            { label: 'Apple Touch', desc: 'iOS Devices' },
+                            { label: 'Maskable', desc: 'Adaptive' }
+                          ].map((icon, i) => (
+                            <div key={i} className="bg-white border border-emerald-100 rounded-2xl p-4 flex flex-col items-center text-center gap-2 group hover:shadow-lg transition-all cursor-pointer">
+                               <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-400 group-hover:text-emerald-500 transition-colors">
+                                  <Plus size={20} />
+                               </div>
+                               <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest leading-none">{icon.label}</span>
+                               <span className="text-[8px] text-emerald-300 font-bold uppercase">{icon.desc}</span>
+                            </div>
+                          ))}
+                       </div>
+                    </div>
+
+                    <div className="bg-slate-900 rounded-[2rem] p-8 text-white relative overflow-hidden group">
+                       <div className="absolute top-0 right-0 w-64 h-64 bg-brand-primary/20 blur-[80px] -z-0" />
+                       <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                          <div className="space-y-2">
+                             <div className="flex items-center gap-2 text-brand-accent">
+                                <Phone size={18} />
+                                <span className="text-[10px] font-black uppercase tracking-[0.3em]">Instalação Offline</span>
+                             </div>
+                             <h4 className="text-xl font-black italic tracking-tighter">Cache Estratégico & Service Workers</h4>
+                             <p className="text-[11px] text-white/40 font-bold max-w-md">O ecossistema Corujinha já possui suporte nativo para funcionamento offline e carregamento ultra-rápido.</p>
                           </div>
-                       </div>
-                       <div style={{ padding: '40px', backgroundColor: primaryColor, borderRadius: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
-                          <h2 style={{ color: 'white', fontWeight: 900, fontSize: '28px', margin: 0 }}>Corujinha</h2>
-                          <p style={{ color: 'rgba(255,255,255,0.6)', fontWeight: 600, fontSize: '13px' }}>Versão Horizontal (Marca D'água)</p>
-                       </div>
-                    </div>
-                  </section>
-
-                  {/* UI Elements Preview */}
-                  <section>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '32px', borderBottom: '1px solid #F1F5F9', paddingBottom: '20px' }}>
-                       <div style={{ width: '40px', height: '40px', borderRadius: '12px', backgroundColor: '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3B82F6' }}>
-                          <MousePointer2 size={20} />
-                       </div>
-                       <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0F172A', margin: 0 }}>Preview de Componentes</h3>
-                    </div>
-
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', padding: '32px', backgroundColor: '#F8FAFC', borderRadius: '24px', border: '1px solid #F1F5F9' }}>
-                       <button style={{ padding: '16px 32px', backgroundColor: primaryColor, color: 'white', border: 'none', borderRadius: '14px', fontWeight: 800, fontSize: '15px', cursor: 'pointer', boxShadow: `0 8px 16px ${primaryColor}30` }}>Botão Primário</button>
-                       <button style={{ padding: '16px 32px', backgroundColor: secondaryColor, color: 'white', border: 'none', borderRadius: '14px', fontWeight: 800, fontSize: '15px', cursor: 'pointer', boxShadow: `0 8px 16px ${secondaryColor}30` }}>Destaque</button>
-                       <button style={{ padding: '16px 32px', backgroundColor: 'white', color: primaryColor, border: `2px solid ${primaryColor}`, borderRadius: '14px', fontWeight: 800, fontSize: '15px', cursor: 'pointer' }}>Outline</button>
-                       <button style={{ padding: '16px 32px', backgroundColor: alertColor, color: 'white', border: 'none', borderRadius: '14px', fontWeight: 800, fontSize: '15px', cursor: 'pointer' }}>Alerta</button>
-                    </div>
-                  </section>
-
-                  {/* Typography Selection */}
-                  <section>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '32px', borderBottom: '1px solid #F1F5F9', paddingBottom: '20px' }}>
-                       <div style={{ width: '40px', height: '40px', borderRadius: '12px', backgroundColor: '#FFFBEB', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#F59E0B' }}>
-                          <Type size={20} />
-                       </div>
-                       <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0F172A', margin: 0 }}>Tipografia</h3>
-                    </div>
-
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
-                       {['Outfit', 'Inter', 'Roboto'].map((font) => (
-                          <button 
-                            key={font} 
-                            onClick={() => setFontFamily(font)}
-                            style={{ 
-                              padding: '24px', 
-                              borderRadius: '16px', 
-                              border: fontFamily === font ? `2px solid ${primaryColor}` : '2px solid #F1F5F9', 
-                              backgroundColor: fontFamily === font ? '#F8FAF9' : 'white',
-                              textAlign: 'left',
-                              cursor: 'pointer'
-                            }}
-                          >
-                             <h4 style={{ margin: '0 0 8px', fontSize: '18px', fontWeight: 900, color: '#0F172A', fontFamily: font }}>{font}</h4>
-                             <p style={{ margin: 0, fontSize: '13px', color: '#64748B', fontWeight: 500 }}>The quick brown fox jumps over the lazy dog.</p>
+                          <button className="px-6 py-4 bg-white/10 hover:bg-white/20 border border-white/10 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all">
+                             Limpar Cache Global
                           </button>
-                       ))}
-                    </div>
-                  </section>
-               </div>
-             )}
-
-             {activeTab === 'notificacoes' && (
-               <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px', borderBottom: '1px solid #F1F5F9', paddingBottom: '20px' }}>
-                     <div style={{ width: '40px', height: '40px', borderRadius: '12px', backgroundColor: '#FFFBEB', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#F59E0B' }}>
-                        <Bell size={20} />
-                     </div>
-                     <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0F172A', margin: 0 }}>Central de Alertas e Notificações</h3>
-                  </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '48px' }}>
-                     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                        <h4 style={{ fontSize: '16px', fontWeight: 800, color: '#0F172A', marginBottom: '8px' }}>Canais Habilitados</h4>
-                        {[
-                          { label: 'E-mail Transacional', desc: 'Envio de convites e confirmações.', status: true },
-                          { label: 'Push Notifications', desc: 'Alertas diretos no celular.', status: true },
-                          { label: 'Relatórios Automáticos', desc: 'Envio semanal para guardiões.', status: false },
-                          { label: 'Alertas de Suporte', desc: 'Novas solicitações de ajuda.', status: true }
-                        ].map((item, i) => (
-                           <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px', borderRadius: '20px', backgroundColor: '#F8FAFC', border: '1px solid #F1F5F9' }}>
-                              <div style={{ flex: 1 }}>
-                                 <p style={{ margin: '0 0 4px', fontWeight: 800, fontSize: '15px', color: '#0F172A' }}>{item.label}</p>
-                                 <p style={{ margin: 0, fontSize: '12px', color: '#64748B', fontWeight: 500 }}>{item.desc}</p>
-                              </div>
-                              <div style={{ width: '48px', height: '26px', borderRadius: '20px', backgroundColor: item.status ? '#10B981' : '#CBD5E1', position: 'relative', cursor: 'pointer' }}>
-                                 <div style={{ position: 'absolute', right: item.status ? '4px' : 'auto', left: item.status ? 'auto' : '4px', top: '3px', width: '20px', height: '20px', borderRadius: '50%', backgroundColor: 'white' }} />
-                              </div>
-                           </div>
-                        ))}
-                     </div>
-                     <div>
-                        <h4 style={{ fontSize: '16px', fontWeight: 800, color: '#0F172A', marginBottom: '24px' }}>Logs Recentes</h4>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                           {['Relatório Semanal Enviado', 'Nova Missão Criada', 'Erro de Login Admin'].map((log, i) => (
-                              <div key={i} style={{ padding: '16px', backgroundColor: 'white', borderRadius: '12px', border: '1px solid #F1F5F9', fontSize: '13px', fontWeight: 600, color: '#475569' }}>
-                                 {log}
-                              </div>
-                           ))}
-                        </div>
-                     </div>
-                  </div>
-               </div>
-             )}
-
-             {activeTab === 'pwa' && (
-               <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px', borderBottom: '1px solid #F1F5F9', paddingBottom: '20px' }}>
-                       <div style={{ width: '40px', height: '40px', borderRadius: '12px', backgroundColor: '#FDF2F2', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#EF4444' }}>
-                          <Smartphone size={20} />
-                       </div>
-                       <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0F172A', margin: 0 }}>Configurações PWA</h3>
-                  </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '48px' }}>
-                     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                           <label style={{ fontSize: '14px', fontWeight: 800, color: '#0F172A' }}>Nome do Aplicativo</label>
-                           <input type="text" defaultValue="Corujinha App" style={{ padding: '14px 16px', borderRadius: '12px', border: '1px solid #E2E8F0', fontSize: '15px', fontWeight: 600 }} />
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                           <label style={{ fontSize: '14px', fontWeight: 800, color: '#0F172A' }}>Cor de Tema (Browser)</label>
-                           <input type="text" defaultValue={primaryColor} style={{ padding: '14px 16px', borderRadius: '12px', border: '1px solid #E2E8F0', fontSize: '15px', fontWeight: 600 }} />
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px', backgroundColor: '#F8FAFC', borderRadius: '16px', border: '1px solid #F1F5F9' }}>
-                           <div>
-                              <p style={{ margin: '0 0 4px', fontWeight: 800, fontSize: '15px' }}>Modo Offline</p>
-                              <p style={{ margin: 0, fontSize: '12px', color: '#64748B', fontWeight: 500 }}>Permitir acesso básico sem internet.</p>
-                           </div>
-                           <div style={{ width: '48px', height: '26px', borderRadius: '20px', backgroundColor: '#10B981', position: 'relative' }}>
-                              <div style={{ position: 'absolute', right: '3px', top: '3px', width: '20px', height: '20px', borderRadius: '50%', backgroundColor: 'white' }} />
-                           </div>
-                        </div>
-                     </div>
-
-                     <div style={{ padding: '40px', backgroundColor: '#0F172A', borderRadius: '32px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '32px', position: 'relative' }}>
-                        <div style={{ width: '180px', height: '360px', border: '8px solid rgba(255,255,255,0.1)', borderRadius: '30px', position: 'relative', overflow: 'hidden', backgroundColor: 'white' }}>
-                           <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px' }}>
-                              <div style={{ width: '64px', height: '64px', backgroundColor: primaryColor, borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px' }}>🦉</div>
-                              <h4 style={{ margin: 0, fontSize: '18px', fontWeight: 900, color: '#0F172A' }}>Corujinha</h4>
-                              <div style={{ padding: '10px 24px', backgroundColor: primaryColor, color: 'white', borderRadius: '10px', fontSize: '12px', fontWeight: 800 }}>Instalar App</div>
-                           </div>
-                        </div>
-                        <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px', fontWeight: 600 }}>Visualização Mobile do Manifesto</p>
-                     </div>
-                  </div>
-               </div>
-             )}
-
-             {activeTab === 'localizacao' && (
-               <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px', borderBottom: '1px solid #F1F5F9', paddingBottom: '20px' }}>
-                       <div style={{ width: '40px', height: '40px', borderRadius: '12px', backgroundColor: '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3B82F6' }}>
-                          <Globe2 size={20} />
-                       </div>
-                       <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0F172A', margin: 0 }}>Região e Localização</h3>
-                  </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '32px' }}>
-                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                        <label style={{ fontSize: '14px', fontWeight: 800, color: '#0F172A' }}>Idioma Padrão</label>
-                        <div style={{ position: 'relative' }}>
-                           <Languages style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} size={20} />
-                           <select style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '14px', border: '1px solid #E2E8F0', fontSize: '15px', fontWeight: 600, appearance: 'none', backgroundColor: 'white' }}>
-                              <option>Português (Brasil)</option>
-                              <option>English (USA)</option>
-                              <option>Español</option>
-                           </select>
-                        </div>
-                     </div>
-                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                        <label style={{ fontSize: '14px', fontWeight: 800, color: '#0F172A' }}>Fuso Horário</label>
-                        <div style={{ position: 'relative' }}>
-                           <Clock style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} size={20} />
-                           <select style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '14px', border: '1px solid #E2E8F0', fontSize: '15px', fontWeight: 600, appearance: 'none', backgroundColor: 'white' }}>
-                              <option>Brasília (GMT-3)</option>
-                              <option>New York (EST)</option>
-                              <option>London (GMT)</option>
-                           </select>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-             )}
-
-             {activeTab === 'seguranca' && (
-               <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
-                  <section>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '32px', borderBottom: '1px solid #F1F5F9', paddingBottom: '20px' }}>
-                       <div style={{ width: '40px', height: '40px', borderRadius: '12px', backgroundColor: '#FDF2F2', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#EF4444' }}>
-                          <Shield size={20} />
-                       </div>
-                       <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#0F172A', margin: 0 }}>Controle de Acesso</h3>
-                    </div>
-                    
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-                       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                          <label style={{ fontSize: '14px', fontWeight: 800, color: '#0F172A' }}>E-mail Master</label>
-                          <div style={{ position: 'relative' }}>
-                             <Mail style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} size={20} />
-                             <input type="email" defaultValue="admin@corujinha.com" style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '14px', border: '1px solid #E2E8F0', fontSize: '15px', fontWeight: 600 }} />
-                          </div>
-                       </div>
-                       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                          <label style={{ fontSize: '14px', fontWeight: 800, color: '#0F172A' }}>Chave de Autenticação</label>
-                          <div style={{ position: 'relative' }}>
-                             <Lock style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} size={20} />
-                             <input type="password" defaultValue="********" style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '14px', border: '1px solid #E2E8F0', fontSize: '15px', fontWeight: 600 }} />
-                          </div>
                        </div>
                     </div>
-                  </section>
+                 </div>
+               )}
 
-                  <section>
-                     <div style={{ padding: '32px', borderRadius: '24px', backgroundColor: '#FEF2F2', border: '2px solid #FEE2E2', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div>
-                           <h4 style={{ margin: '0 0 4px', fontSize: '18px', fontWeight: 900, color: '#991B1B' }}>Zona de Perigo</h4>
-                           <p style={{ margin: 0, fontSize: '14px', color: '#B91C1C', fontWeight: 500 }}>Ações irreversíveis no banco de dados e usuários.</p>
-                        </div>
-                        <button style={{ padding: '12px 24px', borderRadius: '12px', backgroundColor: '#EF4444', color: 'white', border: 'none', fontWeight: 800, fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                           <Trash2 size={20} /> Resetar Ecossistema
-                        </button>
-                     </div>
-                  </section>
-               </div>
-             )}
-
-             {activeTab === 'firestore' && (
-               <div style={{ textAlign: 'center', padding: '100px 0' }}>
-                  <div style={{ width: '80px', height: '80px', borderRadius: '24px', backgroundColor: '#ECFDF5', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 32px', color: '#10B981', boxShadow: '0 8px 16px rgba(16, 185, 129, 0.1)' }}>
-                     <Check size={40} strokeWidth={3} />
-                  </div>
-                  <h3 style={{ fontSize: '24px', fontWeight: 900, color: '#0F172A', marginBottom: '12px' }}>Firebase Sincronizado</h3>
-                  <p style={{ color: '#64748B', fontSize: '16px', fontWeight: 500, maxWidth: '400px', margin: '0 auto', lineHeight: 1.6 }}>O núcleo de dados está conectado e operando em perfeita harmonia com o ambiente de produção.</p>
-                  <button style={{ marginTop: '32px', padding: '12px 24px', borderRadius: '12px', border: '1px solid #E2E8F0', backgroundColor: 'white', color: '#475569', fontWeight: 700, fontSize: '14px', cursor: 'pointer' }}>Testar Conexão Novamente</button>
-               </div>
-             )}
-          </div>
+               {/* Outras abas seguem o mesmo padrão */}
+               {activeTab === 'idioma' && (
+                 <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
+                    <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300">
+                       <Settings size={32} />
+                    </div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Módulo em Desenvolvimento</p>
+                 </div>
+               )}
+             </motion.div>
+           </AnimatePresence>
         </div>
-      </main>
-    </div>
+      </div>
+    </AdminShell>
   )
 }

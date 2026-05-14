@@ -1,96 +1,143 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-primary: #1A4332;
-  --color-brand-secondary: #2D6A4F;
-  --color-brand-accent: #52B788;
-  --color-brand-bg: #F8FAF9;
+  --color-brand-primary: #0A3D2D;
+  --color-brand-secondary: #1E5B44;
+  --color-brand-accent: #3EC28F;
+  --color-brand-bg: #F0F4F2;
   --color-brand-surface: #FFFFFF;
-  --color-app-border: #E2E8F0;
+  --color-app-border: #E8EDEB;
 }
 
-:root {
-  --brand-primary: #1A4332;
-  --brand-secondary: #2D6A4F;
-  --brand-accent: #52B788;
-  --brand-bg: #F8FAF9;
-  --brand-surface: #FFFFFF;
-  --app-border: #E2E8F0;
-  --foreground: #0F172A;
+@layer base {
+  :root {
+    --brand-primary: #0A3D2D;
+    --brand-secondary: #1E5B44;
+    --brand-accent: #3EC28F;
+    --brand-bg: #F0F4F2;
+    --brand-surface: #FFFFFF;
+    --app-border: #E8EDEB;
+    --foreground: #1A2E26;
+    
+    /* Premium Shadows */
+    --shadow-sm: 0 2px 4px rgba(10, 61, 45, 0.05);
+    --shadow-md: 0 10px 25px -5px rgba(10, 61, 45, 0.08), 0 8px 10px -6px rgba(10, 61, 45, 0.08);
+    --shadow-lg: 0 20px 50px -12px rgba(10, 61, 45, 0.12);
+  }
+
+  body {
+    background-color: var(--brand-bg);
+    color: var(--foreground);
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(62, 194, 143, 0.03) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(10, 61, 45, 0.03) 0px, transparent 50%);
+    background-attachment: fixed;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif;
+  }
 }
 
-.dark {
-  --brand-bg: #0F172A;
-  --brand-surface: #1E293B;
-  --app-border: #334155;
-  --foreground: #F8FAFC;
+/* ─── Premium Glassmorphism ────────────────────────────────────────── */
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: var(--shadow-md);
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  background-color: var(--brand-bg);
-  color: var(--foreground);
-  font-family: 'Inter', system-ui, sans-serif;
-  line-height: 1.5;
-}
-
-/* ─── Admin Components ────────────────────────────────────────────────── */
+/* ─── Admin Components Evolution ───────────────────────────────────── */
 
 .admin-card {
-  background-color: var(--brand-surface);
+  background: var(--brand-surface);
   border: 1px solid var(--app-border);
-  border-radius: 0.75rem;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
+  border-radius: 2rem;
+  padding: 2rem;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .admin-card:hover {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--brand-accent);
 }
 
 .sidebar-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  color: #64748B;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 1.25rem;
+  color: #8C9B96;
   text-decoration: none;
-  font-weight: 500;
-  transition: all 0.2s;
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin: 0.25rem 0.75rem;
 }
 
 .sidebar-item:hover {
-  background-color: #F1F5F9;
+  background: rgba(10, 61, 45, 0.05);
   color: var(--brand-primary);
+  transform: translateX(4px);
 }
 
 .sidebar-item.active {
-  background-color: #E9F5EB;
-  color: var(--brand-primary);
-}
-
-.dark .sidebar-item:hover {
-  background-color: #334155;
+  background: var(--brand-primary);
   color: white;
+  box-shadow: 0 10px 20px -5px rgba(10, 61, 45, 0.3);
 }
 
-.dark .sidebar-item.active {
-  background-color: #1A4332;
-  color: white;
+.sidebar-item svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  stroke-width: 2.5;
 }
 
-/* Scrollbar Hide */
+/* ─── Custom Scrollbar ────────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Scrollbar Hide Utility */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* ─── Animations ──────────────────────────────────────────────────── */
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }

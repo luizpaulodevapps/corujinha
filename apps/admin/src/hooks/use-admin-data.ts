@@ -10,6 +10,7 @@ import {
   onSnapshot, 
   doc, 
   updateDoc, 
+  setDoc,
   addDoc, 
   deleteDoc,
   serverTimestamp,
@@ -33,44 +34,68 @@ export function useAdminData() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [pendingTasks, setPendingTasks] = useState<TaskExecution[]>([])
   const [rewards, setRewards] = useState<Reward[]>([])
+  const [media, setMedia] = useState<any[]>([])
+  const [tips, setTips] = useState<any[]>([])
+  const [products, setProducts] = useState<any[]>([])
+  const [partners, setPartners] = useState<any[]>([])
+  const [mascots, setMascots] = useState<any[]>([])
+  const [systemSettings, setSystemSettings] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   const db = getFirebaseFirestore()
 
   useEffect(() => {
-    // 1. Fetch Families
-    const qFamilies = query(collection(db, 'families'), orderBy('createdAt', 'desc'))
-    const unsubFamilies = onSnapshot(qFamilies, (snapshot) => {
+    const unsubFamilies = onSnapshot(query(collection(db, 'families'), orderBy('createdAt', 'desc')), (snapshot) => {
       setFamilies(snapshot.docs.map(d => ({ id: d.id, ...d.data() } as Family)))
     })
 
-    // 2. Fetch Children
-    const qChildren = query(collection(db, 'children'), orderBy('xp', 'desc'))
-    const unsubChildren = onSnapshot(qChildren, (snapshot) => {
+    const unsubChildren = onSnapshot(query(collection(db, 'children'), orderBy('xp', 'desc')), (snapshot) => {
       setChildren(snapshot.docs.map(d => ({ id: d.id, ...d.data() } as Child)))
     })
 
-    // 3. Fetch Tasks (Templates/Configured)
-    const qTasks = query(collection(db, 'tasks'), orderBy('createdAt', 'desc'))
-    const unsubTasks = onSnapshot(qTasks, (snapshot) => {
+    const unsubTasks = onSnapshot(query(collection(db, 'tasks'), orderBy('createdAt', 'desc')), (snapshot) => {
       setTasks(snapshot.docs.map(d => ({ id: d.id, ...d.data() } as Task)))
     })
 
-    // 4. Fetch Pending Validations
-    const qPending = query(
+    const unsubPending = onSnapshot(query(
       collection(db, 'taskExecutions'), 
       where('status', '==', 'completed'),
       orderBy('completedAt', 'desc')
-    )
-    const unsubPending = onSnapshot(qPending, (snapshot) => {
+    ), (snapshot) => {
       setPendingTasks(snapshot.docs.map(d => ({ id: d.id, ...d.data() } as TaskExecution)))
     })
 
-    // 5. Fetch Rewards
-    const qRewards = query(collection(db, 'rewards'), orderBy('createdAt', 'desc'))
-    const unsubRewards = onSnapshot(qRewards, (snapshot) => {
-      setRewards(snapshot.docs.map(d => ({ id: d.id, ...d.data() } as Reward)))
+    const unsubMedia = onSnapshot(query(collection(db, 'media'), orderBy('createdAt', 'desc')), (snapshot) => {
+      setMedia(snapshot.docs.map(d => ({ id: d.id, ...d.data() })))
+    })
+
+    const unsubTips = onSnapshot(query(collection(db, 'tips'), orderBy('createdAt', 'desc')), (snapshot) => {
+      setTips(snapshot.docs.map(d => ({ id: d.id, ...d.data() })))
+    })
+
+    const unsubProducts = onSnapshot(query(collection(db, 'products'), orderBy('createdAt', 'desc')), (snapshot) => {
+      setProducts(snapshot.docs.map(d => ({ id: d.id, ...d.data() })))
+    })
+
+    const unsubPartners = onSnapshot(query(collection(db, 'partners'), orderBy('createdAt', 'desc')), (snapshot) => {
+      setPartners(snapshot.docs.map(d => ({ id: d.id, ...d.data() })))
+    })
+
+    const unsubMascots = onSnapshot(query(collection(db, 'mascots'), orderBy('createdAt', 'desc')), (snapshot) => {
+      setMascots(snapshot.docs.map(d => ({ id: d.id, ...d.data() })))
+    })
+
+    const unsubSettings = onSnapshot(doc(db, 'systemSettings', 'global'), (snapshot) => {
+      if (snapshot.exists()) {
+        setSystemSettings(snapshot.data())
+      } else {
+        setSystemSettings({ allowNewAdmins: true })
+      }
       setIsLoading(false)
+    })
+
+    const unsubRewards = onSnapshot(query(collection(db, 'rewards'), orderBy('createdAt', 'desc')), (snapshot) => {
+      setRewards(snapshot.docs.map(d => ({ id: d.id, ...d.data() } as Reward)))
     })
 
     return () => {
@@ -78,23 +103,33 @@ export function useAdminData() {
       unsubChildren()
       unsubTasks()
       unsubPending()
+      unsubMedia()
+      unsubTips()
+      unsubProducts()
+      unsubPartners()
+      unsubMascots()
+      unsubSettings()
       unsubRewards()
     }
   }, [db])
 
   // Actions
+  const updateSystemSettings = async (settings: any) => {
+    const settingsRef = doc(db, 'systemSettings', 'global')
+    await setDoc(settingsRef, {
+      ...settings,
+      updatedAt: serverTimestamp()
+    }, { merge: true })
+  }
+
   const approveTask = async (execution: TaskExecution) => {
     const execRef = doc(db, 'taskExecutions', execution.id)
-    const walletRef = doc(db, 'wallets', execution.childId) // Assuming wallet ID is childId
-
-    // Update Execution
     await updateDoc(execRef, {
       status: 'approved',
       approvedAt: serverTimestamp(),
-      approvedBy: 'system-admin' // Simplified for now
+      approvedBy: 'system-admin'
     })
 
-    // Add Transaction
     const transRef = collection(db, 'transactions')
     await addDoc(transRef, {
       childId: execution.childId,
@@ -108,7 +143,6 @@ export function useAdminData() {
       createdAt: serverTimestamp()
     } as any)
 
-    // Update Child Stats (XP and Leveling logic should probably be on Functions, but simplified here)
     const childRef = doc(db, 'children', execution.childId)
     await updateDoc(childRef, {
       xp: (children.find(c => c.id === execution.childId)?.xp || 0) + execution.taskRewardXp
@@ -130,8 +164,15 @@ export function useAdminData() {
     tasks,
     pendingTasks,
     rewards,
+    media,
+    tips,
+    products,
+    partners,
+    mascots,
+    systemSettings,
     isLoading,
     approveTask,
-    rejectTask
+    rejectTask,
+    updateSystemSettings
   }
 }
