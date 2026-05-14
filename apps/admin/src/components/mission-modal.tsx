@@ -26,8 +26,13 @@ export function MissionModal({ isOpen, onClose }: { isOpen: boolean, onClose: ()
     
     try {
       const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY
-      if (!apiKey || apiKey === 'sua_chave_aqui') {
-        throw new Error('Chave de API do Gemini não configurada')
+      
+      if (!apiKey) {
+        throw new Error('Variável NEXT_PUBLIC_GEMINI_API_KEY não encontrada no sistema.')
+      }
+      
+      if (apiKey === 'sua_chave_aqui') {
+        throw new Error('A chave configurada ainda é o valor padrão "sua_chave_aqui".')
       }
 
       const prompt = `Você é um assistente criativo do app infantil Corujinha. 
@@ -44,6 +49,11 @@ export function MissionModal({ isOpen, onClose }: { isOpen: boolean, onClose: ()
           contents: [{ parts: [{ text: prompt }] }]
         })
       })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(`Erro na API do Google: ${errorData.error?.message || response.statusText}`)
+      }
 
       const result = await response.json()
       const text = result.candidates[0].content.parts[0].text.replace(/```json|```/g, '').trim()
@@ -65,9 +75,13 @@ export function MissionModal({ isOpen, onClose }: { isOpen: boolean, onClose: ()
         rewardXp: data.rewardXp,
         imageUrl: finalImageUrl
       })
-    } catch (err) {
-      console.error('Erro na IA:', err)
-      alert('Erro ao gerar com IA. Verifique sua chave no arquivo .env.local')
+    } catch (err: any) {
+      console.error('Erro detalhado na IA:', err)
+      const keySnippet = process.env.NEXT_PUBLIC_GEMINI_API_KEY 
+        ? `${process.env.NEXT_PUBLIC_GEMINI_API_KEY.substring(0, 6)}...${process.env.NEXT_PUBLIC_GEMINI_API_KEY.slice(-4)}`
+        : 'AUSENTE'
+      
+      alert(`🚨 FALHA NA IA\n\nMotivo: ${err.message}\nChave detectada: ${keySnippet}\n\nSe estiver na Vercel, certifique-se de ter feito o REDEPLOY após salvar a variável.`)
     } finally {
       setIsGenerating(false)
     }
