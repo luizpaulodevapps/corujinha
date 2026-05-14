@@ -26,6 +26,7 @@ export function MissionModal({ isOpen, onClose }: { isOpen: boolean, onClose: ()
     
     try {
       const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY
+      const model = process.env.NEXT_PUBLIC_GEMINI_MODEL || 'gemini-1.5-flash'
       
       if (!apiKey) {
         throw new Error('Variável NEXT_PUBLIC_GEMINI_API_KEY não encontrada no sistema.')
@@ -42,7 +43,7 @@ export function MissionModal({ isOpen, onClose }: { isOpen: boolean, onClose: ()
       Categorias válidas: Saúde, Organização, Sabedoria, Natureza, Deveres.
       O imageSearchTerm deve ser um termo curto em inglês para busca de imagem.`
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
