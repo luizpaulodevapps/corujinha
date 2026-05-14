@@ -17,14 +17,14 @@ export function useShop() {
   }, [filter])
 
   const handlePurchaseClick = (reward: Reward) => {
-    if (profile.coins >= reward.cost) {
+    if (profile && profile.coins >= reward.cost) {
       setSelectedReward(reward)
       setIsConfirmOpen(true)
     }
   }
 
   const confirmPurchase = () => {
-    if (selectedReward) {
+    if (selectedReward && profile) {
       spendCoins(selectedReward.cost, `Resgate: ${selectedReward.title}`)
       setIsConfirmOpen(false)
       setIsSuccessOpen(true)
@@ -42,6 +42,6 @@ export function useShop() {
     setIsSuccessOpen,
     handlePurchaseClick,
     confirmPurchase,
-    childCoins: profile.coins
+    childCoins: profile?.coins ?? 0
   }
 }

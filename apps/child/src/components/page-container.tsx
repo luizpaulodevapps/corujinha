@@ -9,6 +9,7 @@ import { ChildWalletModal } from './child-wallet-modal'
 import { NotificationDrawer } from './modals/NotificationDrawer'
 import { AvatarCustomizationModal } from './modals/AvatarCustomizationModal'
 import { motion } from 'framer-motion'
+import { Sparkles } from 'lucide-react'
 
 import { MagicBackground } from './magic-background'
 import { ChildBottomNav } from './child-bottom-nav'
@@ -43,6 +44,16 @@ export function PageContainer({
   const modals = useDashboardModals()
 
   const unreadCount = notifications.filter(n => !n.read).length
+
+  if (!profile) {
+    return (
+      <div className="min-h-screen bg-[#0A1A14] flex items-center justify-center">
+        <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}>
+          <Sparkles className="text-brand-primary" size={48} />
+        </motion.div>
+      </div>
+    )
+  }
 
   return (
     <div className="relative min-h-screen flex flex-col">

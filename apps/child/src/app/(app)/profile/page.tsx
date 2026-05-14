@@ -23,18 +23,33 @@ const themes = [
 
 export default function ProfilePage() {
   const { profile, updateAvatar } = useChildStore()
-  const [selectedAvatar, setSelectedAvatar] = useState(profile.avatar)
+  const [selectedAvatar, setSelectedAvatar] = useState('')
   const [selectedTheme, setSelectedTheme] = useState('green')
   const [isEditingName, setIsEditingName] = useState(false)
-  const [tempName, setTempName] = useState(profile.name)
+  const [tempName, setTempName] = useState('')
   const [showSaveSuccess, setShowSaveSuccess] = useState(false)
   const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    if (profile) {
+      setSelectedAvatar(profile.avatar)
+      setTempName(profile.name)
+    }
+  }, [profile])
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  if (!mounted) return null
+  if (!mounted || !profile) {
+    return (
+      <div className="min-h-screen bg-[#0A1A14] flex items-center justify-center">
+        <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}>
+          <Sparkles className="text-brand-primary" size={48} />
+        </motion.div>
+      </div>
+    )
+  }
 
   const handleSave = () => {
     updateAvatar(selectedAvatar)

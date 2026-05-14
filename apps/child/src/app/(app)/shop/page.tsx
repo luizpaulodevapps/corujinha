@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
 import { Coins, Gem, Leaf, ShoppingBag, Sparkles } from 'lucide-react'
 import { PageContainer } from '@/components/page-container'
 import { useShop } from '@/features/shop/hooks/use-shop'
@@ -28,14 +29,25 @@ export default function ShopPage() {
   } = useShop()
 
   const { profile } = useChildStore()
-  const categories = ['Todos', 'Tecnologia', 'Comida', 'Lazer', 'Aventura'] as RewardCategory[]
-  const affordableCount = filteredRewards.filter(reward => profile.coins >= reward.cost).length
-
+  
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  if (!mounted) return null
+  if (!mounted || !profile) {
+    return (
+      <PageContainer title="Loja de Tesouros" hideHeader hideAvatar>
+        <div className="flex-1 flex items-center justify-center min-h-[50vh]">
+          <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}>
+            <Sparkles className="text-brand-primary" size={48} />
+          </motion.div>
+        </div>
+      </PageContainer>
+    )
+  }
+
+  const categories = ['Todos', 'Tecnologia', 'Comida', 'Lazer', 'Aventura'] as RewardCategory[]
+  const affordableCount = filteredRewards.filter(reward => profile.coins >= reward.cost).length
 
   return (
     <PageContainer title="Loja de Tesouros" hideHeader hideAvatar>
