@@ -146,12 +146,14 @@ export default function LandingPage() {
               transition={{ delay: 0.2 }}
               className="flex flex-col sm:flex-row items-center gap-8"
             >
-              <Link href="/login" className="btn-primary h-24 px-16 text-3xl rounded-[2.5rem] w-full sm:w-auto shadow-[0_12px_0_0_#1B4332]">
+              <a href="https://corujinha-child.vercel.app/" className="btn-primary h-24 px-16 text-3xl rounded-[2.5rem] w-full sm:w-auto shadow-[0_12px_0_0_#1B4332] flex items-center justify-center gap-4">
                 Começar Aventura <ArrowRight size={32} />
-              </Link>
+              </a>
               <div className="flex flex-col text-left">
-                <span className="text-brand-primary font-black text-2xl">+15k</span>
-                <span className="text-text-muted font-bold text-sm uppercase tracking-widest">Famílias Felizes</span>
+                <span className="text-brand-primary font-black text-2xl">Portal do</span>
+                <Link href="/login" className="text-brand-secondary font-black text-sm uppercase tracking-widest hover:text-brand-primary underline decoration-2 underline-offset-4 transition-colors">
+                  Acesso dos Guardiões
+                </Link>
               </div>
             </motion.div>
           </motion.div>

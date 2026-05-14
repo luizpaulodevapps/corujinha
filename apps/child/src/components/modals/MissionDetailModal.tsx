@@ -76,21 +76,24 @@ export function MissionDetailModal({ mission, onClose, onComplete }: MissionDeta
             </div>
 
             {/* Mascot Tip with Cozy Speech Bubble */}
-            <div className="flex gap-6 mb-10 items-end">
-              <motion.div 
-                animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                className="w-20 h-20 shrink-0"
-              >
-                <img src="/owl_mascot_new.png" alt="Corujinha" className="w-full h-full object-contain filter drop-shadow-xl" />
-              </motion.div>
-              
-              <div className="relative bg-white p-6 rounded-[2.5rem] flex-1 shadow-[0_10px_30px_rgba(6,31,21,0.05)] border-2 border-emerald-50">
-                <p className="text-[15px] font-bold text-emerald-900 m-0 leading-relaxed italic">
-                  "<TypewriterText text={mission.title === 'Arrumar a Cama' ? 'Dobre os lençóis com carinho para o quarto ficar bem aconchegante! 🛏️' : 'Capriche na escovação para seu sorriso brilhar como uma estrela! ✨'} />"
-                </p>
-                {/* Bubble Tip */}
-                <div className="absolute bottom-6 -left-2 w-5 h-5 bg-white border-b-2 border-l-2 border-emerald-50 rotate-45 -z-10" />
+            <div className="flex flex-col gap-2 mb-10">
+              <span className="text-[10px] font-black text-emerald-600/40 uppercase tracking-[0.3em] ml-24">Sua Mentora diz:</span>
+              <div className="flex gap-6 items-end">
+                <motion.div 
+                  animate={{ y: [0, -8, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                  className="w-20 h-20 shrink-0"
+                >
+                  <img src="/owl_mascot_new.png" alt="Corujinha" className="w-full h-full object-contain filter drop-shadow-xl" />
+                </motion.div>
+                
+                <div className="relative bg-white p-6 rounded-[2.5rem] flex-1 shadow-[0_10px_30px_rgba(6,31,21,0.05)] border-2 border-emerald-50">
+                  <p className="text-[15px] font-bold text-emerald-900 m-0 leading-relaxed italic">
+                    "<TypewriterText text={mission.title === 'Arrumar a Cama' ? 'Dobre os lençóis com carinho para o quarto ficar bem aconchegante! 🛏️' : 'Capriche na escovação para seu sorriso brilhar como uma estrela! ✨'} />"
+                  </p>
+                  {/* Bubble Tip */}
+                  <div className="absolute bottom-6 -left-2 w-5 h-5 bg-white border-b-2 border-l-2 border-emerald-50 rotate-45 -z-10" />
+                </div>
               </div>
             </div>
 
@@ -136,23 +139,33 @@ export function MissionDetailModal({ mission, onClose, onComplete }: MissionDeta
             </div>
 
             {/* Actions (High Contrast 3D Style) */}
-            <div className="flex gap-4">
-              <button
-                onClick={closeModal}
-                className="flex-1 h-16 rounded-2xl bg-emerald-100 text-emerald-800 font-black hover:bg-emerald-200 transition-all uppercase tracking-widest text-xs border-b-4 border-emerald-200 active:translate-y-1 active:border-b-0"
-              >
-                Voltar
-              </button>
-              <button
-                onClick={() => {
-                  onComplete(mission.id, missionPhoto)
-                  setMissionPhoto(null)
-                }}
-                className="flex-[1.8] h-16 rounded-2xl bg-emerald-600 font-black text-2xl italic text-white shadow-[0_10px_0_0_#064e3b] transition-all flex items-center justify-center gap-3 hover:brightness-110 active:translate-y-2 active:shadow-none"
-              >
-                Concluir!
-                <Sparkles size={24} fill="currentColor" />
-              </button>
+            <div className="space-y-6">
+              <div className="flex gap-4">
+                <button
+                  onClick={closeModal}
+                  className="flex-1 h-16 rounded-2xl bg-emerald-100 text-emerald-800 font-black hover:bg-emerald-200 transition-all uppercase tracking-widest text-xs border-b-4 border-emerald-200 active:translate-y-1 active:border-b-0"
+                >
+                  Voltar
+                </button>
+                <button
+                  onClick={() => {
+                    onComplete(mission.id, missionPhoto)
+                    setMissionPhoto(null)
+                  }}
+                  className="flex-[1.8] h-16 rounded-2xl bg-emerald-600 font-black text-2xl italic text-white shadow-[0_10px_0_0_#064e3b] transition-all flex items-center justify-center gap-3 hover:brightness-110 active:translate-y-2 active:shadow-none"
+                >
+                  Concluir!
+                  <Sparkles size={24} fill="currentColor" />
+                </button>
+              </div>
+              
+              <div className="flex items-center justify-center gap-3 py-4 border-t-2 border-emerald-100/50">
+                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <p className="text-[10px] font-black text-emerald-700/60 uppercase tracking-[0.2em]">
+                  Enviando para o seu <span className="text-emerald-600 underline">Guardião</span> aprovar no Ninho
+                </p>
+                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              </div>
             </div>
           </div>
           

@@ -106,8 +106,8 @@ export default function ChildDashboardPage() {
             </h1>
             <p className="cd-hero__text">
               {allMissionsDone
-                ? 'Tudo pronto por hoje. A floresta ja esta celebrando suas conquistas.'
-                : 'Escolha uma missao, ganhe moedas e avance para o proximo nivel.'}
+                ? 'Tudo pronto por hoje! Sua Mentora esta orgulhosa e seu Guardiao ja celebrou suas conquistas.'
+                : 'Sua Mentora tem novas dicas para voce! Complete missoes para impressionar seu Guardiao.'}
             </p>
 
             <div className="cd-actions">
