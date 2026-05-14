@@ -1,0 +1,229 @@
+@import "tailwindcss";
+
+/* 
+  ─── CORUJINHA FOREST DESIGN SYSTEM ───
+  Tema: Floresta Encantada, Corujas e Magia
+*/
+
+@theme {
+  /* ─── Brand Core (Forest Theme) ─── */
+  --color-brand-primary:     #2D6A4F;   /* Forest Green 600 */
+  --color-brand-secondary:   #52B788;   /* Leaf Green 400 */
+  --color-brand-accent:      #F9D423;   /* Owl Yellow / Moonlight */
+  --color-brand-warm:        #FF9F1C;   /* Sunset Orange */
+  --color-brand-success:     #40916C;   /* Deep Emerald */
+  --color-brand-warning:     #FFB703;   /* Amber */
+  --color-brand-danger:      #D00000;   /* Deep Red */
+  --color-brand-magic:       #7400B8;   /* Magic Purple */
+
+  /* ─── Semantic (Nature Inspired) ─── */
+  --color-text-main:         #081C15;   /* Very Dark Green */
+  --color-text-secondary:    #2D6A4F;   /* Forest Green */
+  --color-text-muted:        #748E83;   /* Muted Sage */
+  --color-bg-main:           #F8FAF5;   /* Soft Cream/Mint */
+  --color-border-main:       #D8E2DC;   /* Sage Border */
+  --color-card-bg:           #FFFFFF;
+  --color-card-border:       #E9F5EB;
+
+  /* ─── Animações ───────────────────────────────────────────────────────── */
+  --animate-float: float 4s ease-in-out infinite;
+  --animate-sway: sway 6s ease-in-out infinite;
+  --animate-blink: blink 8s infinite;
+  --animate-leaf-fall: leaf-fall 10s linear infinite;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+  }
+  @keyframes sway {
+    0%, 100% { transform: rotate(-2deg); }
+    50% { transform: rotate(2deg); }
+  }
+  @keyframes blink {
+    0%, 90%, 100% { transform: scaleY(1); }
+    95% { transform: scaleY(0.1); }
+  }
+  @keyframes leaf-fall {
+    0% { transform: translateY(-10%) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.8; }
+    90% { opacity: 0.8; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+  }
+}
+
+@layer base {
+  .dark {
+    --color-text-main:         #F8FAF5;
+    --color-text-secondary:    #B7E4C7;
+    --color-text-muted:        #748E83;
+    --color-bg-main:           #081C15;   /* Deep Forest Night */
+    --color-border-main:       #1B4332;
+    --color-card-bg:           #132A13;
+    --color-card-border:       #2D6A4F;
+  }
+
+  body {
+    background-color: var(--color-bg-main);
+    color: var(--color-text-main);
+    @apply antialiased relative transition-colors duration-500 overflow-x-hidden;
+    font-family: 'Fredoka', 'Quicksand', system-ui, sans-serif;
+  }
+
+  /* Overlay de Textura: Nature Pattern */
+  body::before {
+    content: "";
+    @apply fixed inset-0 pointer-events-none z-0;
+    background-image: url('/forest_pattern.png'); /* Pattern generated previously */
+    background-size: 400px;
+    opacity: 0.05;
+  }
+
+  .dark body::before {
+    opacity: 0.03;
+  }
+
+  /* Scrollbar Estilo Galho */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { @apply bg-transparent; }
+  ::-webkit-scrollbar-thumb { 
+    @apply bg-brand-primary/30 hover:bg-brand-primary/50 rounded-full border-4 border-transparent bg-clip-padding; 
+  }
+}
+
+@layer components {
+  /* Títulos com Gradiente Natureza */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary bg-[length:200%_auto] animate-[gradient_8s_linear_infinite];
+  }
+
+  @keyframes gradient {
+    to { background-position: 200% center; }
+  }
+
+  /* Botão Estilo "Friendly Giant" */
+  .btn-primary {
+    @apply flex items-center justify-center gap-2 px-8 py-4 bg-brand-primary text-white font-bold 
+           rounded-3xl shadow-[0_10px_0_0_#1B4332] border-2 border-white/10
+           hover:brightness-110 hover:translate-y-[2px] hover:shadow-[0_8px_0_0_#1B4332]
+           active:translate-y-[10px] active:shadow-none
+           transition-all duration-150;
+  }
+
+  .btn-secondary {
+    @apply flex items-center justify-center gap-2 px-8 py-4 bg-white/80 dark:bg-white/5 text-text-main font-bold 
+           rounded-3xl border-4 border-brand-secondary/30 backdrop-blur-md
+           hover:bg-white dark:hover:bg-white/10 active:scale-[0.95]
+           transition-all duration-300;
+  }
+
+  /* Inputs "Soft" */
+  .input-field {
+    @apply w-full px-6 py-4 rounded-3xl border-4 transition-all duration-300 outline-none;
+    background-color: var(--color-card-bg);
+    border-color: var(--color-border-main);
+    color: var(--color-text-main);
+  }
+
+  .input-field:focus {
+    @apply border-brand-secondary shadow-[0_0_20px_rgba(82,183,136,0.2)];
+  }
+
+  /* Cards "Florestais" */
+  .premium-card {
+    @apply backdrop-blur-xl border-4 transition-all duration-500 overflow-hidden relative;
+    background-color: var(--color-card-bg);
+    border-color: var(--color-card-border);
+    border-radius: 2.5rem;
+    box-shadow: 0 20px 0 0 var(--color-card-border);
+  }
+
+  .premium-card:hover {
+    @apply border-brand-secondary;
+    transform: translateY(-5px);
+    box-shadow: 0 25px 0 0 var(--color-card-border);
+  }
+
+  .dark .premium-card {
+    box-shadow: 0 10px 0 0 rgba(0,0,0,0.5);
+  }
+
+  /* Efeito de Sombra de Folha */
+  .leaf-shadow {
+    filter: drop-shadow(0 10px 15px rgba(27, 67, 50, 0.2));
+  }
+
+  /* Mesh Gradients de Floresta */
+  .mesh-gradient {
+    @apply relative before:absolute before:inset-0 before:-z-10;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(45, 106, 79, 0.05) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(249, 212, 35, 0.05) 0px, transparent 50%);
+  }
+
+  .dark .mesh-gradient {
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(45, 106, 79, 0.2) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(249, 212, 35, 0.1) 0px, transparent 50%);
+  }
+
+  /* Superfícies reutilizáveis (substitui branco fixo em telas internas) */
+  .surface-panel {
+    background-color: var(--color-card-bg);
+    border-color: var(--color-card-border);
+    @apply border-4 shadow-sm transition-colors duration-300;
+  }
+
+  .surface-muted {
+    background-color: color-mix(in srgb, var(--color-card-bg) 72%, var(--color-bg-main));
+    @apply transition-colors duration-300;
+  }
+
+  /* Auth / loading */
+  .auth-layout {
+    @apply min-h-screen flex flex-col items-center justify-center bg-bg-main p-6 motion-safe:transition-colors duration-300;
+  }
+
+  .app-loading {
+    @apply min-h-screen flex flex-col items-center justify-center gap-6 bg-bg-main;
+  }
+
+  .loading-spinner {
+    @apply h-14 w-14 rounded-full border-4 border-brand-secondary/30 border-t-brand-primary animate-spin motion-reduce:animate-none;
+  }
+}
+
+@utility animate-page-in {
+  animation: page-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-float,
+  .animate-sway,
+  .animate-blink,
+  .animate-leaf-fall,
+  .animate-glow,
+  .text-gradient {
+    animation: none !important;
+  }
+}
+

@@ -1,0 +1,40 @@
+# ─── Firebase Service Account Keys (NUNCA commitar) ───
+*-adminsdk-*.json
+*-firebase-adminsdk-*.json
+firebase-admin-*.json
+service-account*.json
+
+# ─── Environment Variables ───
+.env
+.env.local
+.env.staging
+.env.production
+.env*.local
+
+# ─── Node ───
+node_modules/
+.pnpm-store/
+
+# ─── Next.js ───
+.next/
+out/
+build/
+
+# ─── Turbo ───
+.turbo/
+
+# ─── Misc ───
+.DS_Store
+*.pem
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ─── Vercel ───
+.vercel
+
+# ─── Testing ───
+coverage/
+playwright-report/
+test-results/

@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-primary: #1A4332;
+  --color-brand-secondary: #2D6A4F;
+  --color-brand-accent: #52B788;
+  --color-brand-bg: #F8FAF9;
+  --color-brand-surface: #FFFFFF;
+  --color-app-border: #E2E8F0;
+}
+
+:root {
+  --brand-primary: #1A4332;
+  --brand-secondary: #2D6A4F;
+  --brand-accent: #52B788;
+  --brand-bg: #F8FAF9;
+  --brand-surface: #FFFFFF;
+  --app-border: #E2E8F0;
+  --foreground: #0F172A;
+}
+
+.dark {
+  --brand-bg: #0F172A;
+  --brand-surface: #1E293B;
+  --app-border: #334155;
+  --foreground: #F8FAFC;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--brand-bg);
+  color: var(--foreground);
+  font-family: 'Inter', system-ui, sans-serif;
+  line-height: 1.5;
+}
+
+/* ─── Admin Components ────────────────────────────────────────────────── */
+
+.admin-card {
+  background-color: var(--brand-surface);
+  border: 1px solid var(--app-border);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.admin-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  color: #64748B;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.sidebar-item:hover {
+  background-color: #F1F5F9;
+  color: var(--brand-primary);
+}
+
+.sidebar-item.active {
+  background-color: #E9F5EB;
+  color: var(--brand-primary);
+}
+
+.dark .sidebar-item:hover {
+  background-color: #334155;
+  color: white;
+}
+
+.dark .sidebar-item.active {
+  background-color: #1A4332;
+  color: white;
+}
+
+/* Scrollbar Hide */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

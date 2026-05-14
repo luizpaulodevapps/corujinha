@@ -1,0 +1,104 @@
+'use client'
+
+import { ReactNode } from 'react'
+import { ChildHeader } from './child-header'
+import { useChildStore } from '@/stores/use-child-store'
+import { useNotificationStore } from '@/stores/use-notification-store'
+import { useDashboardModals } from '@/stores/use-dashboard-modals'
+import { ChildWalletModal } from './child-wallet-modal'
+import { NotificationDrawer } from './modals/NotificationDrawer'
+import { AvatarCustomizationModal } from './modals/AvatarCustomizationModal'
+import { motion } from 'framer-motion'
+
+import { MagicBackground } from './magic-background'
+import { ChildBottomNav } from './child-bottom-nav'
+
+interface PageContainerProps {
+  children: ReactNode
+  title: string
+  subtitle?: string
+  showBack?: boolean
+  backHref?: string
+  hideHeader?: boolean
+  hideBottomNav?: boolean
+  className?: string
+  headerProps?: any
+  hideAvatar?: boolean
+}
+
+export function PageContainer({ 
+  children, 
+  title, 
+  subtitle, 
+  showBack = false, 
+  backHref = '/dashboard',
+  hideHeader = false,
+  hideBottomNav = false,
+  className = '',
+  headerProps = {},
+  hideAvatar = false
+}: PageContainerProps) {
+  const { profile, transactions, updateAvatar } = useChildStore()
+  const { notifications, markAsRead, clearAll } = useNotificationStore()
+  const modals = useDashboardModals()
+
+  const unreadCount = notifications.filter(n => !n.read).length
+
+  return (
+    <div className="relative min-h-screen flex flex-col">
+      <MagicBackground />
+
+      {!hideHeader && (
+        <ChildHeader 
+          title={title}
+          subtitle={subtitle}
+          showBack={showBack}
+          backHref={backHref}
+          coins={profile.coins}
+          xp={profile.xp}
+          avatarUrl={profile.avatar}
+          unreadCount={unreadCount}
+          onCoinsClick={modals.openWallet}
+          onXpClick={modals.openWallet}
+          onAvatarClick={modals.openAvatar}
+          onNotificationsClick={modals.openNotifications}
+          hideAvatar={hideAvatar}
+          {...headerProps}
+        />
+      )}
+
+      <motion.main 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className={`child-page-main ${className}`}
+      >
+        <div className="child-page-inner">
+          {children}
+        </div>
+      </motion.main>
+
+      {/* Global Modals Orchestration */}
+      <ChildWalletModal 
+        isOpen={modals.showWallet}
+        onClose={modals.closeWallet}
+        coins={profile.coins}
+        transactions={transactions}
+      />
+
+      <NotificationDrawer 
+        isOpen={modals.showNotifications}
+        onClose={modals.closeNotifications}
+        notifications={notifications}
+        onRead={markAsRead}
+        onClearAll={clearAll}
+      />
+
+      <AvatarCustomizationModal 
+        isOpen={modals.showAvatar}
+        onClose={modals.closeAvatar}
+        currentAvatar={profile.avatar}
+        onSelect={updateAvatar}
+      />
+    </div>
+  )
+}

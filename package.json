@@ -1,0 +1,29 @@
+{
+  "name": "corujinha",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Corujinha — Plataforma gamificada de desenvolvimento infantil",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "dev:parent": "turbo run dev --filter=@corujinha/parent",
+    "dev:child": "turbo run dev --filter=@corujinha/child",
+    "dev:admin": "turbo run dev --filter=@corujinha/admin",
+    "dev:landing": "turbo run dev --filter=@corujinha/landing",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\" --ignore-path .gitignore"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.3",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@11.1.0"
+}

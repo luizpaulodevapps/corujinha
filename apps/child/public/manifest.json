@@ -1,0 +1,17 @@
+{
+  "name": "Corujinha - Universo Mágico",
+  "short_name": "Corujinha",
+  "description": "Sua jornada épica rumo à sabedoria financeira!",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1A4332",
+  "theme_color": "#2D6A4F",
+  "icons": [
+    {
+      "src": "/owl_mascot_new.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
