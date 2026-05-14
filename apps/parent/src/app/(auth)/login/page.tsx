@@ -44,12 +44,14 @@ export default function LoginPage() {
 
     try {
       const auth = getFirebaseAuth()
-      await signInWithEmailAndPassword(auth, email, password)
+      await signInWithEmailAndPassword(auth, email.trim(), password)
       router.push('/dashboard')
     } catch (err: any) {
       console.error('[Login] Erro:', err)
       if (err.code === 'auth/invalid-credential') {
         setError('E-mail ou senha incorretos.')
+      } else if (err.code === 'auth/invalid-email') {
+        setError('Por favor, digite um e-mail válido.')
       } else if (err.code === 'auth/invalid-api-key') {
         setError('Configuração do servidor pendente. Ativando Modo Preview...')
         setTimeout(() => router.push('/dashboard'), 2000)

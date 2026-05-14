@@ -56,8 +56,23 @@ const menuGroups = [
   }
 ]
 
+import { getFirebaseAuth } from '@corujinha/firebase'
+import { signOut } from 'firebase/auth'
+import { useRouter } from 'next/navigation'
+
 export function AdminSidebar() {
   const pathname = usePathname()
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    try {
+      const auth = getFirebaseAuth()
+      await signOut(auth)
+      router.push('/login')
+    } catch (error) {
+      console.error('[Admin Sidebar] Erro ao deslogar:', error)
+    }
+  }
 
   return (
     <aside style={{ 
@@ -163,21 +178,24 @@ export function AdminSidebar() {
             <p style={{ fontSize: '12px', color: '#64748B', fontWeight: 500, margin: 0 }}>ID: CX-9428</p>
           </div>
         </div>
-        <button style={{ 
-          width: '100%', 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: '12px', 
-          padding: '14px 16px', 
-          borderRadius: '14px', 
-          border: '1px solid #F1F5F9',
-          backgroundColor: '#F8FAFC',
-          color: '#EF4444',
-          fontWeight: 800,
-          fontSize: '14px',
-          cursor: 'pointer',
-          transition: 'all 0.2s'
-        }}>
+        <button 
+          onClick={handleLogout}
+          style={{ 
+            width: '100%', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '12px', 
+            padding: '14px 16px', 
+            borderRadius: '14px', 
+            border: '1px solid #F1F5F9',
+            backgroundColor: '#F8FAFC',
+            color: '#EF4444',
+            fontWeight: 800,
+            fontSize: '14px',
+            cursor: 'pointer',
+            transition: 'all 0.2s'
+          }}
+        >
           <LogOut size={20} strokeWidth={2.5} />
           <span>Sair do Centro</span>
         </button>

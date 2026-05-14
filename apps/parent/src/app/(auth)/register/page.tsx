@@ -33,7 +33,7 @@ export default function RegisterPage() {
 
     try {
       const auth = getFirebaseAuth()
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+      const userCredential = await createUserWithEmailAndPassword(auth, email.trim(), password)
       
       // Atualiza o nome do perfil do usuário
       await updateProfile(userCredential.user, { displayName: name })
@@ -44,6 +44,8 @@ export default function RegisterPage() {
       console.error('[Register] Erro:', err)
       if (err.code === 'auth/email-already-in-use') {
         setError('Este e-mail já está em uso.')
+      } else if (err.code === 'auth/invalid-email') {
+        setError('Por favor, digite um e-mail válido.')
       } else if (err.code === 'auth/weak-password') {
         setError('A senha deve ter pelo menos 6 caracteres.')
       } else {
