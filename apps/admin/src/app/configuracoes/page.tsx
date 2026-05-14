@@ -31,7 +31,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useAdminData } from '@/hooks/use-admin-data'
 import { getFirebaseAuth } from '@corujinha/firebase'
 
-type TabType = 'seguranca' | 'notificacoes' | 'database' | 'idioma' | 'branding' | 'pwa'
+type TabType = 'seguranca' | 'notificacoes' | 'ai' | 'database' | 'idioma' | 'branding' | 'pwa'
 
 export default function ConfiguracoesPage() {
   const { 
@@ -92,6 +92,7 @@ export default function ConfiguracoesPage() {
   const tabs: { id: TabType; label: string; icon: any }[] = [
     { id: 'seguranca', label: 'Segurança e Acesso', icon: Shield },
     { id: 'notificacoes', label: 'Notificações do Sistema', icon: Bell },
+    { id: 'ai', label: 'Configuração de IA', icon: Sparkles },
     { id: 'database', label: 'Banco de Dados', icon: Database },
     { id: 'idioma', label: 'Região e Idioma', icon: Globe },
     { id: 'branding', label: 'Branding Visual', icon: Palette },
@@ -352,6 +353,76 @@ export default function ConfiguracoesPage() {
                     </div>
                  </div>
                )}
+
+                {activeTab === 'ai' && (
+                  <div className="space-y-8">
+                     <header className="flex items-center gap-4 mb-8 pb-6 border-b border-slate-50">
+                        <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center text-purple-500 border border-purple-100">
+                           <Sparkles size={24} />
+                        </div>
+                        <div>
+                           <h3 className="text-xl font-black text-slate-900 italic tracking-tighter">Personalidade & Segurança da IA</h3>
+                           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Configure o comportamento e os filtros de proteção infantil</p>
+                        </div>
+                     </header>
+
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="space-y-4">
+                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Arquétipo da IA (Persona)</label>
+                           <div className="grid grid-cols-2 gap-3">
+                              {[
+                                { id: 'mago', label: 'Mago Sábio', icon: '🧙‍♂️' },
+                                { id: 'hero', label: 'Super-Herói', icon: '🦸‍♂️' },
+                                { id: 'prof', label: 'Professor(a)', icon: '👨‍🏫' },
+                                { id: 'amigo', label: 'Melhor Amigo', icon: '🐶' }
+                              ].map(p => (
+                                <button key={p.id} className="p-4 bg-slate-50 border border-slate-100 rounded-2xl flex flex-col items-center gap-2 hover:border-brand-primary transition-all">
+                                   <span className="text-2xl">{p.icon}</span>
+                                   <span className="text-[10px] font-black uppercase tracking-widest">{p.label}</span>
+                                </button>
+                              ))}
+                           </div>
+                        </div>
+
+                        <div className="space-y-6">
+                           <div className="p-6 bg-emerald-50/50 border border-emerald-100 rounded-[2rem] space-y-4">
+                              <div className="flex items-center justify-between">
+                                 <div className="flex items-center gap-2 text-emerald-600">
+                                    <ShieldIcon size={18} />
+                                    <span className="text-[10px] font-black uppercase tracking-widest">Escudo Infantil Ativo</span>
+                                 </div>
+                                 <div className="w-10 h-5 bg-emerald-500 rounded-full relative cursor-pointer shadow-inner">
+                                    <div className="absolute top-0.5 right-0.5 w-4 h-4 bg-white rounded-full" />
+                                 </div>
+                              </div>
+                              <p className="text-[10px] text-emerald-600 font-bold leading-relaxed">
+                                 Este filtro remove automaticamente qualquer conteúdo com conotação agressiva, sexual, linguagem imprópria ou temas adultos.
+                              </p>
+                           </div>
+
+                           <div className="space-y-4">
+                              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Nível de Criatividade (Temperatura)</label>
+                              <div className="px-4 py-6 bg-slate-50 border border-slate-100 rounded-2xl space-y-4">
+                                 <div className="flex justify-between text-[8px] font-black uppercase text-slate-400">
+                                    <span>Conservador (Seguro)</span>
+                                    <span>Inovador (Ousado)</span>
+                                 </div>
+                                 <input type="range" className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-brand-primary" />
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+
+                     <div className="pt-8 border-t border-slate-50 space-y-4">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Diretrizes de Segurança Personalizadas</label>
+                        <textarea 
+                           className="w-full p-6 bg-slate-50 border border-slate-100 rounded-[2rem] font-bold text-slate-600 text-sm h-32 outline-none focus:border-brand-primary transition-all"
+                           placeholder="Ex: Nunca mencionar lutas reais, focar sempre em cooperação e bondade, evitar o uso da palavra 'inimigo'..."
+                        ></textarea>
+                        <p className="text-[9px] font-medium text-slate-400 italic">* Estas diretrizes serão injetadas diretamente no 'core' da inteligência artificial.</p>
+                     </div>
+                  </div>
+                )}
 
                {activeTab === 'notificacoes' && (
                  <div className="space-y-8">

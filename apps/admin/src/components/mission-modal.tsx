@@ -25,8 +25,11 @@ export function MissionModal({ isOpen, onClose }: { isOpen: boolean, onClose: ()
     setIsGenerating(true)
     
     try {
-      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY
-      const model = process.env.NEXT_PUBLIC_GEMINI_MODEL || 'gemini-1.5-flash'
+      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY?.trim()
+      let model = process.env.NEXT_PUBLIC_GEMINI_MODEL?.trim() || 'gemini-1.5-flash'
+      
+      // Limpar o nome do modelo caso já contenha o prefixo 'models/'
+      model = model.replace('models/', '')
       
       if (!apiKey) {
         throw new Error('Variável NEXT_PUBLIC_GEMINI_API_KEY não encontrada no sistema.')
@@ -36,35 +39,89 @@ export function MissionModal({ isOpen, onClose }: { isOpen: boolean, onClose: ()
         throw new Error('A chave configurada ainda é o valor padrão "sua_chave_aqui".')
       }
 
-      const prompt = `Você é um assistente criativo do app infantil Corujinha. 
-      Crie uma missão épica para crianças baseada em: "${aiPrompt}".
-      Retorne APENAS um JSON puro (sem markdown) com: 
-      { "title": "...", "description": "...", "category": "...", "difficulty": "easy|medium|hard", "rewardCoins": 20, "rewardXp": 100, "imageSearchTerm": "..." }
-      Categorias válidas: Saúde, Organização, Sabedoria, Natureza, Deveres.
-      O imageSearchTerm deve ser um termo curto em inglês para busca de imagem.`
+      const prompt = `Você é o Arquiteto de Missões do Corujinha, um app focado em gamificação positiva para crianças.
+      Sua missão é transformar tarefas mundanas em aventuras épicas, lúdicas e inspiradoras.
+      
+      REGRAS DE OURO:
+      1. Linguagem Mágica: Use um tom de voz de mestre de RPG amigável. Use adjetivos como "épico", "lendário", "místico".
+      2. Títulos Criativos: NUNCA use o nome da tarefa literalmente. Transforme "Lavar louça" em "O Ritual das Águas Cristalinas".
+      3. Público-Alvo: Crianças de 5 a 10 anos.
+      
+      DIRETRIZ DE IMAGEM:
+      O 'imageSearchTerm' deve ser um termo curto em INGLÊS que descreva uma ILUSTRAÇÃO ou DESENHO FOFINHO relacionado ao tema.
+      Exemplos: "cute dragon cleaning teeth", "magic forest castle", "cute owl hero".
+      
+      Entrada do usuário: "${aiPrompt}".
+      
+      Retorne APENAS um JSON puro (sem markdown): 
+      { 
+        "title": "...", 
+        "description": "...", 
+        "category": "Saúde|Organização|Sabedoria|Natureza|Deveres", 
+        "difficulty": "easy|medium|hard", 
+        "rewardCoins": 20, 
+        "rewardXp": 100, 
+        "imageSearchTerm": "..." 
+      }`
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }]
+      const tryGenerate = async (currentModel: string, currentVersion: string) => {
+        // Garantir que o nome do modelo tenha o prefixo correto se necessário
+        const modelPath = currentModel.includes('models/') ? currentModel : `models/${currentModel}`
+        const url = `https://generativelanguage.googleapis.com/${currentVersion}/${modelPath}:generateContent?key=${apiKey}`
+        
+        return await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }]
+          })
         })
-      })
+      }
+
+      // 1. Tentar o modelo configurado
+      let response = await tryGenerate(model, 'v1beta')
+      
+      // 2. Se der 404, tentar listar modelos disponíveis para descobrir o nome correto
+      if (response.status === 404) {
+        console.warn(`[Gemini] Modelo ${model} não encontrado. Tentando listar modelos disponíveis...`)
+        try {
+          const listUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`
+          const listRes = await fetch(listUrl)
+          const listData = await listRes.json()
+          console.log('[Gemini] Modelos disponíveis para esta chave:', listData)
+          
+          if (listData.models && listData.models.length > 0) {
+            // Buscar o primeiro modelo que suporte geração de conteúdo e seja da família gemini
+            const fallbackModel = listData.models.find((m: any) => 
+              m.supportedGenerationMethods.includes('generateContent') && 
+              m.name.toLowerCase().includes('gemini')
+            )
+            
+            if (fallbackModel) {
+              console.info(`[Gemini] Usando modelo auto-descoberto: ${fallbackModel.name}`)
+              response = await tryGenerate(fallbackModel.name, 'v1beta')
+            }
+          }
+        } catch (listErr) {
+          console.error('[Gemini] Erro ao tentar auto-descobrir modelos:', listErr)
+        }
+      }
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(`Erro na API do Google: ${errorData.error?.message || response.statusText}`)
+        console.error('[Gemini] Erro crítico:', errorData)
+        const errorMsg = errorData.error?.message || response.statusText
+        const errorCode = errorData.error?.status || response.status
+        throw new Error(`${errorMsg} (Status: ${errorCode})`)
       }
 
       const result = await response.json()
       const text = result.candidates[0].content.parts[0].text.replace(/```json|```/g, '').trim()
       const data = JSON.parse(text)
 
-      // Get Image from Unsplash based on search term
-      const imageUrl = `https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=400` // Fallback
-      const finalImageUrl = data.imageSearchTerm 
-        ? `https://source.unsplash.com/featured/400x400?${encodeURIComponent(data.imageSearchTerm)}`
-        : imageUrl
+      // Get Image from stable service based on search term
+      const searchTerm = data.imageSearchTerm || data.title || 'fantasy'
+      const finalImageUrl = `https://loremflickr.com/400/400/${encodeURIComponent(searchTerm.replace(/\s+/g, ','))},illustration,cartoon`
 
       setFormData({ 
         ...formData, 

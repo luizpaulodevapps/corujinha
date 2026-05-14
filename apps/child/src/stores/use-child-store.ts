@@ -2,8 +2,11 @@ import { create } from 'zustand'
 import { ChildProfile, Transaction } from '../types'
 
 interface ChildState {
-  profile: ChildProfile
+  profile: ChildProfile | null
   transactions: Transaction[]
+  isLoading: boolean
+  setProfile: (profile: ChildProfile) => void
+  fetchProfile: (childId: string) => Promise<void>
   addXp: (amount: number) => void
   addCoins: (amount: number) => void
   spendCoins: (amount: number, title: string) => void
@@ -21,46 +24,83 @@ const MOCK_CHILD: ChildProfile = {
 }
 
 export const useChildStore = create<ChildState>((set) => ({
-  profile: MOCK_CHILD,
-  transactions: [
-    { id: '1', title: 'Escovar os Dentes', value: 10, type: 'earn', date: 'Hoje, 08:30' },
-    { id: '2', title: 'Arrumar a Cama', value: 15, type: 'earn', date: 'Hoje, 09:15' },
-    { id: '3', title: 'Sorvete de Chocolate', value: -40, type: 'spend', date: 'Ontem, 16:20' },
-  ],
-  
+  profile: null,
+  transactions: [],
+  isLoading: false,
+
+  setProfile: (profile) => set({ profile }),
+
+  fetchProfile: async (childId) => {
+    set({ isLoading: true })
+    try {
+      // Aqui integraremos com o Firestore futuramente
+      // const doc = await getDoc(doc(db, 'children', childId))
+      // set({ profile: doc.data(), isLoading: false })
+
+      // Simulação de carregamento de dados reais
+      setTimeout(() => {
+        set({
+          profile: {
+            name: 'Aventureiro',
+            level: 1,
+            xp: 0,
+            nextLevelXp: 100,
+            coins: 0,
+            streak: 0,
+            avatar: '/owl_mascot_new.png',
+          },
+          isLoading: false
+        })
+      }, 1000)
+    } catch (error) {
+      console.error('Erro ao carregar perfil:', error)
+      set({ isLoading: false })
+    }
+  },
+
   addXp: (amount) => set((state) => {
+    if (!state.profile) return state
     let newXp = state.profile.xp + amount
     let newLevel = state.profile.level
-    
+
     if (newXp >= state.profile.nextLevelXp) {
       newXp -= state.profile.nextLevelXp
       newLevel += 1
     }
-    
+
     return {
       profile: { ...state.profile, xp: newXp, level: newLevel }
     }
   }),
 
-  addCoins: (amount) => set((state) => ({
-    profile: { ...state.profile, coins: state.profile.coins + amount }
-  })),
+  addCoins: (amount) => set((state) => {
+    if (!state.profile) return state
+    return {
+      profile: { ...state.profile, coins: state.profile.coins + amount }
+    }
+  }),
 
-  spendCoins: (amount, title) => set((state) => ({
-    profile: { ...state.profile, coins: state.profile.coins - amount },
-    transactions: [
-      { 
-        id: Math.random().toString(), 
-        title, 
-        value: -amount, 
-        type: 'spend', 
-        date: 'Agora' 
-      },
-      ...state.transactions
-    ]
-  })),
+  spendCoins: (amount, title) => set((state) => {
+    if (!state.profile) return state
+    return {
+      profile: { ...state.profile, coins: state.profile.coins - amount },
+      transactions: [
+        {
+          id: Math.random().toString(),
+          title,
+          value: -amount,
+          type: 'spend',
+          date: 'Agora'
+        },
+        ...state.transactions
+      ]
+    }
+  }),
 
-  updateAvatar: (src) => set((state) => ({
-    profile: { ...state.profile, avatar: src }
-  })),
+  updateAvatar: (src) => set((state) => {
+    if (!state.profile) return state
+    return {
+      profile: { ...state.profile, avatar: src }
+    }
+  }),
 }))

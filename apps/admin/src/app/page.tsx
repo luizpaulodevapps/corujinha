@@ -77,11 +77,6 @@ export default function LoginPage() {
       <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-emerald-500/20 rounded-full blur-[150px] animate-pulse delay-1000 pointer-events-none" />
       <div className="absolute inset-0 opacity-[0.15] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay" />
 
-      {/* ─── Back to Landing ────────────────────────────────────────────── */}
-      <Link href="https://corujinha.vercel.app" className="fixed top-8 left-8 z-50 flex items-center gap-2 text-white/60 font-black uppercase tracking-widest text-[10px] hover:text-brand-accent transition-all group backdrop-blur-md bg-white/5 px-4 py-2 rounded-full border border-white/10">
-        <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> 
-        Voltar para o Portal
-      </Link>
 
       <motion.div
         initial={{ opacity: 0, y: 30 }}

@@ -9,13 +9,19 @@ import {
   Sparkles, 
   Camera,
   ChevronRight,
-  Loader2
+  Loader2,
+  User,
+  Phone,
+  ScanFace
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
+type LoginMethod = 'select' | 'qr' | 'pin' | 'credentials' | 'face'
+
 export default function ChildLoginPage() {
-  const [method, setMethod] = useState<'select' | 'qr' | 'pin'>('select')
+  const [method, setMethod] = useState<LoginMethod>('select')
   const [pin, setPin] = useState(['', '', '', ''])
+  const [username, setUsername] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
@@ -25,10 +31,8 @@ export default function ChildLoginPage() {
     newPin[index] = val
     setPin(newPin)
     
-    // Auto focus next or submit
     if (val && index < 3) {
-      const nextInput = document.getElementById(`pin-${index + 1}`)
-      nextInput?.focus()
+      document.getElementById(`pin-${index + 1}`)?.focus()
     } else if (val && index === 3) {
       handleLogin()
     }
@@ -36,84 +40,86 @@ export default function ChildLoginPage() {
 
   const handleLogin = async () => {
     setIsLoading(true)
-    // Simulate auth logic
     setTimeout(() => {
       setIsLoading(false)
       router.push('/dashboard')
-    }, 1500)
+    }, 2000)
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#1A4332', color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 24px', position: 'relative', overflow: 'hidden' }}>
-      {/* Decorative Elements */}
-      <div style={{ position: 'absolute', top: '-100px', right: '-100px', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(82,183,136,0.2) 0%, transparent 70%)' }} />
-      <div style={{ position: 'absolute', bottom: '-50px', left: '-50px', width: '200px', height: '200px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(82,183,136,0.1) 0%, transparent 70%)' }} />
+    <div className="min-h-screen relative flex flex-col items-center justify-center p-6 overflow-hidden">
+      {/* Background Immersivo */}
+      <div 
+        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: 'url("/login-bg.png")' }}
+      >
+        <div className="absolute inset-0 bg-[#0A1A14]/60 backdrop-blur-[2px]" />
+      </div>
+
+      {/* Partículas / Efeito de Brilho */}
+      <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-brand-primary/20 rounded-full blur-[100px] animate-pulse" />
+      <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-emerald-500/10 rounded-full blur-[100px] animate-pulse delay-700" />
 
       <AnimatePresence mode="wait">
         {method === 'select' && (
           <motion.div 
             key="select"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            style={{ width: '100%', maxWidth: '400px', textAlign: 'center', zIndex: 1 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.1 }}
+            className="relative z-10 w-full max-w-md text-center"
           >
-            <div style={{ width: '120px', height: '120px', backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 32px' }}>
-               <Sparkles size={64} color="#52B788" />
+            <div className="w-24 h-24 bg-white/10 backdrop-blur-xl border border-white/20 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 shadow-2xl">
+               <Sparkles size={48} className="text-brand-primary animate-bounce" />
             </div>
-            <h1 style={{ fontSize: '32px', fontWeight: 900, marginBottom: '12px' }}>Olá, Explorador!</h1>
-            <p style={{ color: '#95D5B2', fontSize: '18px', marginBottom: '48px' }}>Como você quer entrar hoje?</p>
+            
+            <h1 className="text-4xl font-black text-white mb-3 italic tracking-tighter">Portal Corujinha</h1>
+            <p className="text-emerald-200/60 font-bold mb-12 uppercase tracking-[0.2em] text-xs">A jornada começa aqui</p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div className="grid grid-cols-1 gap-4">
+               {/* QR Code Button */}
                <button 
                  onClick={() => setMethod('qr')}
-                 style={{ 
-                   width: '100%', 
-                   padding: '24px', 
-                   borderRadius: '24px', 
-                   backgroundColor: 'white', 
-                   color: '#1A4332', 
-                   border: 'none', 
-                   display: 'flex', 
-                   alignItems: 'center', 
-                   gap: '20px', 
-                   cursor: 'pointer',
-                   boxShadow: '0 10px 30px rgba(0,0,0,0.2)'
-                 }}
+                 className="group relative flex items-center gap-4 p-5 bg-white/10 backdrop-blur-md border border-white/10 rounded-3xl hover:bg-white/20 transition-all duration-300"
                >
-                  <div style={{ width: '56px', height: '56px', borderRadius: '16px', backgroundColor: '#E9F5EB', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1A4332' }}>
-                     <QrCode size={32} />
+                  <div className="w-14 h-14 bg-brand-primary rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
+                     <QrCode size={28} />
                   </div>
-                  <div style={{ textAlign: 'left' }}>
-                     <p style={{ margin: 0, fontWeight: 900, fontSize: '18px' }}>Usar QR Code</p>
-                     <p style={{ margin: 0, fontSize: '14px', opacity: 0.6 }}>Aponte para o app do papai ou mamãe</p>
+                  <div className="text-left">
+                     <p className="text-white font-black text-lg italic leading-tight">Escanear Magia</p>
+                     <p className="text-emerald-300/50 text-[10px] font-bold uppercase tracking-wider">Usar o QR Code do Papai/Mamãe</p>
                   </div>
-                  <ChevronRight style={{ marginLeft: 'auto', opacity: 0.3 }} />
+                  <ChevronRight className="ml-auto text-white/30" size={20} />
                </button>
 
+               <div className="grid grid-cols-2 gap-4">
+                  {/* PIN Button */}
+                  <button 
+                    onClick={() => setMethod('pin')}
+                    className="flex flex-col items-center gap-3 p-6 bg-white/5 backdrop-blur-sm border border-white/5 rounded-3xl hover:bg-white/10 transition-all"
+                  >
+                     <Grid3X3 size={24} className="text-emerald-400" />
+                     <span className="text-white font-black text-[10px] uppercase tracking-widest">Usar PIN</span>
+                  </button>
+
+                  {/* Username Button */}
+                  <button 
+                    onClick={() => setMethod('credentials')}
+                    className="flex flex-col items-center gap-3 p-6 bg-white/5 backdrop-blur-sm border border-white/5 rounded-3xl hover:bg-white/10 transition-all"
+                  >
+                     <User size={24} className="text-blue-400" />
+                     <span className="text-white font-black text-[10px] uppercase tracking-widest">Usuário</span>
+                  </button>
+               </div>
+
+               {/* Facial Placeholder */}
                <button 
-                 onClick={() => setMethod('pin')}
-                 style={{ 
-                   width: '100%', 
-                   padding: '24px', 
-                   borderRadius: '24px', 
-                   backgroundColor: 'rgba(255,255,255,0.1)', 
-                   color: 'white', 
-                   border: '2px solid rgba(255,255,255,0.1)', 
-                   display: 'flex', 
-                   alignItems: 'center', 
-                   gap: '20px', 
-                   cursor: 'pointer' 
-                 }}
+                 onClick={() => setMethod('face')}
+                 className="flex items-center justify-center gap-3 p-4 bg-emerald-500/20 border border-emerald-500/20 rounded-2xl group overflow-hidden relative"
                >
-                  <div style={{ width: '56px', height: '56px', borderRadius: '16px', backgroundColor: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                     <Grid3X3 size={32} />
-                  </div>
-                  <div style={{ textAlign: 'left' }}>
-                     <p style={{ margin: 0, fontWeight: 900, fontSize: '18px' }}>Usar PIN</p>
-                     <p style={{ margin: 0, fontSize: '14px', opacity: 0.6 }}>Digite seus 4 números mágicos</p>
-                  </div>
-                  <ChevronRight style={{ marginLeft: 'auto', opacity: 0.3 }} />
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                  <ScanFace size={18} className="text-emerald-400" />
+                  <span className="text-emerald-400 font-black text-[10px] uppercase tracking-widest">Login por Rosto (Em breve)</span>
                </button>
             </div>
           </motion.div>
@@ -122,23 +128,31 @@ export default function ChildLoginPage() {
         {method === 'qr' && (
           <motion.div 
             key="qr"
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            style={{ width: '100%', maxWidth: '400px', textAlign: 'center' }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="relative z-10 w-full max-w-sm text-center"
           >
-             <button onClick={() => setMethod('select')} style={{ background: 'none', border: 'none', color: 'white', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', marginBottom: '32px' }}>
-                <ArrowLeft size={20} /> Voltar
+             <button onClick={() => setMethod('select')} className="mb-8 text-emerald-300/50 hover:text-white flex items-center gap-2 mx-auto uppercase font-black text-[10px] tracking-widest">
+                <ArrowLeft size={16} /> Voltar
              </button>
-             <h2 style={{ fontSize: '28px', fontWeight: 900, marginBottom: '32px' }}>Scan Mágico</h2>
-             <div style={{ width: '280px', height: '280px', backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: '32px', margin: '0 auto 32px', border: '4px dashed #52B788', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-                <Camera size={64} opacity={0.2} />
-                <div style={{ position: 'absolute', top: '20px', left: '20px', width: '40px', height: '40px', borderTop: '4px solid #52B788', borderLeft: '4px solid #52B788', borderRadius: '8px 0 0 0' }} />
-                <div style={{ position: 'absolute', top: '20px', right: '20px', width: '40px', height: '40px', borderTop: '4px solid #52B788', borderRight: '4px solid #52B788', borderRadius: '0 8px 0 0' }} />
-                <div style={{ position: 'absolute', bottom: '20px', left: '20px', width: '40px', height: '40px', borderBottom: '4px solid #52B788', borderLeft: '4px solid #52B788', borderRadius: '0 0 0 8px' }} />
-                <div style={{ position: 'absolute', bottom: '20px', right: '20px', width: '40px', height: '40px', borderBottom: '4px solid #52B788', borderRight: '4px solid #52B788', borderRadius: '0 0 8px 0' }} />
+             
+             <h2 className="text-3xl font-black text-white mb-8 italic tracking-tighter">Scan Mágico</h2>
+             
+             <div className="relative w-72 h-72 mx-auto mb-8 p-1 bg-gradient-to-br from-emerald-400/50 to-blue-500/50 rounded-[3rem]">
+                <div className="w-full h-full bg-black/40 backdrop-blur-xl rounded-[2.8rem] flex items-center justify-center relative overflow-hidden">
+                   <div className="absolute inset-0 border-2 border-emerald-400/30 border-dashed animate-[spin_20s_linear_infinite]" />
+                   <Camera size={64} className="text-white/10" />
+                   
+                   {/* Scanner Line */}
+                   <motion.div 
+                     animate={{ top: ['10%', '90%'] }}
+                     transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                     className="absolute left-[10%] right-[10%] h-0.5 bg-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.8)] z-10" 
+                   />
+                </div>
              </div>
-             <p style={{ color: '#95D5B2', fontSize: '16px' }}>Peça para um adulto mostrar o QR Code da sua conta no celular dele.</p>
+             <p className="text-emerald-200/60 font-bold text-sm px-8">Mostre o QR Code do Portal do Guardião para a câmera.</p>
           </motion.div>
         )}
 
@@ -148,50 +162,102 @@ export default function ChildLoginPage() {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
-            style={{ width: '100%', maxWidth: '400px', textAlign: 'center' }}
+            className="relative z-10 w-full max-w-sm text-center"
           >
-             <button onClick={() => setMethod('select')} style={{ background: 'none', border: 'none', color: 'white', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', marginBottom: '32px' }}>
-                <ArrowLeft size={20} /> Voltar
+             <button onClick={() => setMethod('select')} className="mb-8 text-emerald-300/50 hover:text-white flex items-center gap-2 mx-auto uppercase font-black text-[10px] tracking-widest">
+                <ArrowLeft size={16} /> Voltar
              </button>
-             <h2 style={{ fontSize: '28px', fontWeight: 900, marginBottom: '12px' }}>Números Mágicos</h2>
-             <p style={{ color: '#95D5B2', fontSize: '16px', marginBottom: '48px' }}>Digite seu PIN de 4 dígitos</p>
              
-             <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginBottom: '48px' }}>
+             <h2 className="text-3xl font-black text-white mb-2 italic tracking-tighter">Números Mágicos</h2>
+             <p className="text-emerald-200/60 font-bold mb-12 uppercase tracking-widest text-[10px]">Digite seu segredo</p>
+             
+             <div className="flex justify-center gap-4 mb-12">
                 {pin.map((digit, i) => (
                   <input 
                     key={i}
                     id={`pin-${i}`}
-                    type="number"
+                    type="password"
+                    maxLength={1}
                     value={digit}
                     onChange={(e) => handlePinInput(e.target.value, i)}
-                    style={{ 
-                      width: '64px', 
-                      height: '80px', 
-                      borderRadius: '20px', 
-                      border: 'none', 
-                      backgroundColor: 'white', 
-                      color: '#1A4332', 
-                      fontSize: '32px', 
-                      fontWeight: 900, 
-                      textAlign: 'center',
-                      boxShadow: '0 8px 20px rgba(0,0,0,0.2)'
-                    }}
+                    className="w-16 h-20 bg-white/10 backdrop-blur-xl border border-white/10 rounded-2xl text-center text-white text-4xl font-black focus:border-brand-primary outline-none transition-all"
                   />
                 ))}
              </div>
 
              {isLoading && (
-               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', color: '#52B788', fontWeight: 700 }}>
-                  <Loader2 className="animate-spin" /> Validando magia...
+               <div className="flex items-center justify-center gap-3 text-emerald-400 font-black text-[10px] uppercase tracking-widest">
+                  <Loader2 className="animate-spin" size={16} /> Validando Magia...
                </div>
              )}
           </motion.div>
         )}
+
+        {method === 'credentials' && (
+          <motion.div 
+            key="credentials"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="relative z-10 w-full max-w-sm text-center"
+          >
+             <button onClick={() => setMethod('select')} className="mb-8 text-emerald-300/50 hover:text-white flex items-center gap-2 mx-auto uppercase font-black text-[10px] tracking-widest">
+                <ArrowLeft size={16} /> Voltar
+             </button>
+             
+             <h2 className="text-3xl font-black text-white mb-2 italic tracking-tighter">Identidade Secreta</h2>
+             <p className="text-emerald-200/60 font-bold mb-12 uppercase tracking-widest text-[10px]">Nome de usuário ou telefone</p>
+             
+             <div className="space-y-4 mb-8">
+                <div className="relative group">
+                   <div className="absolute left-6 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-brand-primary transition-colors">
+                      <User size={20} />
+                   </div>
+                   <input 
+                     type="text" 
+                     placeholder="Qual o seu nome?"
+                     value={username}
+                     onChange={(e) => setUsername(e.target.value)}
+                     className="w-full pl-16 pr-6 py-5 bg-white/10 backdrop-blur-xl border border-white/10 rounded-3xl text-white font-bold outline-none focus:border-brand-primary transition-all placeholder:text-white/20"
+                   />
+                </div>
+                
+                <button 
+                  onClick={handleLogin}
+                  disabled={!username || isLoading}
+                  className="w-full py-5 bg-brand-primary text-white font-black rounded-3xl shadow-xl shadow-brand-primary/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:grayscale"
+                >
+                   {isLoading ? <Loader2 className="animate-spin mx-auto" /> : 'ENTRAR NA AVENTURA'}
+                </button>
+             </div>
+          </motion.div>
+        )}
+
+        {method === 'face' && (
+          <motion.div 
+            key="face"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            className="relative z-10 w-full max-w-sm text-center"
+          >
+             <button onClick={() => setMethod('select')} className="mb-8 text-emerald-300/50 hover:text-white flex items-center gap-2 mx-auto uppercase font-black text-[10px] tracking-widest">
+                <ArrowLeft size={16} /> Voltar
+             </button>
+             
+             <div className="w-48 h-48 mx-auto mb-8 bg-brand-primary/10 rounded-full flex items-center justify-center border-2 border-brand-primary/20 relative">
+                <ScanFace size={80} className="text-brand-primary animate-pulse" />
+                <div className="absolute inset-0 border-4 border-brand-primary rounded-full animate-ping opacity-20" />
+             </div>
+
+             <h2 className="text-2xl font-black text-white mb-2 italic tracking-tighter">Visão de Coruja</h2>
+             <p className="text-emerald-200/60 font-bold mb-8 text-sm">Este recurso está sendo preparado pelo Grande Guardião!</p>
+          </motion.div>
+        )}
       </AnimatePresence>
 
-      {/* Footer Branding */}
-      <div style={{ marginTop: 'auto', textAlign: 'center', opacity: 0.5 }}>
-         <p style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase' }}>Universo Corujinha</p>
+      <div className="absolute bottom-10 left-0 right-0 text-center z-10 opacity-30">
+         <p className="text-[10px] font-black text-white uppercase tracking-[0.4em]">Desenvolvido para Heróis</p>
       </div>
     </div>
   )

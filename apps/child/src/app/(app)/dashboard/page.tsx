@@ -73,7 +73,19 @@ export default function ChildDashboardPage() {
     setMounted(true)
   }, [])
 
-  if (!mounted) return null
+  if (!mounted || !profile) {
+    return (
+      <div className="min-h-screen bg-[#0A1A14] flex items-center justify-center">
+        <motion.div 
+          animate={{ rotate: 360 }} 
+          transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
+          className="text-brand-primary"
+        >
+          <Sparkles size={48} />
+        </motion.div>
+      </div>
+    )
+  }
 
   const completedMissions = missions.filter(mission => mission.completed).length
   const activeMissions = missions.length - completedMissions
