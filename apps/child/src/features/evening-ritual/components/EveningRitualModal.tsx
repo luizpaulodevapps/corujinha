@@ -58,9 +58,14 @@ export function EveningRitualModal() {
 
   // Abrir o modal automaticamente se for noite e o ritual não estiver completo
   useEffect(() => {
+    let timer: NodeJS.Timeout | undefined;
+    
     if ((vibe === 'dusk' || vibe === 'night') && !isEveningRitualComplete) {
-      const timer = setTimeout(() => setIsOpen(true), 5000)
-      return () => clearTimeout(timer)
+      timer = setTimeout(() => setIsOpen(true), 5000)
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer)
     }
   }, [vibe, isEveningRitualComplete])
 

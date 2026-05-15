@@ -11,14 +11,14 @@
   --rarity-color: var(--brand-magic);
   --rarity-glow: 0 0 10px var(--brand-magic-alpha);
   border-color: var(--brand-magic);
+  @apply animate-pulse;
 }
- @apply animate-pulse;
+
 /* Epic: High value */
 .rarity-epic {
   --rarity-color: var(--brand-accent);
   --rarity-glow: 0 0 20px var(--brand-accent-alpha);
   border-color: var(--brand-accent);
- 
 }
 
 /* Sacred: Legendary / Character-linked */

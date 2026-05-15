@@ -19,8 +19,8 @@
 
 /* Magic Card: Glowing and Animated */
 .cj-card-magic {
-  background: linear-gradient(to bottom right, white, var(--emerald-50/20));
-  border-color: var(--brand-accent/30);
+  background: linear-gradient(to bottom right, white, color-mix(in srgb, var(--emerald-50), transparent 80%));
+  border-color: color-mix(in srgb, var(--brand-accent), transparent 70%);
   box-shadow: var(--elevation-floating);
 }
 
@@ -28,7 +28,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at top right, var(--brand-accent/5), transparent);
+  background: radial-gradient(circle at top right, color-mix(in srgb, var(--brand-accent), transparent 95%), transparent);
   pointer-events: none;
 }
 

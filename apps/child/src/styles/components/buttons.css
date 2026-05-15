@@ -24,7 +24,7 @@
   background: var(--brand-primary);
   color: var(--text-contrast, #FFFFFF);
   box-shadow: 0 8px 0 0 var(--brand-warm), var(--shadow-md);
-  border: 2px border-white/20;
+  border: 2px solid color-mix(in srgb, white, transparent 80%);
 }
 
 .cj-button-primary:active {
