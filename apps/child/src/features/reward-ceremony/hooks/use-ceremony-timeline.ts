@@ -13,20 +13,22 @@ export function useCeremonyTimeline(isOpen: boolean) {
   const [stage, setStage] = useState<CeremonyStage>(CeremonyStage.IDLE)
 
   useEffect(() => {
+    const timers: NodeJS.Timeout[] = []
+
     if (isOpen) {
       // Timeline Sequence
       setStage(CeremonyStage.ENTER)
 
-      const timer1 = setTimeout(() => setStage(CeremonyStage.MENTOR_APPEAR), 600)
-      const timer2 = setTimeout(() => setStage(CeremonyStage.REWARD_REVEAL), 1200)
-      const timer3 = setTimeout(() => setStage(CeremonyStage.NEST_EVOLUTION), 2000)
-      const timer4 = setTimeout(() => setStage(CeremonyStage.CTA), 2800)
-
-      return () => {
-        [timer1, timer2, timer3, timer4].forEach(clearTimeout)
-      }
+      timers.push(setTimeout(() => setStage(CeremonyStage.MENTOR_APPEAR), 600))
+      timers.push(setTimeout(() => setStage(CeremonyStage.REWARD_REVEAL), 1200))
+      timers.push(setTimeout(() => setStage(CeremonyStage.NEST_EVOLUTION), 2000))
+      timers.push(setTimeout(() => setStage(CeremonyStage.CTA), 2800))
     } else {
       setStage(CeremonyStage.IDLE)
+    }
+
+    return () => {
+      timers.forEach(clearTimeout)
     }
   }, [isOpen])
 
