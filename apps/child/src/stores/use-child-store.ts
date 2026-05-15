@@ -97,10 +97,27 @@ export const useChildStore = create<ChildState>((set) => ({
     }
   }),
 
-  updateAvatar: (src) => set((state) => {
-    if (!state.profile) return state
-    return {
-      profile: { ...state.profile, avatar: src }
+  updateAvatar: async (src) => {
+    const state = useChildStore.getState()
+    if (!state.profile) return
+
+    set({ isLoading: true })
+    try {
+      const { getFirebaseFirestore } = await import('@corujinha/firebase')
+      const { doc, updateDoc } = await import('firebase/firestore')
+      
+      const db = getFirebaseFirestore()
+      const childRef = doc(db, 'children', state.profile.id)
+      
+      await updateDoc(childRef, { avatar: src })
+      
+      set((state) => ({
+        profile: state.profile ? { ...state.profile, avatar: src } : null,
+        isLoading: false
+      }))
+    } catch (error) {
+      console.error('Erro ao atualizar avatar no Firestore:', error)
+      set({ isLoading: false })
     }
-  }),
+  },
 }))

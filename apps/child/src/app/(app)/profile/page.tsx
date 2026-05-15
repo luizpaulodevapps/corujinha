@@ -6,6 +6,7 @@ import { CheckCircle2, Coins, Flame, Palette, Save, Sparkles, Star, Trophy, User
 import clsx from 'clsx'
 import { PageContainer } from '@/components/page-container'
 import { useChildStore } from '@/stores/use-child-store'
+import { AvatarUpload } from '@/components/avatar-upload'
 
 const avatars = [
   { id: 'owl-new', emoji: '🦉', name: 'Aventureira', src: '/owl_mascot_new.png' },
@@ -61,7 +62,7 @@ export default function ProfilePage() {
     <PageContainer title="Meu Perfil" hideHeader hideAvatar>
       <section className="cp-hero" aria-labelledby="profile-title">
         <div className="cp-hero__avatar">
-          <img src={selectedAvatar} alt="Avatar escolhido" />
+          <AvatarUpload currentAvatar={profile.avatar} />
         </div>
 
         <div className="cp-hero__copy">
