@@ -39,6 +39,8 @@ export const useChildStore = create<ChildState>((set) => ({
         // Fallback para perfil novo se não existir no banco
         set({ 
           profile: {
+            id: childId,
+            familyId: 'unknown',
             name: 'Explorador',
             level: 1,
             xp: 0,
