@@ -93,10 +93,10 @@ export function RewardCeremonyModal({ isOpen, mission, mentor = 'Bubo', onClose 
   // Triggers de Áudio e FX baseados na Timeline
   useEffect(() => {
     if (stage === CeremonyStage.ENTER) {
-      audioService.playEffect('reward_ceremony', mentor)
+      audioService.playEffect('reward_ceremony', 'REWARD', mentor)
     }
     if (stage === CeremonyStage.MENTOR_APPEAR) {
-      audioService.playEffect('mentor_appear', mentor)
+      audioService.playEffect('mentor_appear', 'MENTOR', mentor)
       triggerCelebration(mission?.difficulty === 'Difícil' ? 'epic' : 'common')
     }
   }, [stage, mentor, mission])
