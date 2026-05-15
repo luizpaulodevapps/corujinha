@@ -21,6 +21,7 @@ import { useAuthStore } from '@/store/auth.store'
 export default function RewardsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [activeCategory, setActiveCategory] = useState('Tudo')
+  const [searchQuery, setSearchQuery] = useState('')
   const user = useAuthStore(s => s.user)
 
   const categories = ['Tudo', 'Digital', 'Experiência', 'Privilégio', 'Físico']
@@ -32,6 +33,12 @@ export default function RewardsPage() {
     { id: '4', title: 'Novo Livro de Histórias', cost: 300, category: 'Físico', emoji: '📚', stock: '2 disponíveis' },
     { id: '5', title: 'Dia de Parque', cost: 500, category: 'Experiência', emoji: '🌳', stock: 'Especial' },
   ]
+
+  const filteredRewards = mockRewards.filter(reward => {
+    const matchesCategory = activeCategory === 'Tudo' || reward.category === activeCategory
+    const matchesSearch = reward.title.toLowerCase().includes(searchQuery.toLowerCase())
+    return matchesCategory && matchesSearch
+  })
 
   return (
     <div className="pb-20 lg:pb-0 min-h-screen bg-bg-main relative overflow-hidden">
@@ -78,6 +85,8 @@ export default function RewardsPage() {
             <input 
               type="text" 
               placeholder="Procurar tesouro..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full h-14 pl-14 pr-6 bg-white rounded-2xl border-4 border-card-border shadow-sm font-bold text-brand-primary placeholder:text-brand-secondary/30 focus:outline-none focus:border-amber-500/20 transition-all"
             />
           </div>
@@ -85,10 +94,14 @@ export default function RewardsPage() {
 
         {/* Rewards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <AnimatePresence>
-            {mockRewards.map((reward, i) => (
+          <AnimatePresence mode="popLayout">
+            {filteredRewards.length > 0 ? filteredRewards.map((reward, i) => (
               <RewardCard key={reward.id} reward={reward} index={i} />
-            ))}
+            )) : (
+              <div className="col-span-full py-20 text-center">
+                <p className="text-brand-secondary/40 font-black italic text-xl">Nenhum tesouro encontrado nesta categoria...</p>
+              </div>
+            )}
           </AnimatePresence>
         </div>
       </div>

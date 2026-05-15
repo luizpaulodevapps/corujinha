@@ -13,15 +13,7 @@ interface ChildState {
   updateAvatar: (src: string) => void
 }
 
-const MOCK_CHILD: ChildProfile = {
-  name: 'Luca',
-  level: 12,
-  xp: 450,
-  nextLevelXp: 1000,
-  coins: 125,
-  streak: 5,
-  avatar: '/owl_mascot_new.png',
-}
+
 
 export const useChildStore = create<ChildState>((set) => ({
   profile: null,
@@ -33,25 +25,31 @@ export const useChildStore = create<ChildState>((set) => ({
   fetchProfile: async (childId) => {
     set({ isLoading: true })
     try {
-      // Aqui integraremos com o Firestore futuramente
-      // const doc = await getDoc(doc(db, 'children', childId))
-      // set({ profile: doc.data(), isLoading: false })
-
-      // Simulação de carregamento de dados reais
-      setTimeout(() => {
-        set({
+      const { getFirebaseFirestore } = await import('@corujinha/firebase')
+      const { doc, getDoc } = await import('firebase/firestore')
+      
+      const db = getFirebaseFirestore()
+      // Simplificado: buscando direto de uma coleção de crianças ou via familyId se disponível
+      const childRef = doc(db, 'children', childId)
+      const snapshot = await getDoc(childRef)
+      
+      if (snapshot.exists()) {
+        set({ profile: snapshot.data() as ChildProfile, isLoading: false })
+      } else {
+        // Fallback para perfil novo se não existir no banco
+        set({ 
           profile: {
-            name: 'Aventureiro',
+            name: 'Explorador',
             level: 1,
             xp: 0,
             nextLevelXp: 100,
             coins: 0,
             streak: 0,
-            avatar: '/owl_mascot_new.png',
+            avatar: '/owl_mascot_new.png'
           },
-          isLoading: false
+          isLoading: false 
         })
-      }, 1000)
+      }
     } catch (error) {
       console.error('Erro ao carregar perfil:', error)
       set({ isLoading: false })

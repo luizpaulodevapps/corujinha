@@ -176,5 +176,37 @@ export const dashboardService = {
       id: doc.id,
       ...doc.data()
     }))
+  },
+
+  /**
+   * Busca os eventos da jornada (Mapa da Semana)
+   */
+  async getJourneyEvents(familyId: string) {
+    const db = getFirebaseFirestore()
+    const eventsRef = collection(db, 'families', familyId, 'journey_events')
+    const q = query(eventsRef, orderBy('date', 'asc'))
+    
+    const snapshot = await getDocs(q)
+    return snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }))
+  },
+
+  /**
+   * Salva um novo evento de jornada
+   */
+  async saveJourneyEvent(familyId: string, eventData: any) {
+    const db = getFirebaseFirestore()
+    const { collection, addDoc, serverTimestamp } = await import('firebase/firestore')
+    
+    const eventsRef = collection(db, 'families', familyId, 'journey_events')
+    const docRef = await addDoc(eventsRef, {
+      ...eventData,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    })
+
+    return docRef.id
   }
 }

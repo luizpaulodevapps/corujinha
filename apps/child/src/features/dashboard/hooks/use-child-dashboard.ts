@@ -8,7 +8,7 @@ import { useDashboardModals } from '@/stores/use-dashboard-modals'
 import { MissionService } from '@/services/mission-service'
 
 export function useChildDashboard() {
-  const { profile, transactions, updateAvatar } = useChildStore()
+  const { profile, transactions, updateAvatar, fetchProfile } = useChildStore()
   const { missions } = useMissionStore()
   const { notifications, markAsRead, clearAll } = useNotificationStore()
   const modals = useDashboardModals()
@@ -43,6 +43,7 @@ export function useChildDashboard() {
     selectedMission,
     lastCompletedMission,
     updateAvatar,
+    fetchProfile,
     markAsRead,
     clearAll,
     handleCompleteMission

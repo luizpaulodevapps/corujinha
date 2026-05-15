@@ -1,5 +1,8 @@
 export interface ChildProfile {
+  id: string
+  familyId: string
   name: string
+  username?: string
   level: number
   xp: number
   nextLevelXp: number

@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   QrCode, 
@@ -11,19 +12,91 @@ import {
   ChevronRight,
   Loader2,
   User,
-  Phone,
   ScanFace
 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useRouter} from 'next/navigation'
+import { useChildStore } from '@/stores/use-child-store'
+import { getFirebaseFirestore } from '@corujinha/firebase'
+import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore'
 
 type LoginMethod = 'select' | 'qr' | 'pin' | 'credentials' | 'face'
 
 export default function ChildLoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#0A1A14] flex items-center justify-center"><Loader2 className="animate-spin text-brand-primary" size={48} /></div>}>
+      <LoginPageContent />
+    </Suspense>
+  )
+}
+
+function LoginPageContent() {
   const [method, setMethod] = useState<LoginMethod>('select')
   const [pin, setPin] = useState(['', '', '', ''])
   const [username, setUsername] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const { setProfile } = useChildStore()
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const t = searchParams.get('t')
+    const f = searchParams.get('f')
+    
+    if (t && f) {
+      handleLogin(undefined, undefined, f, t)
+    }
+  }, [searchParams])
+
+  const handleLogin = async (u?: string, p?: string, f?: string, t?: string) => {
+    setIsLoading(true)
+    const targetUsername = u || username
+    const targetPin = p || pin.join('')
+    
+    try {
+      const db = getFirebaseFirestore()
+      
+      if (t && f) {
+        // Login via Magic Token (Secure)
+        const childrenRef = collection(db, 'families', f, 'children')
+        const q = query(childrenRef, where('loginToken', '==', t))
+        const snapshot = await getDocs(q)
+          
+        if (!snapshot.empty) {
+          const childDoc = snapshot.docs[0]
+          if (childDoc) {
+            setProfile({ id: childDoc.id, familyId: f, ...childDoc.data() } as any)
+            router.push('/dashboard')
+            return
+          }
+        }
+      } else if (f) {
+        // Manual Login with PIN
+        const childrenRef = collection(db, 'families', f, 'children')
+        const q = query(childrenRef, where('username', '==', targetUsername))
+        const snapshot = await getDocs(q)
+        
+        if (!snapshot.empty) {
+          const childDoc = snapshot.docs[0]
+          if (childDoc) {
+            const childData = childDoc.data()
+            
+            if (childData.pinCode === targetPin) {
+              setProfile({ id: childDoc.id, familyId: f, ...childData } as any)
+              router.push('/dashboard')
+              return
+            }
+          }
+        }
+      } else {
+        alert('Por favor, use o QR Code do Papai ou Mamãe!')
+      }
+    } catch (error) {
+      console.error('Erro no login:', error)
+      alert('Opa! A magia falhou. Verifique seus dados.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const handlePinInput = (val: string, index: number) => {
     if (val.length > 1) return
@@ -36,14 +109,6 @@ export default function ChildLoginPage() {
     } else if (val && index === 3) {
       handleLogin()
     }
-  }
-
-  const handleLogin = async () => {
-    setIsLoading(true)
-    setTimeout(() => {
-      setIsLoading(false)
-      router.push('/dashboard')
-    }, 2000)
   }
 
   return (
@@ -223,7 +288,7 @@ export default function ChildLoginPage() {
                 </div>
                 
                 <button 
-                  onClick={handleLogin}
+                  onClick={() => handleLogin()}
                   disabled={!username || isLoading}
                   className="w-full py-5 bg-brand-primary text-white font-black rounded-3xl shadow-xl shadow-brand-primary/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:grayscale"
                 >

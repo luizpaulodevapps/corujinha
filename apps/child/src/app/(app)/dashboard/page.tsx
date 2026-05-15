@@ -66,12 +66,16 @@ export default function ChildDashboardPage() {
     modals,
     selectedMission,
     lastCompletedMission,
+    fetchProfile,
     handleCompleteMission
   } = useChildDashboard()
 
   useEffect(() => {
     setMounted(true)
-  }, [])
+    if (!profile) {
+      fetchProfile('child-1') // Placeholder ID até termos o sistema de login completo
+    }
+  }, [profile, fetchProfile])
 
   if (!mounted || !profile) {
     return (

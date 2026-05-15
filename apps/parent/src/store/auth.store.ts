@@ -8,6 +8,10 @@ interface AuthUser {
   uid: string
   email: string | null
   displayName: string | null
+  firstName?: string
+  lastName?: string
+  birthDate?: string
+  whatsapp?: string
   photoURL: string | null
   familyId: string | null
   onboardingCompleted: boolean
@@ -24,6 +28,7 @@ interface AuthState {
   // Actions
   setLoading: () => void
   setUser: (firebaseUser: FirebaseUser, claims: Record<string, unknown>, previewChildren?: any[]) => void
+  updateUser: (data: Partial<AuthUser>) => void
   clearUser: () => void
 }
 
@@ -55,6 +60,15 @@ export const useAuthStore = create<AuthState>()(
           },
           false,
           'auth/setUser'
+        ),
+
+      updateUser: (data) =>
+        set(
+          (state) => ({
+            user: state.user ? { ...state.user, ...data } : null
+          }),
+          false,
+          'auth/updateUser'
         ),
 
       clearUser: () =>

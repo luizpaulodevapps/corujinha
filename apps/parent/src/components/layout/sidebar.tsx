@@ -21,15 +21,18 @@ import { useAuthActions } from '@/hooks/use-auth'
 import Image from 'next/image'
 import { ThemeToggle } from '@/components/theme-toggle'
 
-const NAV_ITEMS = [
-  { icon: LayoutDashboard, label: 'Painel', href: '/dashboard' },
-  { icon: MapIcon, label: 'Jornada', href: '/jornada' },
+const PRIMARY_NAV = [
+  { icon: LayoutDashboard, label: 'Início', href: '/dashboard' },
   { icon: ListTodo, label: 'Missões', href: '/tasks' },
-  { icon: Gift, label: 'Prêmios', href: '/rewards' },
   { icon: MessageCircle, label: 'Chat', href: '/chat' },
+  { icon: Users, label: 'Família', href: '/family' },
+]
+
+const SECONDARY_NAV = [
+  { icon: MapIcon, label: 'Jornada', href: '/jornada' },
+  { icon: Gift, label: 'Prêmios', href: '/rewards' },
   { icon: History, label: 'Diário', href: '/history' },
   { icon: BarChart3, label: 'Evolução', href: '/reports' },
-  { icon: Users, label: 'Família', href: '/family' },
   { icon: Settings, label: 'Ajustes', href: '/settings' },
 ]
 
@@ -43,25 +46,34 @@ export function Sidebar() {
         <ThemeToggle />
       </div>
 
-      {/* Mobile Bottom Nav */}
-      <nav className="fixed bottom-0 left-0 right-0 h-20 bg-card-bg/90 backdrop-blur-2xl border-t-4 border-brand-secondary/20 flex items-center justify-around z-50 lg:hidden px-4 pb-4">
-        {NAV_ITEMS.map((item) => {
+      {/* Mobile Bottom Nav (Clean & App-like) */}
+      <nav className="fixed bottom-0 left-0 right-0 h-20 bg-card-bg/95 backdrop-blur-2xl border-t-4 border-card-border flex items-center justify-around z-50 lg:hidden px-6 pb-safe shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
+        {PRIMARY_NAV.map((item) => {
           const isActive = pathname === item.href
           return (
             <Link 
               key={item.href} 
               href={item.href}
-              className={`flex flex-col items-center justify-center gap-1 transition-all p-2 rounded-2xl ${isActive ? 'bg-brand-primary text-white shadow-lg' : 'text-text-secondary'}`}
+              className={`flex flex-col items-center justify-center gap-1 transition-all relative px-4 py-2 rounded-2xl ${isActive ? 'text-brand-primary scale-110' : 'text-text-muted hover:text-brand-primary'}`}
             >
-              <item.icon size={22} strokeWidth={isActive ? 3 : 2} />
-              <span className="text-[10px] font-black uppercase tracking-wider">{item.label}</span>
+              {isActive && (
+                <motion.div 
+                  layoutId="mobile-nav-pill"
+                  className="absolute inset-0 bg-brand-primary/10 rounded-2xl"
+                  transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                />
+              )}
+              <item.icon size={26} strokeWidth={isActive ? 3 : 2} className="relative z-10" />
+              <span className={`text-[9px] font-black uppercase tracking-tighter relative z-10 ${isActive ? 'opacity-100' : 'opacity-60'}`}>
+                {item.label}
+              </span>
             </Link>
           )
         })}
       </nav>
 
       {/* Desktop Sidebar */}
-      <nav className="fixed top-0 bottom-0 left-0 w-72 bg-card-bg/80 backdrop-blur-3xl border-r-8 border-brand-secondary/10 flex-col p-8 hidden lg:flex z-50 overflow-hidden">
+      <nav className="fixed top-0 bottom-0 left-0 w-72 bg-card-bg/80 backdrop-blur-3xl border-r-8 border-brand-secondary/10 flex-col p-8 hidden lg:flex z-50">
         {/* Decorative Leaves */}
         <motion.div 
           animate={{ y: [0, 10, 0], rotate: [0, 5, 0] }}
@@ -90,30 +102,46 @@ export function Sidebar() {
           </div>
         </div>
 
-        <div className="flex flex-col w-full gap-3 flex-1 relative z-10">
-          {NAV_ITEMS.map((item) => {
-            const isActive = pathname === item.href
-            return (
-              <Link 
-                key={item.href} 
-                href={item.href}
-                className={`group flex items-center gap-4 px-6 py-4 rounded-[2rem] font-bold transition-all relative border-4
-                  ${isActive 
-                    ? 'bg-brand-primary text-white border-brand-primary shadow-[0_8px_0_0_#1B4332]' 
-                    : 'text-text-secondary border-transparent hover:bg-brand-secondary/10 hover:text-brand-primary hover:border-brand-secondary/20'}`}
-              >
-                <item.icon size={24} className={isActive ? 'text-white' : 'text-brand-secondary group-hover:text-brand-primary'} strokeWidth={isActive ? 3 : 2} />
-                <span className={isActive ? 'text-lg font-black' : 'text-lg'}>{item.label}</span>
-                
-                {isActive && (
-                  <motion.div 
-                    layoutId="sidebar-active"
-                    className="absolute -right-2 w-4 h-8 bg-brand-accent rounded-l-full shadow-lg border-2 border-card-border"
-                  />
-                )}
-              </Link>
-            )
-          })}
+        <div className="flex flex-col w-full gap-2 flex-1 relative z-10 overflow-y-auto overflow-x-hidden pr-2 custom-scrollbar mb-8">
+          <div className="mb-4">
+            <p className="text-[10px] font-black text-brand-primary/30 uppercase tracking-[0.3em] mb-4 px-6">Principal</p>
+            {PRIMARY_NAV.map((item) => {
+              const isActive = pathname === item.href
+              return (
+                <Link 
+                  key={item.href} 
+                  href={item.href}
+                  className={`group flex items-center gap-4 px-6 py-4 rounded-[2rem] font-bold transition-all relative border-4 mb-2
+                    ${isActive 
+                      ? 'bg-brand-primary text-white border-brand-primary shadow-[0_8px_0_0_#1B4332]' 
+                      : 'text-text-secondary border-transparent hover:bg-brand-primary/5 hover:text-brand-primary hover:border-brand-primary/10'}`}
+                >
+                  <item.icon size={22} className={isActive ? 'text-white' : 'text-brand-secondary group-hover:text-brand-primary'} strokeWidth={isActive ? 3 : 2} />
+                  <span className={isActive ? 'text-base font-black' : 'text-base'}>{item.label}</span>
+                </Link>
+              )
+            })}
+          </div>
+
+          <div className="mt-4 pt-4 border-t-4 border-brand-primary/5">
+            <p className="text-[10px] font-black text-brand-primary/30 uppercase tracking-[0.3em] mb-4 px-6">Ferramentas</p>
+            {SECONDARY_NAV.map((item) => {
+              const isActive = pathname === item.href
+              return (
+                <Link 
+                  key={item.href} 
+                  href={item.href}
+                  className={`group flex items-center gap-4 px-6 py-4 rounded-[2rem] font-bold transition-all relative border-4 mb-2
+                    ${isActive 
+                      ? 'bg-brand-primary text-white border-brand-primary shadow-[0_8px_0_0_#1B4332]' 
+                      : 'text-text-secondary border-transparent hover:bg-brand-primary/5 hover:text-brand-primary hover:border-brand-primary/10'}`}
+                >
+                  <item.icon size={22} className={isActive ? 'text-white' : 'text-brand-secondary group-hover:text-brand-primary'} strokeWidth={isActive ? 3 : 2} />
+                  <span className={isActive ? 'text-base font-black' : 'text-base'}>{item.label}</span>
+                </Link>
+              )
+            })}
+          </div>
         </div>
 
         <div className="mt-auto flex flex-col gap-3">

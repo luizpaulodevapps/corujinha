@@ -56,7 +56,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-bg-main selection:bg-brand-accent selection:text-brand-primary motion-safe:transition-colors">
       <Sidebar />
-      <main className="lg:pl-72 min-h-screen transition-all duration-300">
+      <main className="lg:pl-72 min-h-screen transition-all duration-300 relative">
         <PageTransition>{children}</PageTransition>
       </main>
     </div>

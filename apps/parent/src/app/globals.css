@@ -17,13 +17,13 @@
   --color-brand-magic:       #7400B8;   /* Magic Purple */
 
   /* ─── Semantic (Nature Inspired) ─── */
-  --color-text-main:         #081C15;   /* Very Dark Green */
+  --color-text-main:         #1B4332;   /* Softer Deep Forest Green for eye comfort */
   --color-text-secondary:    #2D6A4F;   /* Forest Green */
   --color-text-muted:        #748E83;   /* Muted Sage */
-  --color-bg-main:           #F8FAF5;   /* Soft Cream/Mint */
-  --color-border-main:       #D8E2DC;   /* Sage Border */
-  --color-card-bg:           #FFFFFF;
-  --color-card-border:       #E9F5EB;
+  --color-bg-main:           #F1F5E9;   /* Softer Forest Mint */
+  --color-border-main:       #DCE2D5;   /* Organic Sage Border */
+  --color-card-bg:           #FDFCF8;   /* Soft Forest Cream */
+  --color-card-border:       #D8E2D5;   /* More defined but still soft */
 
   /* ─── Animações ───────────────────────────────────────────────────────── */
   --animate-float: float 4s ease-in-out infinite;
@@ -55,17 +55,23 @@
   .dark {
     --color-text-main:         #F8FAF5;
     --color-text-secondary:    #B7E4C7;
-    --color-text-muted:        #748E83;
+    --color-text-muted:        #95B3A6;   /* Improved contrast for muted text */
     --color-bg-main:           #081C15;   /* Deep Forest Night */
-    --color-border-main:       #1B4332;
-    --color-card-bg:           #132A13;
-    --color-card-border:       #2D6A4F;
+    --color-border-main:       #1B4332;   /* Deep forest border */
+    --color-card-bg:           #0D281F;   /* Deep card bg */
+    --color-card-border:       #1B4332;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
   }
 
   body {
+    @apply antialiased relative transition-colors duration-500 overflow-x-hidden;
     background-color: var(--color-bg-main);
     color: var(--color-text-main);
-    @apply antialiased relative transition-colors duration-500 overflow-x-hidden;
     font-family: 'Fredoka', 'Quicksand', system-ui, sans-serif;
   }
 
@@ -88,6 +94,10 @@
   ::-webkit-scrollbar-thumb { 
     @apply bg-brand-primary/30 hover:bg-brand-primary/50 rounded-full border-4 border-transparent bg-clip-padding; 
   }
+
+  .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+  .custom-scrollbar::-webkit-scrollbar-track { @apply bg-transparent; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { @apply bg-brand-primary/20 hover:bg-brand-primary/40 rounded-full; }
 }
 
 @layer components {

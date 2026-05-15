@@ -21,12 +21,22 @@ export const metadata: Metadata = {
     template: '%s | Corujinha',
   },
   description: 'Pequenas tarefas, grandes conquistas.',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Corujinha',
+  },
+  applicationName: 'Corujinha',
 }
 
 export const viewport: Viewport = {
-  themeColor: '#1E3A8A',
+  themeColor: '#2D6A4F',
   width: 'device-width',
   initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
 }
 
 export default function RootLayout({

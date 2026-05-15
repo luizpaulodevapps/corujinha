@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Map as MapIcon, Shield, Sword, Target, Trophy, User } from 'lucide-react'
+import { Map as MapIcon, Shield, Sword, Target, Trophy, User, MessageCircle } from 'lucide-react'
 import clsx from 'clsx'
 
 const ITEMS = [
@@ -11,6 +11,7 @@ const ITEMS = [
   { href: '/metas', label: 'Metas', icon: Target },
   { href: '/shop', label: 'Loja', icon: Shield },
   { href: '/achievements', label: 'Conquistas', icon: Trophy },
+  { href: '/chat', label: 'Conversa', icon: MessageCircle },
   { href: '/profile', label: 'Perfil', icon: User },
 ] as const
 
