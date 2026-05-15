@@ -5,7 +5,7 @@ import { ChildHeader } from './child-header'
 import { useChildStore } from '@/stores/use-child-store'
 import { useNotificationStore } from '@/stores/use-notification-store'
 import { useDashboardModals } from '@/stores/use-dashboard-modals'
-import { ChildWalletModal } from './child-wallet-modal'
+import { ChildWalletModal } from './child-wallet-modal-v3'
 import { NotificationDrawer } from './modals/NotificationDrawer'
 import { AvatarCustomizationModal } from './modals/AvatarCustomizationModal'
 import { motion } from 'framer-motion'
@@ -25,6 +25,8 @@ interface PageContainerProps {
   className?: string
   headerProps?: any
   hideAvatar?: boolean
+  mentor?: 'bubo' | 'bolt' | 'lumi' | 'gaia'
+  energy?: 'calm' | 'adventure' | 'magic' | 'night'
 }
 
 export function PageContainer({ 
@@ -37,9 +39,11 @@ export function PageContainer({
   hideBottomNav = false,
   className = '',
   headerProps = {},
-  hideAvatar = false
+  hideAvatar = false,
+  mentor,
+  energy
 }: PageContainerProps) {
-  const { profile, transactions, updateAvatar } = useChildStore()
+  const { profile, updateAvatar } = useChildStore()
   const { notifications, markAsRead, clearAll } = useNotificationStore()
   const modals = useDashboardModals()
 
@@ -56,7 +60,11 @@ export function PageContainer({
   }
 
   return (
-    <div className="relative min-h-screen flex flex-col">
+    <div 
+      className="relative min-h-screen flex flex-col"
+      data-mentor={mentor}
+      data-energy={energy}
+    >
       <MagicBackground />
 
       {!hideHeader && (
@@ -81,7 +89,7 @@ export function PageContainer({
       <motion.main 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className={`child-page-main ${className}`}
+        className={`relative z-0 child-page-main ${className}`}
       >
         <div className="child-page-inner">
           {children}
@@ -92,8 +100,6 @@ export function PageContainer({
       <ChildWalletModal 
         isOpen={modals.showWallet}
         onClose={modals.closeWallet}
-        coins={profile.coins}
-        transactions={transactions}
       />
 
       <NotificationDrawer 

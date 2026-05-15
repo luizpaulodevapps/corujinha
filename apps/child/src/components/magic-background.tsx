@@ -24,7 +24,7 @@ export function MagicBackground() {
       />
 
       {/* 4. TEXTURE OVERLAY (Paper/Watercolor feel) */}
-      <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay bg-[url('/textures/noise.svg')]" />
       
       {/* 5. SOFT VIGNETTE (Focus on content) */}
       <div className="absolute inset-0 bg-[radial-gradient(circle,transparent_50%,rgba(6,31,21,0.12)_100%)]" />

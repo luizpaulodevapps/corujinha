@@ -1,0 +1,75 @@
+@reference "tailwindcss";
+
+/* 🧱 Corujinha Primitives: Semantic Design Identity */
+
+/* 🏺 Sacred Card: The most premium surface, used for hero news and rare items */
+.sacred-card {
+  @apply relative overflow-hidden transition-all duration-500;
+  background: var(--glass-glow);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 0 !important;
+  border-radius: var(--radius-card);
+  box-shadow: var(--elevation-sacred);
+}
+
+.sacred-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: var(--elevation-cinematic);
+}
+
+/* 🎈 Floating Card: Standard interactive surface */
+.floating-card {
+  @apply relative overflow-hidden transition-all duration-300;
+  background: white;
+  border-radius: var(--radius-card);
+  border: 2px solid var(--emerald-50);
+  box-shadow: var(--elevation-floating);
+}
+
+.floating-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--emerald-100);
+  box-shadow: var(--shadow-md);
+}
+
+/* 🔮 Ritual Card: Deep, cinematic surfaces for high-focus moments */
+.ritual-card {
+  @apply relative overflow-hidden text-white;
+  background: var(--emerald-950);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--elevation-cinematic);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* 🦉 Mentor Card: Character-driven containers */
+.mentor-card {
+  @apply relative overflow-hidden transition-all duration-700;
+  border-radius: var(--radius-card);
+  box-shadow: var(--elevation-sacred);
+}
+
+.mentor-card--bubo { background: var(--grad-aurora); }
+.mentor-card--bolt { background: var(--brand-warm); }
+.mentor-card--lumi { background: var(--brand-magic); }
+.mentor-card--gaia { background: var(--emerald-900); }
+
+/* 🛡️ Section Icon: Small semantic markers */
+.section-icon {
+  @apply w-10 h-10 flex items-center justify-center shadow-inner shrink-0;
+  border-radius: var(--radius-md);
+  background: var(--emerald-50);
+  border: 1px solid var(--emerald-100);
+  color: var(--emerald-600);
+}
+
+[data-world-state="night"] .section-icon {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.2);
+  color: #34D399;
+}
+
+/* 🎖️ Rarity Tokens */
+.rarity-epic {
+  border-color: var(--rarity-epic);
+  box-shadow: 0 0 20px var(--rarity-epic-glow);
+}

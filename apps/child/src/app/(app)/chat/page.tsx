@@ -22,6 +22,9 @@ import {
   serverTimestamp 
 } from 'firebase/firestore'
 import Link from 'next/link'
+import clsx from 'clsx'
+
+import { PageContainer } from '@/components/page-container'
 
 export default function ChildChatPage() {
   const { profile } = useChildStore()
@@ -30,8 +33,6 @@ export default function ChildChatPage() {
   const [isSending, setIsSending] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  // O childId é o ID do perfil logado. 
-  // No ecossistema Corujinha, o childId está no profile.id
   const childId = profile?.id
   const familyId = profile?.familyId
 
@@ -48,7 +49,6 @@ export default function ChildChatPage() {
         ...doc.data()
       }))
       setMessages(msgs)
-      // Auto scroll
       setTimeout(() => {
         scrollRef.current?.scrollIntoView({ behavior: 'smooth' })
       }, 100)
@@ -84,40 +84,53 @@ export default function ChildChatPage() {
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-brand-bg flex items-center justify-center">
-        <Loader2 className="animate-spin text-brand-primary" size={48} />
-      </div>
+      <PageContainer title="Chat da Família" hideHeader hideAvatar>
+        <div className="flex-1 flex items-center justify-center min-h-[50vh]">
+          <Loader2 className="animate-spin text-emerald-600" size={48} />
+        </div>
+      </PageContainer>
     )
   }
 
   return (
-    <div className="min-h-screen bg-brand-bg pb-32 flex flex-col">
+    <PageContainer 
+      title="Chat da Família" 
+      hideHeader 
+      hideAvatar 
+      className="flex flex-col h-[calc(100vh-140px)]" // Adjust for bottom nav if present, or fixed
+    >
       {/* Header Mágico */}
-      <header className="p-6 bg-white/10 backdrop-blur-md border-b border-white/10 flex items-center justify-between sticky top-0 z-50">
-        <div className="flex items-center gap-4">
-          <Link href="/dashboard" className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-white">
-            <ArrowLeft size={24} />
-          </Link>
-          <div>
-            <h1 className="text-2xl font-black text-white italic tracking-tight">Chat da Família</h1>
-            <p className="text-[10px] font-black text-brand-primary uppercase tracking-widest flex items-center gap-1">
-              <Shield size={10} /> Guardiões Online
-            </p>
+      <header className="px-6 py-8 bg-emerald-950 rounded-b-[3rem] shadow-[var(--shadow-lg)] relative overflow-hidden shrink-0">
+        <div className="absolute inset-0 opacity-20 pointer-events-none mix-blend-overlay" style={{ backgroundImage: 'url(/textures/noise.svg)' }} />
+        <div className="absolute -top-12 -right-12 w-32 h-32 bg-brand-accent/20 blur-[40px] rounded-full" />
+        
+        <div className="relative z-10 flex items-center justify-between">
+          <div className="flex items-center gap-5">
+            <Link href="/dashboard" className="w-12 h-12 bg-white/10 rounded-[var(--radius-md)] flex items-center justify-center text-white border border-white/10 hover:bg-white/20 transition-colors">
+              <ArrowLeft size={24} />
+            </Link>
+            <div>
+              <h1 className="text-2xl font-black text-white italic tracking-tight leading-none mb-2">Voz do Ninho</h1>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.6)]" />
+                <p className="text-loud text-emerald-400/80 !text-[8px]">GUARDIÕES ATIVOS</p>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="w-12 h-12 bg-brand-primary/20 rounded-2xl flex items-center justify-center border-2 border-brand-primary/30">
-          <MessageCircle size={24} className="text-brand-primary" />
+          <div className="w-14 h-14 bg-brand-accent/10 rounded-[var(--radius-lg)] flex items-center justify-center border-2 border-brand-accent/30 text-brand-accent shadow-2xl">
+            <MessageCircle size={28} />
+          </div>
         </div>
       </header>
 
       {/* Área de Mensagens */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[url('/forest_pattern.png')] bg-[length:300px] bg-fixed bg-opacity-5">
+      <div className="flex-1 overflow-y-auto px-6 py-10 space-y-8 scrollbar-hide">
         {messages.length === 0 ? (
-          <div className="py-20 text-center">
-            <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
-              <MessageCircle size={40} className="text-white/20" />
+          <div className="py-20 text-center space-y-6">
+            <div className="w-24 h-24 bg-emerald-50 rounded-full flex items-center justify-center mx-auto border-2 border-dashed border-emerald-100">
+              <Sparkles size={40} className="text-emerald-200" />
             </div>
-            <p className="text-white/40 font-bold italic">Nenhuma mensagem ainda... Envie um "Oi!"</p>
+            <p className="text-poetic !text-[16px] !not-italic text-emerald-950/30">O ninho está silencioso... Que tal enviar um "Oi!"?</p>
           </div>
         ) : (
           messages.map((msg) => (
@@ -127,15 +140,22 @@ export default function ChildChatPage() {
               key={msg.id} 
               className={`flex ${msg.senderRole === 'child' ? 'justify-end' : 'justify-start'}`}
             >
-              <div className={`p-5 rounded-[2.5rem] max-w-[85%] shadow-xl relative ${
+              <div className={clsx(
+                "p-5 rounded-[var(--radius-card)] max-w-[85%] shadow-md relative group",
                 msg.senderRole === 'child' 
-                  ? 'bg-brand-primary text-white rounded-br-none border-b-4 border-emerald-700' 
-                  : 'bg-white/10 backdrop-blur-xl text-white rounded-bl-none border border-white/20'
-              }`}>
-                <p className="font-bold text-sm leading-relaxed">{msg.text}</p>
-                <div className={`flex items-center gap-1 mt-2 ${msg.senderRole === 'child' ? 'text-white/50' : 'text-emerald-300/50'}`}>
+                  ? 'bg-emerald-950 text-white rounded-br-none border-b-4 border-emerald-900' 
+                  : 'bg-white text-emerald-950 rounded-bl-none border-2 border-emerald-50'
+              )}>
+                {!profile || msg.senderId !== profile.id && (
+                  <span className="text-loud !text-[7px] block mb-1 opacity-40">{msg.senderName.toUpperCase()}</span>
+                )}
+                <p className="font-bold text-[15px] leading-relaxed italic">{msg.text}</p>
+                <div className={clsx(
+                  "flex items-center gap-1 mt-2",
+                  msg.senderRole === 'child' ? 'text-white/30' : 'text-emerald-900/20'
+                )}>
                    <Clock size={10} />
-                   <span className="text-[9px] font-black uppercase tracking-tighter">
+                   <span className="text-loud !text-[7px]">
                     {msg.createdAt?.seconds ? new Date(msg.createdAt.seconds * 1000).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '...'}
                    </span>
                 </div>
@@ -147,24 +167,29 @@ export default function ChildChatPage() {
       </div>
 
       {/* Input de Mensagem */}
-      <div className="p-6 bg-white/5 backdrop-blur-2xl border-t border-white/10 sticky bottom-24 z-50">
-        <form onSubmit={handleSendMessage} className="flex gap-4">
-          <input 
-            type="text" 
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Diga algo especial..." 
-            className="flex-1 bg-white/10 border-2 border-white/10 rounded-[2.5rem] px-8 py-5 outline-none font-bold text-white focus:border-brand-primary transition-all placeholder:text-white/20" 
-          />
+      <div className="p-6 bg-white/80 backdrop-blur-2xl border-t border-emerald-50 sticky bottom-0 z-50">
+        <form onSubmit={handleSendMessage} className="max-w-3xl mx-auto flex gap-4">
+          <div className="flex-1 relative">
+            <input 
+              type="text" 
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Diga algo especial..." 
+              className="w-full bg-emerald-50/50 border-2 border-emerald-100 rounded-[var(--radius-xl)] px-8 py-5 outline-none font-bold text-emerald-950 focus:bg-white focus:border-emerald-600 focus:shadow-lg transition-all placeholder:text-emerald-900/20" 
+            />
+            <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none opacity-20">
+              <Sparkles size={20} className="text-emerald-600" />
+            </div>
+          </div>
           <button 
             type="submit"
             disabled={!newMessage.trim() || isSending}
-            className="bg-brand-primary text-white w-20 h-20 rounded-[2rem] flex items-center justify-center shadow-[0_8px_0_0_#1B4332] active:translate-y-2 active:shadow-none transition-all disabled:opacity-50 disabled:grayscale"
+            className="bg-emerald-950 text-white w-20 h-20 rounded-[var(--radius-lg)] flex items-center justify-center shadow-[0_8px_0_0_#064e3b] active:translate-y-2 active:shadow-none transition-all disabled:opacity-50 disabled:grayscale hover:bg-emerald-900 shrink-0"
           >
-            <Send size={32} />
+            {isSending ? <Loader2 className="animate-spin" size={32} /> : <Send size={32} />}
           </button>
         </form>
       </div>
-    </div>
+    </PageContainer>
   )
 }

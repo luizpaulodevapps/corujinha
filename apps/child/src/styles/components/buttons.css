@@ -1,0 +1,47 @@
+/* 📦 Corujinha Component: Buttons Hierarchy & Physics */
+
+.cj-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: var(--radius-md);
+  font-weight: var(--font-black);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-loud);
+  transition: all var(--physics-duration-snappy) var(--physics-spring-bounce);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.cj-button:active {
+  transform: scale(var(--physics-press-scale)) translateY(var(--physics-press-y));
+}
+
+/* Primary Button: High Action */
+.cj-button-primary {
+  background: var(--brand-primary);
+  color: var(--text-contrast, #FFFFFF);
+  box-shadow: 0 8px 0 0 var(--brand-warm), var(--shadow-md);
+  border: 2px border-white/20;
+}
+
+.cj-button-primary:active {
+  box-shadow: 0 2px 0 0 var(--brand-warm), var(--shadow-sm);
+}
+
+/* Ghost Button: Secondary / Calm */
+.cj-button-ghost {
+  background: white;
+  color: var(--brand-bg);
+  border: 2px solid var(--emerald-50);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Magic Button: Rarity-based / Sacred */
+.cj-button-magic {
+  background: var(--grad-aurora);
+  color: white;
+  box-shadow: var(--elevation-sacred);
+}

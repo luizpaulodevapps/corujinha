@@ -32,7 +32,7 @@ export function NotificationDrawer({ isOpen, onClose, notifications, onRead, onC
             onClick={e => e.stopPropagation()}
           >
             {/* Texture Overlay */}
-            <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')] pointer-events-none" />
+            <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay bg-[url('/textures/noise.svg')] pointer-events-none" />
 
             <div className="flex items-center justify-between relative z-10">
               <div className="flex items-center gap-3">

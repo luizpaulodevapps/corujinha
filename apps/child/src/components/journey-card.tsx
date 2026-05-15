@@ -31,59 +31,79 @@ export function JourneyCard({ event, onClick, index }: JourneyCardProps) {
       transition={{ delay: index * 0.04, type: 'spring', stiffness: 260, damping: 24 }}
       onClick={() => onClick(event)}
       disabled={isLocked}
-      className={clsx('cj-card', isLocked && 'is-locked')}
-      style={{ '--event-color': event.color } as MotionStyle}
+      className={clsx(
+        "w-full text-left p-6 rounded-[var(--radius-card)] border-2 transition-all duration-300 flex items-center gap-5 relative overflow-hidden group",
+        isLocked 
+          ? "bg-emerald-50/20 border-emerald-50/40 opacity-60 grayscale" 
+          : "bg-white border-emerald-50 shadow-md hover:shadow-xl hover:border-emerald-100 active:scale-[0.98]"
+      )}
     >
-      {event.isUrgent && !isLocked && <span className="cj-card__urgent">Hoje</span>}
+      {event.isUrgent && !isLocked && (
+        <span className="absolute top-0 right-0 bg-brand-accent text-emerald-950 text-loud !text-[8px] px-3 py-1 rounded-bl-xl shadow-sm">
+          Hoje
+        </span>
+      )}
 
-      <div className="cj-card__rail" />
+      {/* Decorative Gradient Rail */}
+      {!isLocked && (
+        <div 
+          className="absolute left-0 top-0 bottom-0 w-1.5 opacity-20" 
+          style={{ backgroundColor: event.color }}
+        />
+      )}
 
-      <div className="cj-card__icon">
+      <div className={clsx(
+        "w-16 h-16 rounded-[var(--radius-lg)] flex items-center justify-center relative shrink-0 transition-transform group-hover:scale-110",
+        isLocked ? "bg-emerald-100 text-emerald-600" : "bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-inner"
+      )}>
         {isLocked ? <Lock size={28} /> : <Icon size={30} />}
         {!isLocked && (
-          <span>
+          <span className="absolute -top-1 -right-1 w-6 h-6 bg-brand-accent rounded-full flex items-center justify-center text-emerald-900 shadow-sm border-2 border-white">
             <Sparkles size={12} fill="currentColor" />
           </span>
         )}
       </div>
 
-      <div className="cj-card__body">
-        <div className="cj-card__time">
-          <CalendarClock size={14} />
-          {event.date} - {event.time}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 text-loud text-emerald-600/40 !text-[8px] mb-1">
+          <CalendarClock size={12} />
+          {event.date} • {event.time}
         </div>
-        <h3>{event.title}</h3>
+        <h3 className="text-lg font-black text-emerald-950 italic tracking-tight leading-tight mb-3 truncate">
+          {event.title}
+        </h3>
 
         {isLocked ? (
-          <div className="cj-card__locked">
-            <Lock size={13} />
-            Bloqueado
+          <div className="flex items-center gap-2 text-loud text-emerald-300 !text-[9px]">
+            <Lock size={12} />
+            CONTEÚDO BLOQUEADO
           </div>
         ) : totalMissions > 0 ? (
-          <div className="cj-card__progress">
-            <div className="cj-card__bar">
+          <div className="space-y-2">
+            <div className="h-2 w-full bg-emerald-50 rounded-full overflow-hidden border border-emerald-100 shadow-inner">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 1, ease: 'easeOut' }}
+                className="h-full bg-emerald-600 shadow-[0_0_8px_rgba(5,150,105,0.4)]"
               />
             </div>
-            <span>
-              <CheckCircle2 size={13} />
-              {completedMissions} de {totalMissions} missoes
-            </span>
+            <div className="flex items-center gap-2 text-loud text-emerald-900/40 !text-[8px]">
+              <CheckCircle2 size={12} className={progress === 100 ? 'text-brand-success' : ''} />
+              {completedMissions} de {totalMissions} missões concluídas
+            </div>
           </div>
         ) : (
-          <div className="cj-card__ready">
-            <Sparkles size={14} fill="currentColor" />
-            Pronto para aventura
+          <div className="flex items-center gap-2 text-loud text-emerald-600 !text-[9px] animate-pulse">
+            <Sparkles size={12} fill="currentColor" />
+            PRONTO PARA AVENTURA
           </div>
         )}
       </div>
 
       {!isLocked && (
-        <div className="cj-card__arrow">
-          <ChevronRight size={21} strokeWidth={3} />
+        <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white transition-all">
+          <ChevronRight size={20} strokeWidth={3} />
         </div>
       )}
     </motion.button>

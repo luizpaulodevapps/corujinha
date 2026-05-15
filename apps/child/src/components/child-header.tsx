@@ -39,34 +39,34 @@ export function ChildHeader({
   hideAvatar = false
 }: ChildHeaderProps) {
   return (
-    <header className="fixed top-0 left-0 right-0 z-[100] h-24 px-4 select-none pointer-events-none">
+    <header className="fixed top-0 left-0 right-0 z-[100] h-20 px-3 select-none pointer-events-none">
       {/* 1. COZY HUD STRIP (Forest Deep Surface) */}
-      <div className="max-w-[720px] mx-auto absolute inset-x-4 top-2 h-20 -z-10 bg-[#0A2F1F] rounded-[2.5rem] shadow-[0_12px_24px_rgba(6,31,21,0.4)] border border-white/10 pointer-events-auto overflow-hidden">
-        {/* Texture Overlay */}
-        <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      <div className="max-w-[720px] mx-auto absolute inset-x-3 top-2 h-16 -z-10 bg-emerald-950 rounded-[var(--radius-xl)] shadow-[var(--shadow-lg)] border border-white/10 pointer-events-auto overflow-hidden">
+        {/* Texture Overlay (Local) */}
+        <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay bg-[url('/textures/noise.svg')]" />
         <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent pointer-events-none" />
       </div>
 
       {/* 2. HUD CONTENT */}
-      <div className="max-w-[720px] mx-auto h-20 flex items-center justify-between px-6 pointer-events-auto mt-2">
+      <div className="max-w-[720px] mx-auto h-16 flex items-center justify-between px-5 pointer-events-auto mt-2">
         
         {/* Left: Identity Section */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           {showBack && (
             <Link 
               href={backHref} 
-              className="w-11 h-11 flex items-center justify-center bg-white/10 border border-white/20 rounded-[1.25rem] shadow-sm hover:bg-white/15 active:translate-y-1 transition-all"
+              className="w-10 h-10 flex items-center justify-center bg-white/10 border border-white/20 rounded-2xl shadow-sm hover:bg-white/15 active:translate-y-1 transition-all"
             >
-              <ArrowLeft size={22} className="text-white" strokeWidth={3} />
+              <ArrowLeft size={20} className="text-white" strokeWidth={3} />
             </Link>
           )}
 
           <div className="flex flex-col">
-            <h1 className="text-3xl font-black text-white italic tracking-tighter leading-none m-0 drop-shadow-md">
+            <h1 className="text-2xl font-black text-white italic tracking-tighter leading-none m-0 drop-shadow-md">
               {title}
             </h1>
             {subtitle && (
-              <p className="text-[10px] font-black text-emerald-400/80 uppercase tracking-[0.35em] mt-1.5 drop-shadow-sm">
+              <p className="text-loud text-emerald-400/80 !text-[9px] mt-1 drop-shadow-sm">
                 {subtitle}
               </p>
             )}
@@ -110,7 +110,7 @@ export function ChildHeader({
             >
               <Bell size={22} strokeWidth={2.5} />
               {unreadCount > 0 && (
-                <span className="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full border-2 border-[#0A2F1F] shadow-sm animate-pulse" />
+                <span className="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full border-2 border-emerald-950 shadow-sm animate-pulse" />
               )}
             </motion.button>
             

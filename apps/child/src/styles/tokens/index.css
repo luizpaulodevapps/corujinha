@@ -1,0 +1,13 @@
+/* 🏛️ Corujinha Design Tokens: Central Index */
+
+/* 🎨 Basic Tokens */
+@import "./colors.css";
+@import "./typography.css";
+@import "./shadows.css";
+@import "./motion.css";
+@import "./rarity.css";
+
+/* 🎭 Advanced Semantic Tokens */
+@import "./elevation.css";
+@import "./energy.css";
+@import "./physics.css";

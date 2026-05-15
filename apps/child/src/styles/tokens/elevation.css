@@ -1,0 +1,27 @@
+:root {
+  /* 🏔️ Semantic Elevation: Depth with Narrative Intent */
+  
+  --elevation-flat: 0 0 0 transparent;
+  
+  --elevation-low: 0 4px 12px rgba(0, 0, 0, 0.05);
+  
+  /* Used for floating UI elements like the Bottom Nav */
+  --elevation-floating: 0 20px 48px -12px rgba(6, 31, 21, 0.2);
+  
+  /* Used for sacred/important items (Reward Modals, Special Missions) */
+  --elevation-sacred: 0 32px 72px -16px rgba(143, 109, 220, 0.25);
+  
+  /* Used for cinematic overlays that need extreme focus */
+  --elevation-cinematic: 0 40px 90px -20px rgba(0, 0, 0, 0.4);
+  
+  /* Internal depth for inputs and containers */
+  --elevation-hollow: inset 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  /* World state adaptation */
+  --elevation-glow: 0 0 20px rgba(52, 211, 153, 0.3);
+}
+
+.dark {
+  --elevation-floating: 0 20px 48px -12px rgba(0, 0, 0, 0.5);
+  --elevation-sacred: 0 32px 72px -16px rgba(143, 109, 220, 0.4);
+}

@@ -1,0 +1,28 @@
+:root {
+  /* 🃏 Rarity Visual System Tokens */
+  
+  /* Common (Emerald) */
+  --rarity-common-bg: var(--color-emerald-50);
+  --rarity-common-border: var(--color-emerald-100);
+  --rarity-common-fg: var(--color-emerald-900);
+  --rarity-common-accent: var(--color-emerald-500);
+
+  /* Rare (Amber) */
+  --rarity-rare-bg: var(--color-amber-50);
+  --rarity-rare-border: var(--color-amber-200);
+  --rarity-rare-fg: #451a03; /* Brown/Dark Amber */
+  --rarity-rare-accent: var(--color-amber-500);
+
+  /* Epic (Indigo) */
+  --rarity-epic-bg: var(--color-indigo-50);
+  --rarity-epic-border: var(--color-indigo-100);
+  --rarity-epic-fg: var(--color-indigo-950);
+  --rarity-epic-accent: var(--color-indigo-500);
+
+  /* Legendary (Gold/Aurora) */
+  --rarity-legendary-bg: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  --rarity-legendary-border: #fde68a;
+  --rarity-legendary-fg: #451a03;
+  --rarity-legendary-accent: #f59e0b;
+  --rarity-legendary-glow: rgba(252, 225, 138, 0.4);
+}

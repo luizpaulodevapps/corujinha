@@ -1,0 +1,32 @@
+/* ♿ Emotional Accessibility: Inclusive Experience */
+
+@reference "tailwindcss";
+
+/* ADHD Mode: Minimal distractions, high visual focus */
+[data-acc-adhd="true"] {
+  --particle-opacity: 0 !important;
+  --glass-blur: 0 !important;
+  --pacing-normal: 100ms; /* Reduce waiting */
+  --motion-spring: var(--spring-soft);
+}
+
+/* Sensory Sensitive Mode (Autism): Low saturation, soft sounds */
+[data-acc-sensory="true"] {
+  filter: saturate(0.8);
+  --brand-primary: var(--color-emerald-700);
+  --app-bg: var(--color-emerald-50);
+}
+
+/* Dyslexia Friendly: Typographic clarity */
+[data-acc-dyslexia="true"] {
+  --font-main: "OpenDyslexic", var(--font-main);
+  --letter-spacing-main: 0.05em;
+  --line-height-main: 1.8;
+}
+
+/* Reduced Effects: Performance & Vision */
+[data-acc-reduced-effects="true"] {
+  --glass-blur: 0 !important;
+  --elevation-sacred: var(--shadow-sm);
+  --elevation-floating: var(--shadow-sm);
+}

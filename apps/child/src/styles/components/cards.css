@@ -1,0 +1,42 @@
+/* 📦 Corujinha Component: Cards & Surfaces */
+
+.cj-card {
+  background: white;
+  border-radius: var(--radius-card);
+  padding: 1.5rem;
+  border: 2px solid var(--emerald-50);
+  box-shadow: var(--elevation-low);
+  transition: all var(--physics-duration-soft) var(--physics-spring-bounce);
+  position: relative;
+  overflow: hidden;
+}
+
+.cj-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--emerald-100);
+}
+
+/* Magic Card: Glowing and Animated */
+.cj-card-magic {
+  background: linear-gradient(to bottom right, white, var(--emerald-50/20));
+  border-color: var(--brand-accent/30);
+  box-shadow: var(--elevation-floating);
+}
+
+.cj-card-magic::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, var(--brand-accent/5), transparent);
+  pointer-events: none;
+}
+
+/* Surface Overlay for dark sections */
+.cj-surface-dark {
+  background: var(--emerald-950);
+  color: white;
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  box-shadow: var(--elevation-cinematic);
+}

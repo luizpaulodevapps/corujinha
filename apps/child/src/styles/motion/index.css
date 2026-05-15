@@ -1,0 +1,29 @@
+/* 🎾 Motion Architecture: Personality & Pacing */
+
+:root {
+  /* Springs: Narrative Response */
+  --spring-snappy: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --spring-bounce: cubic-bezier(0.68, -0.6, 0.32, 1.6);
+  --spring-soft: cubic-bezier(0.4, 0, 0.2, 1);
+  --spring-ritual: cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+  /* Pacing: Emotional Speed */
+  --pacing-instant: 100ms;
+  --pacing-fast: 200ms;
+  --pacing-normal: 400ms;
+  --pacing-deliberate: 800ms;
+  --pacing-cinematic: 1200ms;
+}
+
+/* Base Motion Utilities */
+.motion-safe {
+  @apply transition-all;
+  transition-duration: var(--pacing-normal);
+  transition-timing-function: var(--spring-soft);
+}
+
+.motion-ritual {
+  @apply transition-all;
+  transition-duration: var(--pacing-deliberate);
+  transition-timing-function: var(--spring-ritual);
+}

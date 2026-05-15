@@ -1,0 +1,48 @@
+:root {
+  /* ✒️ Font Families */
+  --font-main: 'Nunito', system-ui, sans-serif;
+  
+  /* 📏 Hierarchy Scales */
+  --text-hero: clamp(38px, 8vw, 58px);
+  --text-display: 32px;
+  --text-title: 25px;
+  --text-subtitle: 18px;
+  --text-body: 15px;
+  --text-small: 13px;
+  --text-micro: 10px;
+
+  /* 🏋️ Weights */
+  --font-thin: 300;
+  --font-regular: 400;
+  --font-medium: 500;
+  --font-bold: 700;
+  --font-extra-bold: 800;
+  --font-black: 900;
+
+  /* 🎭 Emotional Hierarchy (Dramaturgy) */
+  --letter-spacing-loud: 0.18em;
+  --letter-spacing-poetic: 0.02em;
+  --letter-spacing-tight: -0.02em;
+}
+
+.text-poetic {
+  font-family: var(--font-main);
+  font-weight: var(--font-medium);
+  font-style: italic;
+  letter-spacing: var(--letter-spacing-poetic);
+  line-height: 1.6;
+}
+
+.text-loud {
+  font-weight: var(--font-black);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-loud);
+}
+
+.text-hero-title {
+  font-size: var(--text-hero);
+  font-weight: var(--font-black);
+  font-style: italic;
+  letter-spacing: var(--letter-spacing-tight);
+  line-height: 0.95;
+}

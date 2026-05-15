@@ -14,7 +14,7 @@ export function ThemeToggle() {
   }, [])
 
   if (!mounted) {
-    return <div className="h-12 w-12 rounded-2xl bg-white/50" aria-hidden />
+    return <div className="h-12 w-12 rounded-[var(--radius-md)] bg-emerald-50 border border-emerald-100" aria-hidden />
   }
 
   const isDark = resolvedTheme === 'dark'
@@ -25,7 +25,7 @@ export function ThemeToggle() {
       whileHover={{ scale: 1.05, rotate: 5 }}
       whileTap={{ scale: 0.95 }}
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-white dark:bg-brand-surface text-brand-primary shadow-sm overflow-hidden"
+      className="relative flex h-12 w-12 items-center justify-center rounded-[var(--radius-md)] bg-white border-2 border-emerald-50 text-emerald-950 shadow-sm overflow-hidden hover:border-emerald-100 transition-colors"
     >
       <AnimatePresence mode="wait">
         <motion.div
@@ -38,7 +38,7 @@ export function ThemeToggle() {
           {isDark ? (
             <Sun size={20} strokeWidth={3} className="text-brand-accent" />
           ) : (
-            <Moon size={20} strokeWidth={3} className="text-brand-primary" />
+            <Moon size={20} strokeWidth={3} className="text-emerald-600" />
           )}
         </motion.div>
       </AnimatePresence>

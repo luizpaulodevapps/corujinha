@@ -1,0 +1,34 @@
+:root {
+  /* 🍃 Motion Language: Branding through Movement */
+  
+  /* Easings */
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-ritual: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Durations */
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 600ms;
+  --duration-ritual: 1200ms;
+}
+
+/* Standard Animations */
+@keyframes breathing {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.05); opacity: 1; }
+}
+
+@keyframes floating {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-breathing {
+  animation: breathing 8s var(--ease-in-out) infinite;
+}
+
+.animate-floating {
+  animation: floating 4s var(--ease-in-out) infinite;
+}

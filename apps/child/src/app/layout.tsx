@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     default: 'Corujinha Play',
     template: '%s | Corujinha',
   },
-  description: 'Suas missões te esperam! Complete tarefas, ganhe moedas e evolua seu avatar.',
+  description: 'Entre na Floresta Encantada, complete missões mágicas e fortaleça seu Ninho todos os dias.',
   applicationName: 'Corujinha Play',
   manifest: '/manifest.json',
   appleWebApp: { capable: true, title: 'Corujinha Play', statusBarStyle: 'black-translucent' },
@@ -25,9 +25,9 @@ export const viewport: Viewport = {
   themeColor: '#4B9C7A',
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
 }
 
+// TODO: Remover suppressHydrationWarning após estabilizar o estado global de mundo
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR" className={nunito.variable} suppressHydrationWarning>

@@ -1,0 +1,41 @@
+/* 🦉 Mentor Design Language: Character-Driven UI Themes */
+
+/* 📖 Bubo: Wisdom & Ancient Magic */
+[data-mentor="bubo"] {
+  --brand-magic: #8B5CF6;
+  --brand-warm: #B45309;
+  --grad-aurora: linear-gradient(135deg, #1E1B4B 0%, #4C1D95 100%);
+  --motion-ease: var(--ease-soft);
+  --physics-duration-normal: 600ms;
+  --elevation-current: var(--elevation-sacred);
+}
+
+/* ⚡ Bolt: Energy & Swift Adventure */
+[data-mentor="bolt"] {
+  --brand-magic: #FBBF24;
+  --brand-warm: #EA580C;
+  --grad-aurora: linear-gradient(135deg, #7C2D12 0%, #B45309 100%);
+  --motion-ease: var(--ease-bounce);
+  --physics-duration-normal: 200ms;
+  --elevation-current: var(--elevation-floating);
+  --text-contrast: #000000;
+}
+
+/* ✨ Lumi: Light & Ethereal Guidance */
+[data-mentor="lumi"] {
+  --brand-magic: #60A5FA;
+  --brand-warm: #F0FDFA;
+  --grad-aurora: linear-gradient(135deg, #172554 0%, #1E3A8A 100%);
+  --motion-ease: var(--ease-in-out);
+  --glass-blur: 40px;
+  --elevation-current: var(--elevation-glow);
+}
+
+/* 🌿 Gaia: Nature & Organic Growth */
+[data-mentor="gaia"] {
+  --brand-magic: #10B981;
+  --brand-warm: #064E3B;
+  --grad-aurora: linear-gradient(135deg, #064E3B 0%, #065F46 100%);
+  --radius-card: 3rem;
+  --physics-drag-resistance: 0.3;
+}

@@ -60,116 +60,172 @@ export default function ProfilePage() {
 
   return (
     <PageContainer title="Meu Perfil" hideHeader hideAvatar>
-      <section className="cp-hero" aria-labelledby="profile-title">
-        <div className="cp-hero__avatar">
-          <AvatarUpload currentAvatar={profile.avatar} />
-        </div>
+      {/* Hero Section: Profile Sanctuary */}
+      <section className="relative px-6 pt-12 pb-20 rounded-b-[3rem] bg-emerald-950 overflow-hidden shadow-[var(--shadow-lg)]" aria-labelledby="profile-title">
+        {/* Background Texture & Ambient Glow */}
+        <div className="absolute inset-0 opacity-20 pointer-events-none mix-blend-overlay" style={{ backgroundImage: 'url(/textures/noise.svg)' }} />
+        <div className="absolute -top-24 -right-24 w-64 h-64 bg-brand-accent/20 blur-[80px] rounded-full" />
+        <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-emerald-400/10 blur-[80px] rounded-full" />
 
-        <div className="cp-hero__copy">
-          <p className="cp-kicker">
-            <User size={15} />
-            Heroi da floresta
-          </p>
+        <div className="relative z-10 max-w-2xl mx-auto flex flex-col items-center text-center">
+          <div className="mb-6 relative">
+            <AvatarUpload currentAvatar={profile.avatar} />
+            <motion.div 
+              animate={{ rotate: 360 }}
+              transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+              className="absolute -inset-4 border-2 border-dashed border-brand-accent/30 rounded-full pointer-events-none"
+            />
+          </div>
 
-          {isEditingName ? (
-            <div className="cp-name-edit">
-              <input value={tempName} onChange={event => setTempName(event.target.value)} maxLength={12} autoFocus />
-              <button onClick={() => setIsEditingName(false)} aria-label="Confirmar nome">
-                <CheckCircle2 size={22} strokeWidth={3} />
+          <div className="space-y-4 w-full">
+            <p className="text-loud text-emerald-100/40 !text-[10px] flex items-center justify-center gap-2">
+              <User size={14} className="text-brand-accent" />
+              HERÓI DA FLORESTA
+            </p>
+
+            {isEditingName ? (
+              <div className="relative max-w-xs mx-auto">
+                <input 
+                  value={tempName} 
+                  onChange={event => setTempName(event.target.value)} 
+                  maxLength={12} 
+                  autoFocus 
+                  className="w-full bg-white/10 border-2 border-brand-accent rounded-[var(--radius-lg)] px-6 py-4 text-2xl font-black text-white text-center outline-none shadow-xl"
+                />
+                <button 
+                  onClick={() => setIsEditingName(false)} 
+                  className="absolute -right-12 top-1/2 -translate-y-1/2 w-10 h-10 bg-brand-accent text-emerald-950 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+                >
+                  <CheckCircle2 size={24} strokeWidth={3} />
+                </button>
+              </div>
+            ) : (
+              <button className="group relative" onClick={() => setIsEditingName(true)}>
+                <h1 id="profile-title" className="text-hero-title text-white group-hover:text-brand-accent transition-colors">
+                  {tempName}
+                </h1>
+                <div className="absolute -right-8 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Palette size={20} className="text-brand-accent" />
+                </div>
               </button>
+            )}
+
+            <div className="flex items-center justify-center gap-4 pt-4">
+              <div className="px-6 py-2 bg-white/5 border border-white/10 rounded-full backdrop-blur-md flex items-center gap-2">
+                <Trophy size={16} fill="currentColor" className="text-brand-accent" />
+                <span className="text-loud text-white !text-[9px]">NÍVEL {profile.level}</span>
+              </div>
+              <div className="px-6 py-2 bg-white/5 border border-white/10 rounded-full backdrop-blur-md flex items-center gap-2">
+                <Coins size={16} fill="currentColor" className="text-brand-accent" />
+                <span className="text-loud text-white !text-[9px]">{profile.coins} MOEDAS</span>
+              </div>
             </div>
-          ) : (
-            <button className="cp-name-button" onClick={() => setIsEditingName(true)}>
-              <h1 id="profile-title">{tempName}</h1>
-              <Palette size={19} />
-            </button>
-          )}
-
-          <div className="cp-hero__stats">
-            <span>
-              <Trophy size={17} fill="currentColor" />
-              Nivel {profile.level}
-            </span>
-            <span>
-              <Coins size={17} fill="currentColor" />
-              {profile.coins} moedas
-            </span>
           </div>
         </div>
       </section>
 
-      <section className="cp-section" aria-labelledby="avatars-title">
-        <div className="cp-section-head">
-          <div>
-            <p className="cp-eyebrow">Personalizacao</p>
-            <h2 id="avatars-title">Escolha seu heroi</h2>
-          </div>
-          <button className="cp-save" onClick={handleSave}>
-            <Save size={18} />
-            Salvar
-          </button>
-        </div>
-
-        <div className="cp-avatar-grid">
-          {avatars.map(avatar => (
-            <button
-              key={avatar.id}
-              onClick={() => setSelectedAvatar(avatar.src)}
-              className={clsx('cp-avatar-option', selectedAvatar === avatar.src && 'is-active')}
+      {/* Profile Sections Container */}
+      <div className="px-6 -mt-10 relative z-20 space-y-12 pb-32">
+        
+        {/* Personalization Section */}
+        <section className="bg-white rounded-[var(--radius-card)] p-8 border-2 border-emerald-50 shadow-md">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <p className="text-loud text-emerald-600/40 !text-[8px] mb-1">PERSONALIZAÇÃO</p>
+              <h2 className="text-2xl font-black text-emerald-950 italic tracking-tight">Escolha seu Herói</h2>
+            </div>
+            <button 
+              className="bg-emerald-950 text-white px-6 py-3 rounded-[var(--radius-md)] text-loud !text-[9px] flex items-center gap-2 hover:bg-emerald-900 transition-colors shadow-lg active:scale-95"
+              onClick={handleSave}
             >
-              <span>{avatar.emoji}</span>
-              <img src={avatar.src} alt={avatar.name} />
-              <strong>{avatar.name}</strong>
+              <Save size={18} />
+              SALVAR
             </button>
-          ))}
-        </div>
-      </section>
-
-      <section className="cp-section" aria-labelledby="themes-title">
-        <div className="cp-section-head">
-          <div>
-            <p className="cp-eyebrow">Aparencia</p>
-            <h2 id="themes-title">Tema favorito</h2>
           </div>
-        </div>
 
-        <div className="cp-theme-grid">
-          {themes.map(theme => (
-            <button
-              key={theme.id}
-              onClick={() => setSelectedTheme(theme.id)}
-              className={clsx('cp-theme', selectedTheme === theme.id && 'is-active')}
-            >
-              <span style={{ background: theme.color }} />
-              <strong>{theme.name}</strong>
-            </button>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {avatars.map(avatar => (
+              <button
+                key={avatar.id}
+                onClick={() => setSelectedAvatar(avatar.src)}
+                className={clsx(
+                  'p-6 rounded-[var(--radius-lg)] border-2 transition-all duration-300 flex flex-col items-center gap-3 group',
+                  selectedAvatar === avatar.src 
+                    ? 'bg-emerald-50 border-emerald-600 shadow-inner' 
+                    : 'bg-white border-emerald-50 hover:border-emerald-100'
+                )}
+              >
+                <div className="relative">
+                  <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-4xl shadow-sm border border-emerald-50 group-hover:scale-110 transition-transform">
+                    <img src={avatar.src} alt={avatar.name} className="w-14 h-14 object-contain" />
+                  </div>
+                  <span className="absolute -top-1 -right-1 text-xl">{avatar.emoji}</span>
+                </div>
+                <strong className="text-loud text-emerald-950 !text-[8px]">{avatar.name.toUpperCase()}</strong>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* Appearance Section */}
+        <section className="bg-white rounded-[var(--radius-card)] p-8 border-2 border-emerald-50 shadow-md">
+          <div className="mb-8">
+            <p className="text-loud text-emerald-600/40 !text-[8px] mb-1">APARÊNCIA</p>
+            <h2 className="text-2xl font-black text-emerald-950 italic tracking-tight">Tema Favorito</h2>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {themes.map(theme => (
+              <button
+                key={theme.id}
+                onClick={() => setSelectedTheme(theme.id)}
+                className={clsx(
+                  'p-4 rounded-[var(--radius-md)] border-2 transition-all duration-300 flex items-center gap-4',
+                  selectedTheme === theme.id 
+                    ? 'bg-emerald-50 border-emerald-600 shadow-inner' 
+                    : 'bg-white border-emerald-50 hover:border-emerald-100'
+                )}
+              >
+                <span className="w-10 h-10 rounded-full border-4 border-white shadow-sm shrink-0" style={{ background: theme.color }} />
+                <strong className="text-loud text-emerald-950 !text-[8px]">{theme.name.toUpperCase()}</strong>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* Stats Summary */}
+        <section className="grid grid-cols-3 gap-4">
+          {[
+            { icon: CheckCircle2, label: 'MISSÕES', value: '47', color: 'text-emerald-600' },
+            { icon: Star, label: 'TROFÉUS', value: '08', color: 'text-brand-accent', fill: true },
+            { icon: Flame, label: 'SÉRIE', value: '05d', color: 'text-orange-500', fill: true }
+          ].map((stat, i) => (
+            <div key={i} className="bg-white rounded-[var(--radius-card)] p-6 border-2 border-emerald-50 shadow-md flex flex-col items-center text-center gap-3">
+              <div className={clsx(
+                "w-12 h-12 rounded-[var(--radius-md)] bg-emerald-50 flex items-center justify-center border border-emerald-100 shadow-inner",
+                stat.color
+              )}>
+                <stat.icon size={24} fill={stat.fill ? 'currentColor' : 'none'} />
+              </div>
+              <div>
+                <span className="text-loud text-emerald-950/30 !text-[7px] block">{stat.label}</span>
+                <strong className="text-2xl font-black text-emerald-950 tracking-tighter">{stat.value}</strong>
+              </div>
+            </div>
           ))}
-        </div>
-      </section>
-
-      <section className="cp-stats" aria-label="Estatisticas globais">
-        <div>
-          <CheckCircle2 size={22} />
-          <span>Missoes</span>
-          <strong>47</strong>
-        </div>
-        <div>
-          <Star size={22} fill="currentColor" />
-          <span>Trofeus</span>
-          <strong>08</strong>
-        </div>
-        <div>
-          <Flame size={22} fill="currentColor" />
-          <span>Serie</span>
-          <strong>05d</strong>
-        </div>
-      </section>
+        </section>
+      </div>
 
       <AnimatePresence>
         {showSaveSuccess && (
-          <motion.div className="cp-toast" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 18 }}>
-            <Sparkles size={20} />
-            Perfil salvo na floresta
+          <motion.div 
+            initial={{ opacity: 0, y: 20, scale: 0.9 }} 
+            animate={{ opacity: 1, y: 0, scale: 1 }} 
+            exit={{ opacity: 0, scale: 0.9 }} 
+            className="fixed bottom-32 left-1/2 -translate-x-1/2 z-[1000] bg-emerald-950 text-white px-8 py-4 rounded-full shadow-2xl border-2 border-emerald-600 flex items-center gap-3"
+          >
+            <Sparkles size={20} className="text-brand-accent" />
+            <span className="text-loud !text-[10px]">PERFIL SALVO NA FLORESTA</span>
           </motion.div>
         )}
       </AnimatePresence>

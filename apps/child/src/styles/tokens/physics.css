@@ -1,0 +1,22 @@
+:root {
+  /* 🎾 Interaction Physics: Tactile & Playful Response */
+  
+  /* Press Depth: How much an element sinks when tapped */
+  --physics-press-scale: 0.96;
+  --physics-press-y: 4px;
+  
+  /* Springs: Motion characteristics */
+  --physics-spring-soft: cubic-bezier(0.4, 0, 0.2, 1);
+  --physics-spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --physics-spring-elastic: cubic-bezier(0.68, -0.6, 0.32, 1.6);
+  
+  /* Drag Physics */
+  --physics-drag-resistance: 0.15;
+  --physics-drag-elasticity: 0.8;
+
+  /* Durations */
+  --physics-duration-instant: 100ms;
+  --physics-duration-snappy: 200ms;
+  --physics-duration-soft: 400ms;
+  --physics-duration-cinematic: 800ms;
+}

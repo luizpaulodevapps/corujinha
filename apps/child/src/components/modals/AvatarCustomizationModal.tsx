@@ -53,7 +53,7 @@ export function AvatarCustomizationModal({ isOpen, onClose, currentAvatar, onSel
             onClick={e => e.stopPropagation()}
           >
             {/* Texture Overlay */}
-            <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')] pointer-events-none" />
+            <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay bg-[url('/textures/noise.svg')] pointer-events-none" />
 
             <div className="p-10 pb-4 text-center relative z-10">
                <h2 className="text-4xl font-black text-emerald-950 italic tracking-tighter m-0">Escolha seu Herói</h2>

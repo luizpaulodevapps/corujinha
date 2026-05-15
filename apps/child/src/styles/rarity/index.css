@@ -1,0 +1,30 @@
+/* 🎖️ UI Rarity Governance: Visual & Emotional Reward */
+
+/* Common: Standard items */
+.rarity-common {
+  --rarity-color: var(--color-emerald-500);
+  --rarity-glow: transparent;
+}
+
+/* Rare: Special items */
+.rarity-rare {
+  --rarity-color: var(--brand-magic);
+  --rarity-glow: 0 0 10px var(--brand-magic-alpha);
+  border-color: var(--brand-magic);
+}
+
+/* Epic: High value */
+.rarity-epic {
+  --rarity-color: var(--brand-accent);
+  --rarity-glow: 0 0 20px var(--brand-accent-alpha);
+  border-color: var(--brand-accent);
+  @apply animate-pulse;
+}
+
+/* Sacred: Legendary / Character-linked */
+.rarity-sacred {
+  --rarity-color: #FFFFFF;
+  --rarity-glow: 0 0 30px rgba(255, 255, 255, 0.4);
+  background: var(--grad-aurora);
+  border: 2px solid white;
+}

@@ -53,43 +53,80 @@ export default function ShopPage() {
     <PageContainer title="Loja de Tesouros" hideHeader hideAvatar>
       <ShopBackground />
 
-      <section className="cs-hero" aria-labelledby="shop-title">
-        <div className="cs-hero__badge">
-          <ShoppingBag size={38} strokeWidth={2.6} />
-        </div>
-        <div className="cs-hero__copy">
-          <p className="cs-kicker">
-            <Gem size={15} />
-            Loja de tesouros
-          </p>
-          <h1 id="shop-title">Escolha seu premio magico</h1>
-          <p>Use suas moedas para resgatar recompensas combinadas com a familia.</p>
-        </div>
-        <div className="cs-wallet">
-          <span>
-            <Coins size={17} fill="currentColor" />
-            Carteira
-          </span>
-          <strong>{profile.coins}</strong>
+      {/* Hero Section: Magical Shop Header */}
+      <section className="relative px-6 pt-12 pb-20 rounded-b-[3rem] bg-emerald-950 overflow-hidden shadow-[var(--shadow-lg)]" aria-labelledby="shop-title">
+        {/* Background Texture & Ambient Glow */}
+        <div className="absolute inset-0 opacity-20 pointer-events-none mix-blend-overlay" style={{ backgroundImage: 'url(/textures/noise.svg)' }} />
+        <div className="absolute -top-24 -right-24 w-64 h-64 bg-brand-accent/20 blur-[80px] rounded-full" />
+        <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-emerald-400/10 blur-[80px] rounded-full" />
+
+        <div className="relative z-10 max-w-2xl mx-auto flex flex-col items-center text-center">
+          <motion.div 
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="mb-6 w-20 h-20 bg-brand-accent/10 border-2 border-brand-accent/20 rounded-[var(--radius-lg)] flex items-center justify-center text-brand-accent shadow-2xl backdrop-blur-md"
+          >
+            <ShoppingBag size={42} strokeWidth={2.5} />
+          </motion.div>
+          
+          <div className="space-y-3">
+            <p className="text-loud text-emerald-100/40 !text-[10px] flex items-center justify-center gap-2">
+              <Gem size={14} className="text-brand-accent" />
+              SANTUÁRIO DE RECOMPENSAS
+            </p>
+            <h1 id="shop-title" className="text-hero-title text-white">
+              Escolha seu prêmio mágico
+            </h1>
+            <p className="text-poetic text-emerald-100/60 !text-[15px] max-w-md mx-auto">
+              Use suas moedas para resgatar recompensas combinadas com sua família. Cada escolha é um passo na sua jornada.
+            </p>
+          </div>
+
+          <div className="mt-8 flex items-center gap-4 bg-white/5 border border-white/10 rounded-[var(--radius-lg)] p-4 pr-6 backdrop-blur-xl shadow-inner group">
+            <div className="w-12 h-12 bg-brand-accent rounded-[var(--radius-md)] flex items-center justify-center text-emerald-950 shadow-xl border-2 border-brand-accent/50 rotate-6 group-hover:rotate-12 transition-transform">
+               <Coins size={24} fill="currentColor" />
+            </div>
+            <div className="text-left">
+              <span className="text-loud text-white/40 !text-[8px]">SEU TESOURO</span>
+              <div className="flex items-baseline gap-1">
+                <span className="text-3xl font-black text-white tracking-tighter leading-none">{profile.coins}</span>
+                <span className="text-loud text-brand-accent !text-[8px]">MOEDAS</span>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section className="cs-summary" aria-label="Resumo da loja">
-        <div>
-          <Leaf size={18} />
-          <span>Categoria</span>
-          <strong>{filter}</strong>
-        </div>
-        <div>
-          <Sparkles size={18} />
-          <span>Disponiveis</span>
-          <strong>{affordableCount}</strong>
+      {/* Summary Section: Stats & Context */}
+      <section className="px-6 -mt-10 mb-12 relative z-20" aria-label="Resumo da loja">
+        <div className="max-w-xl mx-auto grid grid-cols-2 gap-4">
+          <div className="bg-white rounded-[var(--radius-card)] p-5 border-2 border-emerald-50 shadow-md flex items-center gap-4">
+            <div className="w-12 h-12 rounded-[var(--radius-md)] bg-emerald-50 flex items-center justify-center text-emerald-600 border border-emerald-100 shadow-inner">
+              <Leaf size={22} />
+            </div>
+            <div>
+              <span className="text-loud text-emerald-900/30 !text-[8px]">FILTRANDO POR</span>
+              <p className="font-black text-emerald-950 italic truncate">{filter}</p>
+            </div>
+          </div>
+          <div className="bg-white rounded-[var(--radius-card)] p-5 border-2 border-emerald-50 shadow-md flex items-center gap-4">
+            <div className="w-12 h-12 rounded-[var(--radius-md)] bg-emerald-50 flex items-center justify-center text-emerald-600 border border-emerald-100 shadow-inner">
+              <Sparkles size={22} fill="currentColor" />
+            </div>
+            <div>
+              <span className="text-loud text-emerald-900/30 !text-[8px]">AO SEU ALCANCE</span>
+              <p className="font-black text-emerald-950 italic">{affordableCount} prêmios</p>
+            </div>
+          </div>
         </div>
       </section>
 
-      <CategoryFilter categories={categories} activeCategory={filter} onSelect={setFilter} />
+      <div className="px-6 mb-12">
+        <CategoryFilter categories={categories} activeCategory={filter} onSelect={setFilter} />
+      </div>
 
-      <section className="cs-grid" aria-label="Recompensas">
+      {/* Rewards Grid */}
+      <section className="px-6 pb-32 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" aria-label="Recompensas">
         {filteredRewards.map((reward, i) => (
           <RewardCard
             key={reward.id}

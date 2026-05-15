@@ -1,0 +1,30 @@
+/* 📜 Corujinha Foundation: Visual Textures & Atmosphere */
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background-image: url('/forest_pattern.png');
+  background-size: 400px;
+  opacity: 0.06;
+  mix-blend-mode: multiply;
+}
+
+.dark body::before {
+  opacity: 0.02;
+  mix-blend-mode: screen;
+}
+
+/* Atmospheric Noise */
+.noise-active::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.015;
+  background-image: url('/textures/noise.svg');
+  mix-blend-mode: overlay;
+}

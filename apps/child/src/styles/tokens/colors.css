@@ -1,0 +1,70 @@
+:root {
+  /* 🎨 Color Palette: The Soul of the Forest */
+  --color-emerald-50: #EEF9F0;
+  --color-emerald-100: #DAE9DE;
+  --color-emerald-200: #A7D8B3;
+  --color-emerald-300: #8EB7A2;
+  --color-emerald-400: #4E8F72;
+  --color-emerald-500: #4B9C7A;
+  --color-emerald-600: #1B4332;
+  --color-emerald-700: #132A13;
+  --color-emerald-800: #0D1B13;
+  --color-emerald-900: #061F15;
+  --color-emerald-950: #040d12;
+
+  --color-amber-50: #fffbeb;
+  --color-amber-100: #fef3c7;
+  --color-amber-200: #fde68a;
+  --color-amber-300: #fcd34d;
+  --color-amber-400: #fbbf24;
+  --color-amber-500: #f59e0b;
+  --color-amber-600: #d97706;
+
+  --color-indigo-50: #eef2ff;
+  --color-indigo-100: #e0e7ff;
+  --color-indigo-500: #6366f1;
+  --color-indigo-900: #1e1b4b;
+  --color-indigo-950: #030712;
+
+  --color-moon-cream: #FCFBF7;
+  --color-forest-parchment: #F3F1E8;
+
+  /* 🏛️ Semantic Tokens: Functional Purpose */
+  --brand-primary: var(--color-emerald-500);
+  --brand-secondary: var(--color-emerald-200);
+  --brand-accent: #FCE18A;
+  --brand-warm: #FFB163;
+  --brand-success: #5CC08B;
+  --brand-magic: #8F6DDC;
+  --brand-danger: #FF6B6B;
+  
+  --app-fg: #1F4F3E;
+  --app-muted: var(--color-emerald-400);
+  --app-faint: var(--color-emerald-300);
+  --brand-bg: var(--color-emerald-50);
+  --brand-surface: var(--color-moon-cream);
+  --app-border: var(--color-emerald-100);
+  
+  /* ✨ Glassmorphism System */
+  --glass-bg: rgba(252, 251, 247, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --glass-glow: rgba(75, 156, 122, 0.1);
+
+  /* 🌫️ Atmosphere Gradients */
+  --grad-forest: linear-gradient(135deg, var(--color-emerald-600) 0%, var(--color-emerald-500) 100%);
+  --grad-sunlight: linear-gradient(135deg, #FCE18A 0%, #FFB163 100%);
+  --grad-magic: linear-gradient(135deg, #8F6DDC 0%, #B388FF 100%);
+  --grad-aurora: linear-gradient(135deg, #5CC08B 0%, var(--color-emerald-500) 50%, #8F6DDC 100%);
+}
+
+.dark {
+  --app-fg: #F7FCF8;
+  --app-muted: #95AD9E;
+  --app-faint: #5B7568;
+  --brand-bg: var(--color-emerald-800);
+  --brand-surface: var(--color-emerald-700);
+  --app-border: var(--color-emerald-600);
+  --glass-bg: rgba(19, 42, 19, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.05);
+  --glass-glow: rgba(167, 216, 179, 0.05);
+}

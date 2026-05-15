@@ -6,10 +6,11 @@ interface TypewriterTextProps {
   text: string
   speed?: number
   delay?: number
+  className?: string
   onComplete?: () => void
 }
 
-export function TypewriterText({ text, speed = 30, delay = 0, onComplete }: TypewriterTextProps) {
+export function TypewriterText({ text, speed = 30, delay = 0, className = '', onComplete }: TypewriterTextProps) {
   const [displayText, setDisplayText] = useState('')
   const [isStarted, setIsStarted] = useState(false)
 
@@ -40,5 +41,5 @@ export function TypewriterText({ text, speed = 30, delay = 0, onComplete }: Type
     return () => clearInterval(intervalId)
   }, [text, speed, isStarted, onComplete])
 
-  return <span>{displayText}</span>
+  return <span className={className}>{displayText}</span>
 }

@@ -42,7 +42,7 @@ export function MissionDetailModal({ mission, onClose, onComplete }: MissionDeta
           <div className="absolute top-0 left-0 right-0 h-48 -z-10 overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-b from-emerald-100/50 to-transparent" />
             {/* Texture */}
-            <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+            <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay bg-[url('/textures/noise.svg')]" />
             
             {/* Foliage/Star Patterns */}
             <div className="absolute top-4 left-6 text-emerald-600/10 rotate-[-15deg]"><Sparkles size={48} fill="currentColor" /></div>

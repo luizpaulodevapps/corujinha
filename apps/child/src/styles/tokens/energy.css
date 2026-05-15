@@ -1,0 +1,40 @@
+:root {
+  /* 🔥 Energy System: Visual & Emotional Modes */
+  
+  /* Calm Mode: Focus, tranquility, soft colors */
+  --energy-calm-bg: #F0FDF4;
+  --energy-calm-accent: #10B981;
+  --energy-calm-blur: 10px;
+  --energy-calm-opacity: 0.6;
+  
+  /* Adventure Mode: High energy, saturated, vibrant */
+  --energy-adventure-bg: #064E3B;
+  --energy-adventure-accent: #FBBF24;
+  --energy-adventure-blur: 30px;
+  --energy-adventure-opacity: 0.9;
+  
+  /* Magic Mode: Ethereal, mysterious, particle-rich */
+  --energy-magic-bg: #1E1B4B;
+  --energy-magic-accent: #A855F7;
+  --energy-magic-blur: 50px;
+  --energy-magic-opacity: 1;
+
+  /* Night Mode: Low stimulus, warm, sleep-friendly */
+  --energy-night-bg: #040D12;
+  --energy-night-accent: #334155;
+  --energy-night-blur: 15px;
+  --energy-night-opacity: 0.4;
+}
+
+/* Energy Modifiers */
+[data-energy="calm"] {
+  --brand-primary: var(--energy-calm-accent);
+  --brand-bg: var(--energy-calm-bg);
+  --glass-blur: var(--energy-calm-blur);
+}
+
+[data-energy="adventure"] {
+  --brand-primary: var(--energy-adventure-accent);
+  --brand-bg: var(--energy-adventure-bg);
+  --glass-blur: var(--energy-adventure-blur);
+}

@@ -39,21 +39,21 @@ export function MissionModal({ isOpen, onClose }: { isOpen: boolean, onClose: ()
         throw new Error('A chave configurada ainda é o valor padrão "sua_chave_aqui".')
       }
 
-      const prompt = `Você é o Arquiteto de Missões do Corujinha, um app focado em gamificação positiva para crianças.
-      Sua missão é transformar tarefas mundanas em aventuras épicas, lúdicas e inspiradoras.
+      const prompt = `Você é o Arquiteto de Missões da Floresta Encantada. Sua função é transformar tarefas em aventuras épicas.
       
-      REGRAS DE OURO:
-      1. Linguagem Mágica: Use um tom de voz de mestre de RPG amigável. Use adjetivos como "épico", "lendário", "místico".
-      2. Títulos Criativos: NUNCA use o nome da tarefa literalmente. Transforme "Lavar louça" em "O Ritual das Águas Cristalinas".
-      3. Público-Alvo: Crianças de 5 a 10 anos.
+      SISTEMA DE MENTORES (ADOTE A VOZ DE ACORDO COM A CATEGORIA):
+      - SABEDORIA/DEVERES (Bubo): Voz poética, sábia, focada no "porquê". Usa "Mapas", "Pergaminhos".
+      - SAÚDE/NOITE (Lumi): Voz alegre, rápida, onomatopeias. Usa "Brilho", "Pérolas", "Zapt".
+      - ORGANIZAÇÃO (Gaia): Voz calma, pausada, passo-a-passo. Usa "Santuário", "Harmonia", "Pedra por pedra".
+      - NATUREZA/ESPORTE (Bolt): Voz motivadora, direta, desafiadora. Usa "Vento", "Foguete", "Vapt-vupt".
       
-      DIRETRIZ DE IMAGEM:
-      O 'imageSearchTerm' deve ser um termo curto em INGLÊS que descreva uma ILUSTRAÇÃO ou DESENHO FOFINHO relacionado ao tema.
-      Exemplos: "cute dragon cleaning teeth", "magic forest castle", "cute owl hero".
+      DIRETRIZES DE LORE:
+      1. TÍTULO: NUNCA literal. Transforme em Ritual/Desafio.
+      2. BIOMAS: Use Clareira do Sol, Rio de Cristal, Caverna dos Ecos, Ninho das Nuvens.
       
       Entrada do usuário: "${aiPrompt}".
       
-      Retorne APENAS um JSON puro (sem markdown): 
+      Retorne APENAS um JSON puro: 
       { 
         "title": "...", 
         "description": "...", 
@@ -61,7 +61,8 @@ export function MissionModal({ isOpen, onClose }: { isOpen: boolean, onClose: ()
         "difficulty": "easy|medium|hard", 
         "rewardCoins": 20, 
         "rewardXp": 100, 
-        "imageSearchTerm": "..." 
+        "imageSearchTerm": "...",
+        "mentor": "Bubo|Lumi|Gaia|Bolt"
       }`
 
       const tryGenerate = async (currentModel: string, currentVersion: string) => {

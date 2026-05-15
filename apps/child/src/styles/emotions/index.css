@@ -1,0 +1,34 @@
+/* 🎭 Emotional Operating System (EOS): Orchestration */
+
+/* Mode: CALM - Low stimulus, tranquility */
+[data-emotion="calm"] {
+  --app-bg: var(--color-emerald-50);
+  --glass-blur: 8px;
+  --motion-duration: var(--pacing-deliberate);
+  --particle-opacity: 0.2;
+}
+
+/* Mode: CELEBRATION - High energy, reward */
+[data-emotion="celebration"] {
+  --app-bg: var(--brand-magic);
+  --brand-primary: var(--brand-accent);
+  --motion-duration: var(--pacing-fast);
+  --motion-spring: var(--spring-bounce);
+  --particle-opacity: 1;
+}
+
+/* Mode: MYSTERY - Exploration, etheareal */
+[data-emotion="mystery"] {
+  --app-bg: var(--color-emerald-950);
+  --brand-primary: var(--brand-magic);
+  --glass-blur: 40px;
+  --elevation-current: var(--elevation-sacred);
+}
+
+/* Mode: COZY - Safety, sleep, warmth */
+[data-emotion="cozy"] {
+  --app-bg: #1A120B; /* Warm dark */
+  --brand-primary: #E58E26;
+  --glass-blur: 20px;
+  --particle-opacity: 0.1;
+}
