@@ -40,7 +40,7 @@ export default function MetasPage() {
       <GoalsBackground />
 
       {/* Hero Section: Goals Sanctuary (ADS V3.2) */}
-      <section className="relative px-8 pt-16 pb-20 rounded-b-[4rem] bg-emerald-950 overflow-hidden" aria-labelledby="goals-title">
+      <section className="relative px-8 pt-16 pb-20 rounded-b-[0.5rem] bg-emerald-950 overflow-hidden" aria-labelledby="goals-title">
         {/* Atmosphere Layers */}
         <div className="absolute inset-0 opacity-[0.05] mix-blend-overlay bg-[url(/textures/noise.svg)]" />
         <div className="absolute top-0 right-0 w-80 h-80 bg-brand-accent/5 blur-[100px] rounded-full" />
@@ -76,7 +76,7 @@ export default function MetasPage() {
             { icon: CheckCircle2, label: 'FEITAS', value: completedGoals },
             { icon: Trophy, label: 'STATUS', value: `${averageProgress}%` }
           ].map((item, i) => (
-            <div key={i} className="bg-color-moon-cream rounded-[2rem] p-5 border border-emerald-100 shadow-sm flex flex-col items-center text-center gap-2">
+            <div key={i} className="bg-moon-cream rounded-[0.5rem] p-5 border border-emerald-100 shadow-sm flex flex-col items-center text-center gap-2">
               <div className="w-10 h-10 rounded-full bg-emerald-50/50 flex items-center justify-center text-emerald-600 border border-emerald-100/50">
                 <item.icon size={18} />
               </div>
@@ -111,7 +111,7 @@ export default function MetasPage() {
 
       {/* Mentor Wisdom: Integrated Design */}
       <aside className="px-8 pb-32 max-w-2xl mx-auto">
-        <div className="bg-emerald-950/95 rounded-[3rem] p-10 flex flex-col sm:flex-row items-center gap-8 shadow-sm relative overflow-hidden text-center sm:text-left">
+        <div className="bg-emerald-950/95 rounded-[0.5rem] p-10 flex flex-col sm:flex-row items-center gap-8 shadow-sm relative overflow-hidden text-center sm:text-left">
           <div className="absolute inset-0 opacity-[0.05] bg-[url(/textures/noise.svg)] pointer-events-none" />
           <div className="w-24 h-24 shrink-0 bg-white/5 rounded-3xl flex items-center justify-center border border-white/10">
             <img src="/owl_mascot_new.png" alt="Corujinha" className="w-16 h-16 object-contain opacity-80" />

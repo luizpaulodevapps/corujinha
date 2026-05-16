@@ -13,14 +13,14 @@ export function MagicBackground() {
 
       {/* 3. AMBIENT DEPTH */}
       <motion.div 
-        animate={{ opacity: [0.03, 0.08, 0.03], scale: [1, 1.1, 1] }}
-        transition={{ duration: 15, repeat: Infinity }}
-        className="absolute top-[10%] right-[-5%] h-[500px] w-[500px] rounded-full bg-emerald-400/5 blur-[120px]" 
+        animate={{ opacity: [0.03, 0.05, 0.03] }}
+        transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+        className="absolute top-[10%] right-[-5%] h-[500px] w-[500px] rounded-full bg-emerald-400/5 blur-[80px] will-change-[opacity]" 
       />
       <motion.div 
-        animate={{ opacity: [0.02, 0.06, 0.02], scale: [1, 1.15, 1] }}
-        transition={{ duration: 20, repeat: Infinity, delay: 5 }}
-        className="absolute bottom-[10%] left-[-10%] h-[600px] w-[600px] rounded-full bg-amber-400/5 blur-[150px]" 
+        animate={{ opacity: [0.02, 0.04, 0.02] }}
+        transition={{ duration: 20, repeat: Infinity, delay: 5, ease: "linear" }}
+        className="absolute bottom-[10%] left-[-10%] h-[600px] w-[600px] rounded-full bg-amber-400/5 blur-[100px] will-change-[opacity]" 
       />
 
       {/* 4. TEXTURE OVERLAY (Paper/Watercolor feel) */}
@@ -29,27 +29,25 @@ export function MagicBackground() {
       {/* 5. SOFT VIGNETTE (Focus on content) */}
       <div className="absolute inset-0 bg-[radial-gradient(circle,transparent_50%,rgba(6,31,21,0.12)_100%)]" />
       
-      {/* 6. MAGIC FIREFLIES (Warm Amber Spirits) */}
-      {[...Array(10)].map((_, i) => (
+      {/* 6. MAGIC FIREFLIES (Reduced for performance) */}
+      {[...Array(4)].map((_, i) => (
         <motion.div
           key={i}
           initial={{ opacity: 0 }}
           animate={{
-            y: [0, -80, 0],
-            x: [0, 30, 0],
-            opacity: [0, 0.4, 0],
-            scale: [0.5, 1, 0.5]
+            y: [0, -40, 0],
+            opacity: [0, 0.3, 0]
           }}
           transition={{
-            duration: 15 + i * 4,
+            duration: 10 + i * 5,
             repeat: Infinity,
-            ease: "easeInOut",
-            delay: i * 2,
+            ease: "linear",
+            delay: i * 3,
           }}
-          className="absolute h-1.5 w-1.5 bg-amber-400/80 rounded-full blur-[0.8px] shadow-[0_0_8px_rgba(251,191,36,0.6)]"
+          className="absolute h-1 w-1 bg-amber-400/60 rounded-full blur-[0.5px] will-change-transform"
           style={{
-            top: `${15 + Math.random() * 70}%`,
-            left: `${10 + Math.random() * 80}%`,
+            top: `${20 + (i * 20)}%`,
+            left: `${15 + (i * 15)}%`,
           }}
         />
       ))}

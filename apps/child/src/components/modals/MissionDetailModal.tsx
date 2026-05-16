@@ -35,7 +35,7 @@ export function MissionDetailModal({ mission, onClose, onComplete }: MissionDeta
           initial={{ scale: 0.9, y: 50, rotate: 1 }}
           animate={{ scale: 1, y: 0, rotate: 0 }}
           exit={{ scale: 0.9, y: 50, rotate: -1 }}
-          className="relative w-full max-w-[520px] overflow-hidden rounded-[3rem] bg-gradient-to-b from-[#FCFFFD] to-[#F0F9F2] shadow-[0_40px_100px_rgba(6,31,21,0.3)] border-4 border-white"
+          className="relative w-full max-w-[520px] overflow-hidden rounded-[0.5rem] bg-gradient-to-b from-[#FCFFFD] to-[#F0F9F2] shadow-[0_40px_100px_rgba(6,31,21,0.3)] border-4 border-white"
           onClick={e => e.stopPropagation()}
         >
           {/* 1. ENVIRONMENT DECORATION (Top Section) */}
@@ -49,7 +49,7 @@ export function MissionDetailModal({ mission, onClose, onComplete }: MissionDeta
             <div className="absolute top-10 right-10 text-emerald-600/10 rotate-[20deg]"><Sparkles size={64} fill="currentColor" /></div>
           </div>
 
-          <div className="p-10">
+          <div className="px-5 sm:px-10 py-10">
             {/* Header: Title & Magic Preview */}
             <div className="flex items-center gap-6 mb-10">
               <motion.div 

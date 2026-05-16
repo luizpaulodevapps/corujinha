@@ -15,24 +15,24 @@ import { audioService } from '@/services/audio-service'
 
 const STAGES = {
   invite: {
-    title: 'A floresta sussurra...',
-    text: 'As estrelas chegaram para iluminar nosso descanso. Vamos fechar o dia juntos?',
-    audio: 'morning_greeting' // Usar como placeholder para vento/noite
+    title: 'O luar desperta...',
+    text: 'A floresta começa a bocejar e as estrelas vieram nos guiar. Que tal encerrarmos o dia com calma?',
+    audio: 'UI_CHIME_SOFT' 
   },
   reflect: {
-    title: 'Coração quentinho',
-    text: 'Você cuidou muito bem da clareira hoje. Sua luz brilhou forte!',
-    audio: 'xp_gain'
+    title: 'Brilho da Gratidão',
+    text: 'Sua luz brilhou forte hoje! Cada pequena tarefa que você fez deixou nossa floresta mais feliz.',
+    audio: 'XP_GAIN_MAGIC'
   },
   anticipate: {
-    title: 'Amanhã tem magia',
-    text: 'O vento já trouxe novas aventuras. Descanse para encontrá-las!',
-    audio: 'nest_evolution'
+    title: 'Sussurros de Amanhã',
+    text: 'Novas aventuras já estão brotando sob o orvalho. Descanse agora para encontrá-las ao amanhecer.',
+    audio: 'NEST_EVOLUTION_SOFT'
   },
   goodnight: {
-    title: 'Boa noite, herói',
-    text: 'Sonhe com as nuvens e a magia da floresta.',
-    audio: 'reward_ceremony'
+    title: 'Sonhos de Algodão',
+    text: 'Feche os olhinhos e deixe a magia te levar. Boa noite, pequeno herói da floresta.',
+    audio: 'SACRED_AMBIANCE'
   }
 }
 
@@ -114,7 +114,7 @@ export function EveningRitualModal() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-slate-950/80 backdrop-blur-md"
+            className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
           />
 
           <motion.div
@@ -122,7 +122,7 @@ export function EveningRitualModal() {
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0, y: 20 }}
             transition={{ type: 'spring', damping: 30, stiffness: 200 }}
-            className="relative w-full max-w-lg bg-indigo-950/30 border border-white/10 rounded-[3.5rem] p-10 text-center shadow-[0_40px_80px_rgba(0,0,0,0.6)] overflow-hidden backdrop-blur-2xl"
+            className="relative w-full max-w-lg bg-indigo-950/80 border border-white/10 rounded-[0.5rem] px-5 sm:px-10 py-10 text-center shadow-[0_40px_80px_rgba(0,0,0,0.6)] overflow-hidden backdrop-blur-md"
           >
             {/* Ambient Breathing Decor */}
             <div className="absolute inset-0 pointer-events-none">
@@ -135,8 +135,7 @@ export function EveningRitualModal() {
                 className="absolute -top-1/2 -left-1/2 w-full h-full bg-indigo-500/20 blur-[100px] rounded-full"
               />
             </div>
-
-            <div className="relative z-10 space-y-10">
+            <div className="px-5 sm:px-8 py-10 space-y-12 relative z-10">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={stage}
@@ -174,11 +173,11 @@ export function EveningRitualModal() {
                     )}
                   </div>
 
-                  <div className="space-y-4">
-                    <h2 className="text-3xl font-black text-white italic tracking-tighter">
+                  <div className="space-y-8 flex flex-col items-center w-full text-justify">
+                    <h2 style={{ textAlign: 'center' }} className="text-4xl font-black text-white italic tracking-tighter w-full drop-shadow-xl">
                       {STAGES[stage].title}
                     </h2>
-                    <p className="text-indigo-100/80 text-xl font-bold leading-relaxed max-w-[280px] mx-auto">
+                    <p className="text-indigo-100/80 text-xl font-bold leading-relaxed max-w-[280px]">
                       {stage === 'reflect' && recentMemory 
                         ? `Você cuidou muito bem da clareira com ${recentMemory.metadata?.title || 'suas tarefas'}.`
                         : STAGES[stage].text}
@@ -186,7 +185,7 @@ export function EveningRitualModal() {
                   </div>
 
                   {stage === 'reflect' && (
-                    <div className="flex justify-center gap-3">
+                    <div className="flex justify-center gap-3 mt-10">
                       {[...Array(3)].map((_, i) => (
                         <motion.div
                           key={i}
@@ -202,11 +201,16 @@ export function EveningRitualModal() {
                 </motion.div>
               </AnimatePresence>
 
-              <div className="pt-4 flex flex-col gap-4">
+              <div className="pt-10 flex flex-col gap-6 px-5 sm:px-8">
                 <button
                   onClick={handleNext}
                   disabled={isTransitioning}
-                  className="w-full h-16 bg-white text-indigo-950 rounded-[2rem] font-black text-xl uppercase tracking-widest shadow-[0_10px_30px_rgba(255,255,255,0.2)] flex items-center justify-center gap-3 active:scale-95 transition-all disabled:opacity-50"
+                  style={{ 
+                    backgroundColor: '#FBBF24', 
+                    color: '#000000',
+                    boxShadow: '0 0 40px rgba(251, 191, 36, 0.4)'
+                  }}
+                  className="w-full h-16 rounded-[1rem] font-black text-xl uppercase tracking-widest flex items-center justify-center gap-3 active:scale-95 transition-all disabled:opacity-50"
                 >
                   {isTransitioning ? (
                     <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }}>
@@ -223,7 +227,7 @@ export function EveningRitualModal() {
                 {stage === 'invite' && (
                   <button 
                     onClick={() => setIsOpen(false)}
-                    className="text-indigo-300/40 hover:text-indigo-300 transition-colors font-bold uppercase text-[10px] tracking-[0.4em]"
+                    className="text-white/80 hover:text-white transition-colors font-bold uppercase text-[10px] tracking-[0.4em] py-2"
                   >
                     Continuar acordado por agora
                   </button>

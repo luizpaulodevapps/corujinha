@@ -30,13 +30,13 @@
   --color-forest-parchment: #F3F1E8;
 
   /* 🏛️ Semantic Tokens: Functional Purpose */
-  --brand-primary: var(--color-emerald-500);
-  --brand-secondary: var(--color-emerald-200);
-  --brand-accent: #FCE18A;
-  --brand-warm: #FFB163;
-  --brand-success: #5CC08B;
-  --brand-magic: #8F6DDC;
-  --brand-danger: #FF6B6B;
+  --color-brand-primary: var(--color-emerald-500);
+  --color-brand-secondary: var(--color-emerald-200);
+  --color-brand-accent: #FCE18A;
+  --color-brand-warm: #FFB163;
+  --color-brand-success: #5CC08B;
+  --color-brand-magic: #8F6DDC;
+  --color-brand-danger: #FF6B6B;
   
   --app-fg: #1F4F3E;
   --app-muted: var(--color-emerald-400);

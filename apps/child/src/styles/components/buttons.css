@@ -21,14 +21,14 @@
 
 /* Primary Button: High Action */
 .cj-button-primary {
-  background: var(--brand-primary);
+  background: var(--color-brand-primary);
   color: var(--text-contrast, #FFFFFF);
-  box-shadow: 0 8px 0 0 var(--brand-warm), var(--shadow-md);
+  box-shadow: 0 8px 0 0 var(--color-brand-warm), var(--shadow-md);
   border: 2px solid color-mix(in srgb, white, transparent 80%);
 }
 
 .cj-button-primary:active {
-  box-shadow: 0 2px 0 0 var(--brand-warm), var(--shadow-sm);
+  box-shadow: 0 2px 0 0 var(--color-brand-warm), var(--shadow-sm);
 }
 
 /* Ghost Button: Secondary / Calm */

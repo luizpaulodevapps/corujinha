@@ -46,7 +46,7 @@ export function MissionCard({ mission, index, onClick }: MissionCardProps) {
       onClick={onClick}
       disabled={mission.completed}
       className={clsx(
-        'w-full p-5 rounded-[2rem] border-2 flex items-center gap-4 text-left transition-all active:scale-[0.98] relative overflow-hidden',
+        'w-full p-6 rounded-[0.5rem] border-2 flex items-center gap-4 text-left transition-all active:scale-[0.98] relative overflow-hidden',
         mission.completed ? 'opacity-60 grayscale bg-gray-50 border-gray-100' : selectedTheme,
         rarity.theme === 'gold' && 'shadow-lg'
       )}

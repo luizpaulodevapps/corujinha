@@ -119,11 +119,11 @@ export function RewardCeremonyModal({ isOpen, mission, mentor = 'Bubo', onClose 
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="relative w-full max-w-lg bg-white rounded-[3rem] overflow-hidden shadow-[0_32px_0_0_#DCE2D5]"
+            className="relative w-full max-w-lg bg-white rounded-[0.5rem] overflow-hidden shadow-[0_32px_0_0_#DCE2D5]"
           >
             <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-brand-secondary via-brand-accent to-brand-secondary" />
 
-            <div className="p-8 text-center space-y-8">
+            <div className="px-5 sm:px-10 py-10 text-center space-y-8">
               {/* Mentor Celebration Area */}
               <div className="relative pt-8">
                 <motion.div

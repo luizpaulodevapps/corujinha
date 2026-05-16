@@ -98,7 +98,7 @@ export function ChildBottomNav() {
                 initial="hidden"
                 animate="visible"
                 exit="exit"
-                className="absolute bottom-24 left-0 right-0 bg-emerald-950/95 border border-white/5 rounded-[0.5rem] p-8 shadow-2xl backdrop-blur-xl overflow-hidden"
+                className="absolute bottom-24 left-0 right-0 bg-emerald-950/98 border border-white/5 rounded-[0.5rem] p-8 shadow-2xl backdrop-blur-md overflow-hidden"
                 style={{ zIndex: LAYERS.POPOVER }}
               >
                 <div className="absolute inset-0 bg-gradient-to-t from-brand-primary/5 to-transparent pointer-events-none" />
@@ -136,9 +136,9 @@ export function ChildBottomNav() {
           )}
         </AnimatePresence>
 
-        {/* Main Dock Bar: Refined Hierarchy */}
+        {/* Main Dock Bar: Optimized for Mobile Performance */}
         <div className={clsx(
-          "flex items-center justify-between bg-emerald-950/80 backdrop-blur-lg border border-white/5 p-2 rounded-[0.5rem] shadow-2xl",
+          "flex items-center justify-between bg-emerald-950/90 backdrop-blur-md border border-white/5 p-2 rounded-[0.5rem] shadow-2xl will-change-transform",
           isRitualActive && "brightness-75 saturate-50"
         )}>
           {MAIN_ITEMS.map(({ href, label, icon: Icon, activeColor }) => {

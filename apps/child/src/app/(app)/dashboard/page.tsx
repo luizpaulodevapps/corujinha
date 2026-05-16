@@ -198,7 +198,7 @@ export default function ChildDashboardPage() {
                 whileHover={{ y: -8 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => modals.openMission(featuredMission.id)}
-                className="floating-card p-8 flex flex-col sm:flex-row items-center justify-between cursor-pointer group !bg-color-forest-parchment/30 !border-emerald-100/50"
+                className="floating-card p-8 flex flex-col sm:flex-row items-center justify-between cursor-pointer group !bg-forest-parchment/30 !border-emerald-100/50"
               >
                 <div className="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left mb-6 sm:mb-0">
                   <div className="section-icon w-20 h-20 !rounded-[0.5rem] !bg-white !border-emerald-100 !text-4xl shadow-sm">

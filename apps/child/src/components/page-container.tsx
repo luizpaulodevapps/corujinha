@@ -91,7 +91,7 @@ export function PageContainer({
         animate={{ opacity: 1 }}
         className={`relative z-0 child-page-main ${className}`}
       >
-        <div className="child-page-inner">
+        <div className="child-page-inner px-6 sm:px-12 max-w-2xl mx-auto w-full">
           {children}
         </div>
       </motion.main>

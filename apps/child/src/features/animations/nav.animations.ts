@@ -28,11 +28,9 @@ export const bloomExpand: Variants = {
 
 export const dockBreathing: Variants = {
   animate: {
-    scale: [1, 1.01, 1],
+    scale: 1,
     transition: {
-      duration: 6,
-      repeat: Infinity,
-      ease: 'easeInOut'
+      duration: 0
     }
   }
 }
